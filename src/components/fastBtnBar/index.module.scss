@@ -1,0 +1,65 @@
+.wrapper {
+  display: flex;
+  overflow-x: auto;
+  font-weight: 500;
+
+  > div {
+    margin-right: 20px;
+    width: 92px;
+    border-top-left-radius: 19px;
+    border-top-right-radius: 19px;
+    background: #e7e7e7;
+    position: relative;
+    text-align: center;
+    padding: 32px 0 12px;
+
+    .badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: block;
+      width: 24px;
+      height: 24px;
+      font-size: 18px;
+      color: #fff;
+      border-radius: 50%;
+      background: #000;
+    }
+
+    .barquette {
+      position: absolute;
+      display: none;
+      top: 5px;
+      left: 3px;
+    }
+  }
+
+  .itemInIndexPage {
+    .firstLine {
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+    .secondLine {
+      font-size: 10px;
+    }
+  }
+
+  .itemInOrderingPage {
+    font-size: 12px;
+    padding-bottom: 6px;
+
+    .title {
+      width: 60px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .price {
+      font-size: 10px;
+    }
+
+    .barquette {
+      display: block;
+    }
+  }
+}
