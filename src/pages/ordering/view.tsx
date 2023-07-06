@@ -13,8 +13,11 @@ import {
 import CustomizedBtnStyles from "../../components/floatingBar/floatingBar.module.scss";
 import { ICourse } from "../../typing";
 import cls from "classnames";
+import { useNavigate } from "react-router-dom";
+import { useCallback } from "react";
 
 function OrderingPage() {
+  const navigate = useNavigate();
   const {
     orderInfo: { summary },
     restInfo: { table },
@@ -25,6 +28,7 @@ function OrderingPage() {
 
   const total = getTotalAmount(summary);
   const totalCount = getTotalCount(summary);
+  const toNext = useCallback(() => navigate("/confirm"), [navigate]);
 
   return (
     <div className="page-wrapper">
@@ -39,7 +43,10 @@ function OrderingPage() {
         <span>Total:</span>
         <span>{total}€</span>
       </div>
-      <div className={cls(CustomizedBtnStyles.wrapper, styles.btnWrapper)}>
+      <div
+        className={cls(CustomizedBtnStyles.wrapper, styles.btnWrapper)}
+        onClick={toNext}
+      >
         <div className={CustomizedBtnStyles.container}>
           <div className={cls(CustomizedBtnStyles.inner, "flex-center")}>
             {totalCount}

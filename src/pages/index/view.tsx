@@ -10,6 +10,8 @@ import Categories from "./categories";
 import FloatingBar from "../../components/floatingBar";
 import CourseMenu from "./courseMenu";
 import TimeAndTableInfo from "../../components/DatetimeTableBar";
+import { useNavigate } from "react-router-dom";
+import { useCallback } from "react";
 
 function IndexPage() {
   const {
@@ -21,6 +23,10 @@ function IndexPage() {
     menuInfo: state[MENU_FEATURE_KEY],
     orderInfo: state[ORDERING_FEATURE_KEY],
   }));
+  
+  const navigate = useNavigate();
+  
+  const toOrder = useCallback(() => navigate('/order'), [navigate]);
 
   useGetRestInfoQuery(restaurantId);
 
@@ -35,7 +41,7 @@ function IndexPage() {
       <FastBtnBar isCheckout={true} elements={fastCheckouts} />
       <Categories categories={categories} activeKey={activeCategoryId} />
       <CourseMenu items={menuMap[activeCategoryId] ?? []} summary={summary} />
-      <FloatingBar />
+      <FloatingBar cbk={toOrder} />
     </div>
   );
 }

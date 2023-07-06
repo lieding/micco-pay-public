@@ -1,0 +1,68 @@
+.title {
+  padding: 0 3px;
+  font-size: 16px;
+}
+
+.promoTitle {
+  margin-top: 30px;
+}
+
+// pourboire
+.tipTitle {
+  margin: 20px 0 10px;
+}
+
+.tipping {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+
+  .item {
+    border-radius: 7px;
+    background: #e4f4f5;
+    color: #4fcfcf;
+    padding: 6px 7px;
+  }
+
+  input {
+    border: unset;
+    padding: unset;
+    margin: unset;
+    outline: none;
+    width: 30px;
+    text-align: right;
+    background: transparent;
+  }
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.btnRow {
+  display: flex;
+  align-items: center;
+  > div {
+    border-radius: 16px;
+    font-size: 16px;
+    text-align: center;
+  }
+  .left {
+    flex: 1;
+    background: #f5f7fe;
+    padding: 12px 0;
+    margin-right: 10px;
+  }
+
+  .right {
+    flex: 2;
+    color: #fff;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    background: #7842eb;
+    padding: 14px 0;
+  }
+}

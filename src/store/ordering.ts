@@ -5,7 +5,11 @@ export const ORDERING_FEATURE_KEY = "ordering";
 
 const { reducer: OrderingReducer, actions } = createSlice({
   name: ORDERING_FEATURE_KEY,
-  initialState: { summary: <OrderingSummary>{} },
+  initialState: {
+    summary: <OrderingSummary>{},
+    tip: <null | number>null,
+    rounded: false,
+  },
   reducers: {
     addOrder(state, action: CoursePayloafType) {
       const { summary } = state;
@@ -22,10 +26,16 @@ const { reducer: OrderingReducer, actions } = createSlice({
         if (obj.count < 1) delete summary[key];
       }
     },
+    setTip(state, action) {
+      state.tip = action.payload;
+    },
+    setRounded(state, action) {
+      state.rounded = action.payload;
+    },
   },
 });
 
-export const { addOrder, reduceOrder } = actions;
+export const { addOrder, reduceOrder, setTip, setRounded } = actions;
 export default OrderingReducer;
 
 export function getTotalCount(summary: OrderingSummary) {
@@ -34,8 +44,10 @@ export function getTotalCount(summary: OrderingSummary) {
   return cnt;
 }
 
-export function getTotalAmount(summary: OrderingSummary) {
-  return Object.values(summary).reduce((prev, cur) => {
-    return prev + cur.count * cur.course.price;
-  }, 0);
+export function getTotalAmount(summary: OrderingSummary, tip?: number | null) {
+  return (
+    Object.values(summary).reduce((prev, cur) => {
+      return prev + cur.count * cur.course.price;
+    }, 0) + (tip || 0)
+  );
 }

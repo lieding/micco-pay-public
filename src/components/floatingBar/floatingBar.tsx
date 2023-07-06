@@ -4,13 +4,13 @@ import { ORDERING_FEATURE_KEY, getTotalCount } from "../../store/ordering";
 import { RootState } from "../../store";
 import cls from "classnames";
 
-function FloatingBar() {
+function FloatingBar(props: { cbk?: () => void }) {
   const totalCount = useSelector((state: RootState) =>
     getTotalCount(state[ORDERING_FEATURE_KEY].summary)
   );
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} onClick={props.cbk}>
       <div className={styles.container}>
         <div className={cls(styles.inner, "flex-center")}>{totalCount}</div>
         <div className={styles.centerTitle}>Commande</div>

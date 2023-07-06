@@ -23,7 +23,7 @@ function CourseItem(props: {
 }
 
 export default function CourseMenu(props: {
-  items: ICourse[];
+  items: ICourse[] | null | undefined;
   summary: OrderingSummary;
 }) {
   const { items, summary } = props;
@@ -33,6 +33,9 @@ export default function CourseMenu(props: {
     (item: ICourse) => dispatch(addOrder(item)),
     [dispatch]
   );
+
+  if (!items) return null;
+
   return (
     <div className={styles.menu}>
       {items.map((e) => (

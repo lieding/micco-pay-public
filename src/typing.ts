@@ -45,3 +45,21 @@ export function isValidQueryRestInfoRes(
 export type CoursePayloafType = {
   payload: ICourse;
 };
+
+export type QueryMenuInfoResponse = {
+  menuInfo?: ICourse[];
+};
+
+export function isValidQueryMenuInfoRes(
+  obj: any
+): obj is QueryMenuInfoResponse {
+  if (isValidObject(obj)) {
+    const { menuInfo } = obj as any;
+    return isValidArray(menuInfo);
+  }
+  return false;
+}
+
+export type SetMenuInfoPayloadType = {
+  payload: { categoryId: string; menuInfo: ICourse[] };
+};
