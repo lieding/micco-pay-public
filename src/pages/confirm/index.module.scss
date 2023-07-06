@@ -16,15 +16,25 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 30px;
+  font-weight: 800;
 
   .item {
     border-radius: 7px;
     background: #e4f4f5;
     color: #4fcfcf;
     padding: 6px 7px;
+
+    &.inactive {
+      background-color: #aeaeb4;
+      color: #fff;
+    }
   }
 
   input {
+    font-weight: inherit;
+    color: inherit;
+    font-size: inherit;
+
     border: unset;
     padding: unset;
     margin: unset;

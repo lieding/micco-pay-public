@@ -3,11 +3,17 @@ import type { OrderingSummary, CoursePayloafType } from "../typing";
 
 export const ORDERING_FEATURE_KEY = "ordering";
 
+export type TipType = {
+  customized: boolean;
+  amount: number;
+  selected: boolean;
+};
+
 const { reducer: OrderingReducer, actions } = createSlice({
   name: ORDERING_FEATURE_KEY,
   initialState: {
     summary: <OrderingSummary>{},
-    tip: <null | number>null,
+    tip: <TipType>{ customized: false, amount: 0, selected: false },
     rounded: false,
   },
   reducers: {
@@ -27,7 +33,17 @@ const { reducer: OrderingReducer, actions } = createSlice({
       }
     },
     setTip(state, action) {
-      state.tip = action.payload;
+      const { payload } = action;
+      const obj = { customized: false };
+      if (typeof payload === "number") {
+        const selected = state.tip.amount != payload;
+        state.tip = { ...obj, selected, amount: selected ? payload : 0 };
+      } else if (typeof payload === "object") {
+        state.tip = {
+          ...obj,
+          ...payload,
+        };
+      }
     },
     setRounded(state, action) {
       state.rounded = action.payload;
@@ -44,10 +60,10 @@ export function getTotalCount(summary: OrderingSummary) {
   return cnt;
 }
 
-export function getTotalAmount(summary: OrderingSummary, tip?: number | null) {
+export function getTotalAmount(summary: OrderingSummary, tip?: TipType) {
   return (
     Object.values(summary).reduce((prev, cur) => {
       return prev + cur.count * cur.course.price;
-    }, 0) + (tip || 0)
+    }, 0) + (tip?.selected ? tip?.amount || 0 : 0)
   );
 }

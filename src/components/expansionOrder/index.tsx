@@ -3,14 +3,15 @@ import { OrderingSummary } from "../../typing";
 import styles from "./index.module.scss";
 import cls from "classnames";
 import { DownIcon } from "../../components/icons";
+import { formatCourseLabel } from "../../utils";
 
 function Row(props: { item: OrderingSummary[string] }) {
   const { item } = props;
   return (
     <div className={styles.row}>
-      <div className={styles.label}>{item.course.label}</div>
+      <div className={styles.label}>{formatCourseLabel(item.course)}</div>
       <div>{item.count}</div>
-      <div>{item.course.price}€</div>
+      <div className={styles.price}>{item.course.price}€</div>
     </div>
   );
 }

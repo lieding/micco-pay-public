@@ -8,6 +8,7 @@ import {
 } from "../../store/ordering";
 import styles from "./index.module.scss";
 import CustomInput from "../../components/customInput";
+import LogoHeader from "../../components/logoHeader";
 import cls from "classnames";
 import Tipping from "./tipping";
 import { useCallback } from "react";
@@ -54,9 +55,7 @@ function ConfirmPage() {
 
   return (
     <div className="page-wrapper">
-      <div className="logo-wrapper textAlign">
-        <img src="micco-pay-logo.png" />
-      </div>
+      <LogoHeader />
       <Expasion summary={summary} />
       <div className={cls(styles.promoTitle, styles.title)}>
         Vous avez un code promo?
@@ -65,7 +64,7 @@ function ConfirmPage() {
       <div className={cls(styles.tipTitle, styles.title)}>
         😀Vous êtes content? Laissez un pourboire
       </div>
-      <Tipping />
+      <Tipping tip={tip} />
       <div className={styles.total}>
         <div>Total:</div>
         <div>{total}€</div>

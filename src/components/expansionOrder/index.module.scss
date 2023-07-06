@@ -33,8 +33,11 @@
       margin-bottom: 9px;
       > div {
         flex: none;
-        width: 30px;
         text-align: right;
+      }
+
+      .price {
+        width: 60px;
       }
 
       .label {

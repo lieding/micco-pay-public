@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { ICourse, MenuMap, SetMenuInfoPayloadType } from "../typing";
-import { useQueryMenuInfoQuery } from "./api";
 
 export const MENU_FEATURE_KEY = "menu";
 
@@ -22,9 +21,8 @@ const { reducer: MenuReducer, actions } = createSlice({
       state.menuMap[categoryId] = menuInfo;
     },
     setActiveCategory(state, action) {
-      const categoryId = (state.activeCategoryId = action.payload);
-      const { restaurantId } = require("./store").store?.getState().restaurant;
-      useQueryMenuInfoQuery({ categoryId, restaurantId });
+      const categoryId = action.payload;
+      state.activeCategoryId = categoryId;
     },
     setMenuInfo(state, action: SetMenuInfoPayloadType) {
       const { categoryId, menuInfo } = action.payload;

@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { useCallback } from "react";
 import cls from "classnames";
 
-function ElementInIndex(props: {
+function Item(props: {
   item: ICourse;
   badgeChar: string;
   cbk: (item: ICourse) => {};
@@ -19,20 +19,27 @@ function ElementInIndex(props: {
   let elements: JSX.Element[] = [];
   if (isCheckout) {
     elements = [
-      <div className={styles.firstLine}>{item.price}€</div>,
-      <div className={styles.secondLine}>{item.label}</div>,
+      <div key="price" className={styles.firstLine}>
+        {item.price}€
+      </div>,
+      <div key="label" className={styles.secondLine}>
+        {item.label}
+      </div>,
     ];
   } else {
     elements = [
-      <div className={styles.title}>{item.label}</div>,
-      <div className={styles.price}>{item.price}€</div>,
+      <div key="title" className={styles.title}>
+        {item.label}
+      </div>,
+      <div key="price" className={styles.price}>
+        {item.price}€
+      </div>,
       <img src="barquette.png" className={styles.barquette} />,
     ];
   }
 
   return (
     <div
-      key={item.key}
       className={
         isCheckout ? styles.itemInIndexPage : styles.itemInOrderingPage
       }
@@ -59,7 +66,8 @@ function FastBtnBar(props: { isCheckout: boolean; elements: Array<ICourse> }) {
   return (
     <div className={styles.wrapper}>
       {elements.map((e) => (
-        <ElementInIndex
+        <Item
+          key={e.key}
           item={e}
           cbk={cbk}
           badgeChar={getBadgeChar(summary, e.key)}

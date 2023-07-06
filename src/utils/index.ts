@@ -1,4 +1,4 @@
-import { OrderingSummary } from "../typing";
+import { ICourse, OrderingSummary } from "../typing";
 
 export * as DateTimeUtils from "./date_time";
 
@@ -23,4 +23,8 @@ export function isValidObject(obj: unknown): obj is {} {
 export function isValidArray(obj: unknown): obj is Array<unknown> {
   if (!!obj && Array.isArray(obj)) return true;
   return false;
+}
+
+export function formatCourseLabel(course: ICourse) {
+  return course.isPack ? `[Emporter] ${course.label}` : course.label;
 }

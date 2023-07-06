@@ -14,8 +14,8 @@ export const api = createApi({
       query: ({ restaurantId, categoryId }) =>
         `/miccoapp-getRestData?restaurantId=${restaurantId}&categoryId=${categoryId}`,
       async onQueryStarted(query, { dispatch, queryFulfilled }) {
+        const { categoryId } = query;
         try {
-          const { categoryId } = query;
           const { data } = await queryFulfilled;
           if (isValidQueryMenuInfoRes(data)) {
             const { menuInfo = [] } = data;

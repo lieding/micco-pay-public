@@ -4,6 +4,7 @@ import { addOrder, reduceOrder } from "../../store/ordering";
 import styles from "./index.module.scss";
 import { useCallback } from "react";
 import cls from "classnames";
+import { formatCourseLabel } from "../../utils";
 
 function Item(props: {
   item: OrderingSummary[keyof OrderingSummary];
@@ -13,7 +14,7 @@ function Item(props: {
   return (
     <div className={styles.item}>
       <div className={styles.leftPart}>
-        <div className={styles.title}>{item.course.label}</div>
+        <div className={styles.title}>{formatCourseLabel(item.course)}</div>
         <div className={styles.price}>{item.course.price}€</div>
       </div>
       <div className={styles.rightPart}>

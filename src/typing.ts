@@ -17,6 +17,7 @@ export interface ICourse {
   pics?: string[];
   price: number;
   restaurantId: string;
+  isPack?: boolean;
 }
 
 export type OrderingSummary = Record<

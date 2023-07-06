@@ -11,6 +11,7 @@ import {
   getTotalCount,
 } from "../../store/ordering";
 import CustomizedBtnStyles from "../../components/floatingBar/floatingBar.module.scss";
+import LogoHeader from "../../components/logoHeader";
 import { ICourse } from "../../typing";
 import cls from "classnames";
 import { useNavigate } from "react-router-dom";
@@ -32,9 +33,7 @@ function OrderingPage() {
 
   return (
     <div className="page-wrapper">
-      <div className="logo-wrapper textAlign">
-        <img src="micco-pay-logo.png" />
-      </div>
+      <LogoHeader />
       <TimeAndTableInfo table={table} />
       <OrderSummary summary={summary} />
       <div className={styles.titlePackaging}>A emporter en plus?</div>
@@ -67,6 +66,7 @@ const PackagingOptions: Array<ICourse> = [
     price: 6,
     category: "",
     restaurantId: "",
+    isPack: true,
   },
   {
     label: "Moyenne barquette",
@@ -74,12 +74,14 @@ const PackagingOptions: Array<ICourse> = [
     price: 9,
     category: "",
     restaurantId: "",
+    isPack: true,
   },
   {
     label: "Grande barquette",
     key: "barquette-3",
     price: 12,
     category: "",
+    isPack: true,
     restaurantId: "",
   },
 ];
