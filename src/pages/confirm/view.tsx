@@ -12,18 +12,20 @@ import LogoHeader from "../../components/logoHeader";
 import cls from "classnames";
 import Tipping from "./tipping";
 import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 function BtnRow(props: { total: number }) {
   const ceilNum = Math.ceil(props.total);
   const showRounded = props.total !== ceilNum;
-
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const cbk = useCallback(
     (round?: boolean) => {
       if (round) dispatch(setRounded(true));
+      navigate("/payment");
     },
-    [dispatch]
+    [dispatch, navigate]
   );
 
   const eles = showRounded ? (

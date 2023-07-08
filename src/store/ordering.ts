@@ -1,13 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { OrderingSummary, CoursePayloafType } from "../typing";
+import type {
+  OrderingSummary,
+  CoursePayloafType,
+  TipType,
+  Contact,
+} from "../typing";
 
 export const ORDERING_FEATURE_KEY = "ordering";
-
-export type TipType = {
-  customized: boolean;
-  amount: number;
-  selected: boolean;
-};
 
 const { reducer: OrderingReducer, actions } = createSlice({
   name: ORDERING_FEATURE_KEY,
@@ -15,6 +14,7 @@ const { reducer: OrderingReducer, actions } = createSlice({
     summary: <OrderingSummary>{},
     tip: <TipType>{ customized: false, amount: 0, selected: false },
     rounded: false,
+    contact: <Contact>{ phone: "", name: "", mail: "" },
   },
   reducers: {
     addOrder(state, action: CoursePayloafType) {
@@ -48,10 +48,14 @@ const { reducer: OrderingReducer, actions } = createSlice({
     setRounded(state, action) {
       state.rounded = action.payload;
     },
+    setContact(state, action: { payload: Contact }) {
+      state.contact = { ...state.contact, ...action.payload };
+    },
   },
 });
 
-export const { addOrder, reduceOrder, setTip, setRounded } = actions;
+export const { addOrder, reduceOrder, setTip, setRounded, setContact } =
+  actions;
 export default OrderingReducer;
 
 export function getTotalCount(summary: OrderingSummary) {
@@ -60,10 +64,14 @@ export function getTotalCount(summary: OrderingSummary) {
   return cnt;
 }
 
-export function getTotalAmount(summary: OrderingSummary, tip?: TipType) {
-  return (
+export function getTotalAmount(
+  summary: OrderingSummary,
+  tip?: TipType,
+  toRound = false
+) {
+  const amount =
     Object.values(summary).reduce((prev, cur) => {
       return prev + cur.count * cur.course.price;
-    }, 0) + (tip?.selected ? tip?.amount || 0 : 0)
-  );
+    }, 0) + (tip?.selected ? tip?.amount || 0 : 0);
+  return toRound ? Math.ceil(amount) : amount;
 }

@@ -1,19 +1,36 @@
 import styles from "./index.module.scss";
+import { useCallback } from "react";
 
 function CustomInput(props: {
   prefix?: React.ReactElement;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  onChange?: (
+    e: React.ChangeEvent<HTMLInputElement>,
+    formName?: string
+  ) => void;
   placeholder?: string;
+  name?: string;
+  validities?: Record<string, string>;
+  [key: string]: any;
 }) {
-  const { prefix, onChange, placeholder } = props;
+  const { prefix, onChange, placeholder, name, validities, ...params } = props;
+  const changeHandler = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChange?.(e, name);
+    },
+    [onChange]
+  );
+  const validity = validities?.[name ?? ""];
   return (
     <div className={styles.wrapper}>
       {prefix}
       <input
         className={styles.customInput}
-        onChange={onChange}
+        onChange={changeHandler}
         placeholder={placeholder}
+        id={name}
+        {...params}
       />
+      {validity && <span className={styles.validity}>{validity}</span>}
     </div>
   );
 }

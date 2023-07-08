@@ -2,6 +2,8 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setRestInfo } from "./restaurant";
 import { setCatesAndCheckouts, setMenuInfo } from "./menu";
 import { isValidQueryRestInfoRes, isValidQueryMenuInfoRes } from "../typing";
+import { setStripeInfo } from "./stripe";
+import { isValidObject } from "../utils";
 
 export const api = createApi({
   reducerPath: "api",
@@ -48,7 +50,25 @@ export const api = createApi({
         }
       },
     }),
+    // get the stripe initialization information
+    getStripeInfo: builder.query({
+      query: (amount) => `/getPaymentInfo?amount=${amount}`,
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (isValidObject(data)) {
+            dispatch(setStripeInfo(data));
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      },
+    }),
   }),
 });
 
-export const { useGetRestInfoQuery, useQueryMenuInfoQuery } = api;
+export const {
+  useGetRestInfoQuery,
+  useQueryMenuInfoQuery,
+  useGetStripeInfoQuery,
+} = api;

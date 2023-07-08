@@ -2,6 +2,8 @@ import { createBrowserRouter } from "react-router-dom";
 import IndexPage from "./pages/index";
 import OrderingPage from "./pages/ordering";
 import ConfirmPage from "./pages/confirm";
+import PaymentPage from "./pages/payment";
+import ResultPage from "./pages/result";
 
 export const routes = [
   {
@@ -15,6 +17,14 @@ export const routes = [
   {
     path: "/confirm",
     element: <ConfirmPage />,
+  },
+  {
+    path: "/payment",
+    element: <PaymentPage />,
+  },
+  {
+    path: "/result",
+    element: <ResultPage />,
   },
 ];
 

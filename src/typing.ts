@@ -64,3 +64,15 @@ export function isValidQueryMenuInfoRes(
 export type SetMenuInfoPayloadType = {
   payload: { categoryId: string; menuInfo: ICourse[] };
 };
+
+export type Contact = {
+  phone: string;
+  name: string;
+  mail: string;
+};
+
+export type TipType = {
+  customized: boolean;
+  amount: number;
+  selected: boolean;
+};

@@ -2,6 +2,8 @@ import { ICourse, OrderingSummary } from "../typing";
 
 export * as DateTimeUtils from "./date_time";
 
+export * as LocalStorageUtils from "./localStorage";
+
 export function formatTabledisplay(table: String) {
   const lenOfCharsToFill = 3 - table.length;
   if (lenOfCharsToFill < 1) return table;

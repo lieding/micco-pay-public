@@ -43,6 +43,15 @@
     text-align: right;
     background: transparent;
   }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
 }
 
 .total {
@@ -50,7 +59,6 @@
   justify-content: space-between;
   margin-bottom: 40px;
   font-size: 17px;
-  font-weight: 500;
 }
 
 .btnRow {

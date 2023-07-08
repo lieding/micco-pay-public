@@ -1,15 +1,25 @@
 .wrapper {
   display: flex;
+  border-radius: 19px;
+  background: #f9f9f9;
+  padding: 12px 18px;
+  position: relative;
   > * {
     flex: unset;
+  }
+
+  .validity {
+    position: absolute;
+    font-size: 8px;
+    bottom: 2px;
+    left: 30px;
+    color: var(--error-color);
   }
 }
 
 .customInput {
   flex: 1;
-  border-radius: 19px;
-  background: #f9f9f9;
-  padding: 12px 18px;
+  background: transparent;
   border: none;
   outline: 0;
 }

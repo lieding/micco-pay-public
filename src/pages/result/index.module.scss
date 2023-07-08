@@ -1,0 +1,37 @@
+.iconWrapper {
+  margin: 50px auto 35px;
+
+  svg {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+.congra {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1e0e62;
+  margin-bottom: 20px;
+}
+
+.subTitle {
+  color: #625c88;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.tableInfo {
+  margin: 20px 0 30px;
+  font-size: 20px;
+}
+
+.tableItem {
+  font-size: 17px;
+  margin-bottom: 22px;
+  display: flex;
+  justify-content: center;
+
+  .title {
+    margin-right: 30px;
+  }
+}

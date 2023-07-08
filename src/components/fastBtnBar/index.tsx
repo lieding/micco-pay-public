@@ -43,6 +43,7 @@ function Item(props: {
       className={
         isCheckout ? styles.itemInIndexPage : styles.itemInOrderingPage
       }
+      key={item.key}
       onClick={() => cbk(item)}
     >
       {elements}
