@@ -8,6 +8,8 @@ import { RESTAURANT_FEATURE_KEY } from "../../store/restaurant";
 import cls from "classnames";
 import { useEffect, useState } from "react";
 import { LocalStorageUtils } from "../../utils";
+import { createOrder, createOrderPostBody } from "./orderHelper";
+import Loading from "../../components/loading";
 
 /**
  * payment_intent=pi_3NRDugFZJYX0E01T05m4YKRp
@@ -25,6 +27,7 @@ type Config = {
 export default function ResultPage() {
   let [searchParams] = useSearchParams();
   const [config, setConfig] = useState<Config | null>(null);
+  const [isLoading, setLoadig] = useState(false);
 
   useEffect(() => {
     const state = LocalStorageUtils.resumeGlobalStore() as RootState;
@@ -33,13 +36,20 @@ export default function ResultPage() {
     const totalWithoutTip = getTotalAmount(summary);
     const total = getTotalAmount(summary, tip, rounded);
     const showTipInfo = Boolean(tip.selected && tip.amount);
-    setConfig({
-      table: state[RESTAURANT_FEATURE_KEY].table,
-      total,
-      showTipInfo,
-      totalWithoutTip,
-    });
-  }, [setConfig]);
+    const body = createOrderPostBody(total, state, searchParams);
+    setLoadig(true);
+    createOrder(body)
+      .then(() => {
+        setConfig({
+          table: state[RESTAURANT_FEATURE_KEY].table,
+          total,
+          showTipInfo,
+          totalWithoutTip,
+        });
+      })
+      .catch(console.error)
+      .finally(() => setLoadig(false));
+  }, []);
 
   let content = null;
   if (config) {
@@ -67,6 +77,8 @@ export default function ResultPage() {
       <div className={cls(styles.congra, "textAlign")}>Congratulations 🎉</div>
       <div className={cls(styles.subTitle, "textAlign")}>Paiement réussie</div>
       {content}
+
+      {isLoading && <Loading />}
     </div>
   );
 }

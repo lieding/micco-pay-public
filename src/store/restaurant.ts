@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 export const RESTAURANT_FEATURE_KEY = "restaurant";
 
-const restInfo = {
+const DefaultRestInfo = {
   name: "wokgrill-91170-1",
   displayName: "WOK GRILL VIRY-CHÂTILLON",
   address: "102 AVENUE DU GÉNÉRAL DE GAULLE 91170 VIRY-CHÂTILLON",
@@ -12,9 +12,15 @@ const restInfo = {
     "https://micco-pay-images.s3.eu-west-3.amazonaws.com/wokgrille-logo.png",
 };
 
+const searchParams = new URL(window.location.href).searchParams;
+
 const { reducer: RestaurantReducer, actions } = createSlice({
   name: RESTAURANT_FEATURE_KEY,
-  initialState: { restaurantId: restInfo.name, table: "1", restInfo: null },
+  initialState: {
+    restaurantId: searchParams.get("restaurantId") ?? DefaultRestInfo.name,
+    table: searchParams.get("table") ?? "1",
+    restInfo: null,
+  },
   reducers: {
     setRestInfo(state, action) {
       state.restInfo = action.payload;
@@ -23,10 +29,5 @@ const { reducer: RestaurantReducer, actions } = createSlice({
 });
 
 export const { setRestInfo } = actions;
-
-/*export const loadRestInfo = (payload: any) =>
-  createAsyncThunk(`${RESTAURANT_FEATURE_KEY}/queryRestInfo`, (_, thunkAPI) => {
-    thunkAPI.dispatch(setRestInfo(payload));
-  });*/
 
 export default RestaurantReducer;

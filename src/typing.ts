@@ -76,3 +76,13 @@ export type TipType = {
   amount: number;
   selected: boolean;
 };
+
+export enum PaymentResultEnum {
+  SUCCEEDED = "succeeded",
+}
+
+export interface PaymentResultParams {
+  payment_intent?: string;
+  payment_intent_client_secret?: string;
+  redirect_status?: PaymentResultEnum;
+}

@@ -4,11 +4,12 @@ import { setCatesAndCheckouts, setMenuInfo } from "./menu";
 import { isValidQueryRestInfoRes, isValidQueryMenuInfoRes } from "../typing";
 import { setStripeInfo } from "./stripe";
 import { isValidObject } from "../utils";
+import { BASE_URL } from "../consts";
 
 export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://lx9l9yqrh6.execute-api.eu-west-3.amazonaws.com/default",
+    baseUrl: BASE_URL,
   }),
   endpoints: (builder) => ({
     // when the current category changes, the query of the new menu of the cqtegory follows
