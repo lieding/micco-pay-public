@@ -10,12 +10,14 @@ export function persistGlobalStore(obj: object) {
   }
 }
 
-export function resumeGlobalStore() {
+export function resumeGlobalStore(config: { clear: boolean }) {
   try {
     const raw = localStorage.getItem(LocalStorageKeys.GlobalStore);
     return raw ? JSON.parse(raw) : null;
   } catch (err) {
     console.error(err);
     return null;
+  } finally {
+    if (config.clear) localStorage.removeItem(LocalStorageKeys.GlobalStore);
   }
 }

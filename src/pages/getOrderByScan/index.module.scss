@@ -1,0 +1,14 @@
+.tableWrapper {
+  .row {
+    > div {
+      flex: 1;
+    }
+    .title {
+      margin-right: 20px;
+      text-align: right;
+    }
+    .value {
+      font-weight: 700;
+    }
+  }
+}

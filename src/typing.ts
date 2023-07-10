@@ -77,12 +77,49 @@ export type TipType = {
   selected: boolean;
 };
 
+// All available payment status
+// https://stripe.com/docs/payments/paymentintents/lifecycle
 export enum PaymentResultEnum {
   SUCCEEDED = "succeeded",
+  REQ_PAYMENT_METHOD = "requires_payment_method",
+  REQ_CONFIRMATION = "requires_confirmation",
+  REQ_ACTION = "requires_action",
+  PROCESSING = "processing",
+}
+
+export enum PaymentStatus {
+  SUCCEEDED = "SUCCEEDED",
+  FAILED = "FAILED",
+  PROCESSING = "PROCESSING",
+  IN_OPERATION = "IN_OPERATION",
+  UNKNOWN = "UNKNOWN",
 }
 
 export interface PaymentResultParams {
   payment_intent?: string;
   payment_intent_client_secret?: string;
   redirect_status?: PaymentResultEnum;
+}
+
+export interface ScanOrderResponse {
+  orders: Array<{
+    count: number;
+    name: string;
+    courseKey: string;
+    price: number;
+  }>;
+  paymentStatus: PaymentResultEnum;
+  contact: {
+    name: string;
+    mail: string;
+    phone: string;
+  };
+  tip: number;
+  table: string;
+  createdAt: string;
+  amount: number;
+  paymentIntent: string;
+  rounded: boolean;
+  id: string;
+  restaurantId: string;
 }

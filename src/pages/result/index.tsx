@@ -1,15 +1,24 @@
 import { useSearchParams } from "react-router-dom";
 import LogoHeader from "../../components/logoHeader";
-import { SuccessIcon } from "../../components/icons";
+import PaymentStatus from "./paymentStatus";
 import styles from "./index.module.scss";
 import { RootState } from "../../store";
 import { ORDERING_FEATURE_KEY, getTotalAmount } from "../../store/ordering";
 import { RESTAURANT_FEATURE_KEY } from "../../store/restaurant";
 import cls from "classnames";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { LocalStorageUtils } from "../../utils";
-import { createOrder, createOrderPostBody } from "./orderHelper";
+import {
+  createOrder,
+  createOrderPostBody,
+  parsePaymentStatus,
+} from "./orderHelper";
 import Loading from "../../components/loading";
+import {
+  PaymentResultEnum,
+  PaymentStatus as PaymentStatusEnum,
+} from "../../typing";
+const LazyQrLibrary = lazy(() => import("./qrcode"));
 
 /**
  * payment_intent=pi_3NRDugFZJYX0E01T05m4YKRp
@@ -22,16 +31,51 @@ type Config = {
   total: number;
   showTipInfo: boolean;
   totalWithoutTip: number;
+  paymentId: string;
+  restaurantId: string;
 };
+
+function Qrcode(props: {
+  config: Config | null;
+  isLoading: boolean;
+  paymentStatus: PaymentStatusEnum | null;
+}) {
+  const { config, isLoading, paymentStatus } = props;
+  const [showQrcode, setShowQrcode] = useState(false);
+  if (!config || isLoading || paymentStatus !== PaymentStatusEnum.SUCCEEDED)
+    return null;
+  if (!showQrcode)
+    return (
+      <div onClick={() => setShowQrcode(true)} className="textAlign">
+        Montrez-moi le Qrcode comme preuve
+      </div>
+    );
+  return (
+    <Suspense>
+      <LazyQrLibrary id={config.paymentId} restaurantId={config.restaurantId} />
+    </Suspense>
+  );
+}
 
 export default function ResultPage() {
   let [searchParams] = useSearchParams();
   const [config, setConfig] = useState<Config | null>(null);
   const [isLoading, setLoadig] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<PaymentStatusEnum | null>(
+    null
+  );
 
   useEffect(() => {
-    const state = LocalStorageUtils.resumeGlobalStore() as RootState;
+    const paymentResult = searchParams.get(
+      "redirect_status"
+    ) as PaymentResultEnum;
+    setPaymentStatus(parsePaymentStatus(paymentResult));
+    const state = LocalStorageUtils.resumeGlobalStore({
+      clear: true,
+    }) as RootState;
     if (!state) return;
+    const paymentId = searchParams.get("payment_intent_client_secret") || "";
+    const { table, restaurantId } = state[RESTAURANT_FEATURE_KEY];
     const { summary, tip, rounded } = state[ORDERING_FEATURE_KEY];
     const totalWithoutTip = getTotalAmount(summary);
     const total = getTotalAmount(summary, tip, rounded);
@@ -41,10 +85,12 @@ export default function ResultPage() {
     createOrder(body)
       .then(() => {
         setConfig({
-          table: state[RESTAURANT_FEATURE_KEY].table,
+          table,
           total,
           showTipInfo,
           totalWithoutTip,
+          paymentId,
+          restaurantId,
         });
       })
       .catch(console.error)
@@ -71,14 +117,14 @@ export default function ResultPage() {
   return (
     <div className="page-wrapper">
       <LogoHeader hideBackArrow={true} />
-      <div className={cls(styles.iconWrapper, "textAlign")}>
-        <SuccessIcon />
-      </div>
-      <div className={cls(styles.congra, "textAlign")}>Congratulations 🎉</div>
-      <div className={cls(styles.subTitle, "textAlign")}>Paiement réussie</div>
+      <PaymentStatus paymentStatus={paymentStatus} />
       {content}
-
       {isLoading && <Loading />}
+      <Qrcode
+        config={config}
+        isLoading={isLoading}
+        paymentStatus={paymentStatus}
+      />
     </div>
   );
 }
