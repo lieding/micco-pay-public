@@ -12,7 +12,7 @@ import CourseMenu from "./courseMenu";
 import TimeAndTableInfo from "../../components/DatetimeTableBar";
 import LogoHeader from "../../components/logoHeader";
 import { useNavigate } from "react-router-dom";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 
 function IndexPage() {
   const {
@@ -48,11 +48,13 @@ function IndexPage() {
   return (
     <div className="page-wrapper">
       <LogoHeader hideBackArrow={true} />
-      <IntroBg restInfo={restInfo} />
-      <TimeAndTableInfo table={table} />
-      <FastBtnBar isCheckout={true} elements={fastCheckouts} />
-      <Categories categories={categories} activeKey={activeCategoryId} />
-      <CourseMenu items={items} summary={summary} />
+      <div className="expanded">
+        <IntroBg restInfo={restInfo} />
+        <TimeAndTableInfo table={table} />
+        <FastBtnBar isCheckout={true} elements={fastCheckouts} />
+        <Categories categories={categories} activeKey={activeCategoryId} />
+        <CourseMenu items={items} summary={summary} />
+      </div>
       <FloatingBar cbk={toOrder} />
     </div>
   );

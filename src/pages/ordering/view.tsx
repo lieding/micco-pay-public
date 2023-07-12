@@ -34,10 +34,12 @@ function OrderingPage() {
   return (
     <div className="page-wrapper">
       <LogoHeader />
-      <TimeAndTableInfo table={table} />
-      <OrderSummary summary={summary} />
-      <div className={styles.titlePackaging}>A emporter en plus?</div>
-      <FastBtnBar isCheckout={false} elements={PackagingOptions} />
+      <div className="expanded">
+        <TimeAndTableInfo table={table} />
+        <OrderSummary summary={summary} />
+        <div className={styles.titlePackaging}>A emporter en plus?</div>
+        <FastBtnBar isCheckout={false} elements={PackagingOptions} />
+      </div>
       <div className={styles.totalAmount}>
         <span>Total:</span>
         <span>{total}€</span>

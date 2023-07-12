@@ -2,7 +2,7 @@ import { useCallback, useRef } from "react";
 import { useDispatch } from "react-redux";
 import styles from "./index.module.scss";
 import { setTip } from "../../store/ordering";
-import type { TipType } from "../../store/ordering";
+import type { TipType } from "../../typing";
 import cls from "classnames";
 
 export type TippingCbk = (num: number) => void;

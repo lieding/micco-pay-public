@@ -58,15 +58,17 @@ function ConfirmPage() {
   return (
     <div className="page-wrapper">
       <LogoHeader />
-      <Expasion summary={summary} />
-      <div className={cls(styles.promoTitle, styles.title)}>
-        Vous avez un code promo?
+      <div className="expanded">
+        <Expasion summary={summary} />
+        <div className={cls(styles.promoTitle, styles.title)}>
+          Vous avez un code promo?
+        </div>
+        <CustomInput placeholder="Promo code" />
+        <div className={cls(styles.tipTitle, styles.title)}>
+          😀Vous êtes content? Laissez un pourboire
+        </div>
+        <Tipping tip={tip} />
       </div>
-      <CustomInput placeholder="Promo code" />
-      <div className={cls(styles.tipTitle, styles.title)}>
-        😀Vous êtes content? Laissez un pourboire
-      </div>
-      <Tipping tip={tip} />
       <div className={styles.total}>
         <div>Total:</div>
         <div>{total}€</div>
