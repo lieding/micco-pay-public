@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import styles from "./index.module.scss";
 import { setTip } from "../../store/ordering";
@@ -24,19 +24,19 @@ function Tipping(props: { num: number; cbk: TippingCbk; classname: string }) {
 function TippingList(props: { tip: TipType }) {
   const { selected, customized, amount } = props.tip;
   const dispatch = useDispatch();
-  const inputValRef = useRef(0);
+  const [input, setInput] = useState((customized && amount) || "");
   const cbk = useCallback(
     (num: number | Partial<TipType>) => dispatch(setTip(num)),
     [dispatch]
   );
   const inputCbk = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInput(event.target.value);
     const amount = Number(event.target.value) || 0;
-    inputValRef.current = amount;
     cbk({ amount, customized: true, selected: true });
   };
   const customizedClickHandler = (_: React.MouseEvent<HTMLDivElement>) => {
     const _selected = customized ? !selected : true;
-    cbk({ customized: true, selected: _selected, amount: inputValRef.current });
+    cbk({ customized: true, selected: _selected, amount: Number(input) });
   };
 
   return (
@@ -53,7 +53,7 @@ function TippingList(props: { tip: TipType }) {
         className={cls(styles.item, getActiveType(selected, customized))}
         onClick={customizedClickHandler}
       >
-        <input type="number" onChange={inputCbk} />€
+        <input type="number" onChange={inputCbk} value={input} />€
       </div>
     </div>
   );

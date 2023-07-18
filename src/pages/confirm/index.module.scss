@@ -57,11 +57,14 @@
 .total {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   font-size: 17px;
 }
 
 .btnRow {
+  position: sticky;
+  bottom: 10px;
+
   display: flex;
   align-items: center;
   > div {
@@ -72,7 +75,7 @@
   .left {
     flex: 1;
     background: #f5f7fe;
-    padding: 12px 0;
+    padding: 6px 0;
     margin-right: 10px;
   }
 
@@ -81,6 +84,6 @@
     color: #fff;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     background: #7842eb;
-    padding: 14px 0;
+    padding: 8px 0;
   }
 }

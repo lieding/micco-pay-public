@@ -1,8 +1,8 @@
 .wrapper {
-  position: fixed;
   margin: 0 auto;
-  bottom: 40px;
-  width: 90%;
+  width: 90vw;
+  position: sticky;
+  bottom: 10px;
 
   border-radius: 16px;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
@@ -13,7 +13,7 @@
     background: #7842eb;
     display: flex;
     justify-content: end;
-    padding: 10px 0;
+    padding: 8px 0;
 
     .inner {
       margin-right: 20px;

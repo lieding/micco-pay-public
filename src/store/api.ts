@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setRestInfo } from "./restaurant";
 import { setCatesAndCheckouts, setMenuInfo } from "./menu";
 import { isValidQueryRestInfoRes, isValidQueryMenuInfoRes } from "../typing";
-import { setStripeInfo } from "./stripe";
+import { setStripeInfo, setStripePublicKey } from "./stripe";
 import { isValidObject } from "../utils";
 import { BASE_URL } from "../consts";
 
@@ -65,6 +65,19 @@ export const api = createApi({
         }
       },
     }),
+    getPublicKey: builder.query({
+      query: () => "/getPublicKey",
+      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          if (isValidObject(data)) {
+            dispatch(setStripePublicKey((data as any).publicKey));
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      },
+    }),
   }),
 });
 
@@ -72,4 +85,5 @@ export const {
   useGetRestInfoQuery,
   useQueryMenuInfoQuery,
   useGetStripeInfoQuery,
+  useGetPublicKeyQuery,
 } = api;

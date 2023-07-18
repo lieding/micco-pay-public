@@ -15,21 +15,23 @@ export function createOrderPostBody(
   const { restaurantId, table } = state.restaurant;
   const { tip, summary, contact, rounded } = state.ordering;
   const paymentIntent = searchParams.get("payment_intent"),
-    paymentClientSecret = searchParams.get("payment_intent_client_secret"),
+    // paymentClientSecret = searchParams.get("payment_intent_client_secret"),
     paymentStatus = searchParams.get("redirect_status");
-
+  const date = new Date();
+  const id = date.getTime() + Math.round(Math.random() * 10000).toString();
   return {
-    id: paymentClientSecret,
+    id,
     paymentIntent,
     restaurantId,
     table,
     paymentStatus,
+    orderStatus: "PAID",
     contact,
     amount: total,
     tip: tip.selected ? tip.amount : 0,
     rounded,
     orders: extractMenuOrders(summary),
-    createdAt: new Date().toISOString(),
+    createdAt: date.toISOString(),
   };
 }
 

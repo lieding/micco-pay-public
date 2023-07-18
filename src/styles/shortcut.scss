@@ -10,14 +10,14 @@
 .page-wrapper {
   padding: 0 18px;
   height: 100%;
-  display: flex;
-  flex-direction: column;
   > div {
     flex: unset;
   }
-  .expanded {
-    flex: 1;
-    overflow-y: auto;
+  .expanded1 {
+    min-height: calc(100% - 100px);
+  }
+  .expanded2 {
+    min-height: calc(100% - 144px);
   }
 }
 

@@ -31,8 +31,9 @@ type Config = {
   total: number;
   showTipInfo: boolean;
   totalWithoutTip: number;
-  paymentId: string;
+  id: string;
   restaurantId: string;
+  tipInfo: RootState["ordering"]["tip"];
 };
 
 function Qrcode(props: {
@@ -52,7 +53,7 @@ function Qrcode(props: {
     );
   return (
     <Suspense>
-      <LazyQrLibrary id={config.paymentId} restaurantId={config.restaurantId} />
+      <LazyQrLibrary id={config.id} restaurantId={config.restaurantId} />
     </Suspense>
   );
 }
@@ -74,7 +75,6 @@ export default function ResultPage() {
       clear: true,
     }) as RootState;
     if (!state) return;
-    const paymentId = searchParams.get("payment_intent_client_secret") || "";
     const { table, restaurantId } = state[RESTAURANT_FEATURE_KEY];
     const { summary, tip, rounded } = state[ORDERING_FEATURE_KEY];
     const totalWithoutTip = getTotalAmount(summary);
@@ -85,12 +85,13 @@ export default function ResultPage() {
     createOrder(body)
       .then(() => {
         setConfig({
+          id: body.id,
           table,
           total,
           showTipInfo,
           totalWithoutTip,
-          paymentId,
           restaurantId,
+          tipInfo: tip,
         });
       })
       .catch(console.error)
@@ -99,14 +100,14 @@ export default function ResultPage() {
 
   let content = null;
   if (config) {
-    const { table, showTipInfo, total, totalWithoutTip } = config;
+    const { table, showTipInfo, total, totalWithoutTip, tipInfo } = config;
     content = (
       <>
         <div className={cls(styles.tableInfo, "textAlign")}>Table {table}</div>
         {showTipInfo && (
           <>
             <Item title="Total" value={`${totalWithoutTip}€`} />
-            <Item title="Pourboire" value={`${total - totalWithoutTip}€`} />
+            <Item title="Pourboire" value={`${tipInfo.amount}€`} />
           </>
         )}
         <Item title="Total paiement" value={`${total}€`} />

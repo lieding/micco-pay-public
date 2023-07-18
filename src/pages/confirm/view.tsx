@@ -11,10 +11,11 @@ import CustomInput from "../../components/customInput";
 import LogoHeader from "../../components/logoHeader";
 import cls from "classnames";
 import Tipping from "./tipping";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { STRIPE_FEATURE_KEY, resetStripeInfo } from "../../store/stripe";
 
-function BtnRow(props: { total: number }) {
+function BtnRow(props: { total: number; beforeLeave?: () => void }) {
   const ceilNum = Math.ceil(props.total);
   const showRounded = props.total !== ceilNum;
   const navigate = useNavigate();
@@ -22,8 +23,9 @@ function BtnRow(props: { total: number }) {
 
   const cbk = useCallback(
     (round?: boolean) => {
+      props.beforeLeave?.();
       if (round) dispatch(setRounded(true));
-      navigate("/payment");
+      setTimeout(() => navigate("/payment"), 50);
     },
     [dispatch, navigate]
   );
@@ -48,17 +50,32 @@ function BtnRow(props: { total: number }) {
 
 function ConfirmPage() {
   const {
-    orderInfo: { summary, tip },
+    orderInfo: { summary, tip, rounded },
+    stripeInited,
   } = useSelector((state: RootState) => ({
     orderInfo: state[ORDERING_FEATURE_KEY],
+    stripeInited: state[STRIPE_FEATURE_KEY].initialized,
   }));
 
+  const dispatch = useDispatch();
+  const prevTotalRef = useRef<number | null>(null);
   const total = getTotalAmount(summary, tip);
+  useEffect(() => {
+    if (!stripeInited) return;
+    prevTotalRef.current = getTotalAmount(summary, tip, rounded);
+  }, []);
+  // the callbacj ffunction to be executed when it is going to beforeLeave
+  // the objective is that when the user has started payment process but stopped and went back
+  // in such screnrio, we need to reset the stripe data and make the paylebt start from scratch
+  const beforeLeave = () => {
+    if (prevTotalRef.current === null) return;
+    if (total !== prevTotalRef.current) dispatch(resetStripeInfo());
+  };
 
   return (
     <div className="page-wrapper">
       <LogoHeader />
-      <div className="expanded">
+      <div className="expanded2">
         <Expasion summary={summary} />
         <div className={cls(styles.promoTitle, styles.title)}>
           Vous avez un code promo?
@@ -73,7 +90,7 @@ function ConfirmPage() {
         <div>Total:</div>
         <div>{total}€</div>
       </div>
-      <BtnRow total={total} />
+      <BtnRow total={total} beforeLeave={beforeLeave} />
     </div>
   );
 }

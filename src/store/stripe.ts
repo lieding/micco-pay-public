@@ -16,8 +16,20 @@ const { reducer: StripeReducer, actions } = createSlice({
       state.publicKey = publicKey;
       state.initialized = true;
     },
+    reset(state) {
+      state.clientSecret = "";
+      state.publicKey = "";
+      state.initialized = false;
+    },
+    setPublicKey(state, action) {
+      state.publicKey = action.payload;
+    },
   },
 });
 
-export const { setStripeInfo } = actions;
+export const {
+  setStripeInfo,
+  reset: resetStripeInfo,
+  setPublicKey: setStripePublicKey,
+} = actions;
 export default StripeReducer;

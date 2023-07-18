@@ -34,7 +34,7 @@ function OrderingPage() {
   return (
     <div className="page-wrapper">
       <LogoHeader />
-      <div className="expanded">
+      <div className="expanded2">
         <TimeAndTableInfo table={table} />
         <OrderSummary summary={summary} />
         <div className={styles.titlePackaging}>A emporter en plus?</div>

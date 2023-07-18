@@ -48,7 +48,7 @@ function IndexPage() {
   return (
     <div className="page-wrapper">
       <LogoHeader hideBackArrow={true} />
-      <div className="expanded">
+      <div className="expanded1">
         <IntroBg restInfo={restInfo} />
         <TimeAndTableInfo table={table} />
         <FastBtnBar isCheckout={true} elements={fastCheckouts} />

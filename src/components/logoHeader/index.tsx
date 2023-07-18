@@ -4,7 +4,10 @@ import { ChevronBackIcon } from "../../components/icons";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
 
-function LogoHeader(props: { hideBackArrow?: boolean }) {
+function LogoHeader(props: {
+  hideBackArrow?: boolean;
+  backArrowCbk?: () => void;
+}) {
   const navigate = useNavigate();
   const back = useCallback(() => navigate(-1), [navigate]);
   return (

@@ -8,8 +8,9 @@ import { STRIPE_FEATURE_KEY } from "../../store/stripe";
 import { RootState } from "../../store";
 import ExpasionOrder from "../../components/expansionOrder";
 import ContactForm from "./contactForm";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { loadStripe } from "@stripe/stripe-js";
+import AppleAndroidBtn from "./AppleAndroidBtn";
 
 function PaymentPage() {
   const { total, stripeInfo, summary } = useSelector((state: RootState) => {
@@ -28,6 +29,7 @@ function PaymentPage() {
   });
 
   const { clientSecret, publicKey } = stripeInfo;
+  const stripe = useMemo(() => publicKey && loadStripe(publicKey), [publicKey]);
 
   return (
     <div className="page-wrapper">
@@ -35,7 +37,8 @@ function PaymentPage() {
       <ExpasionOrder summary={summary} />
       <ContactForm ref={(el) => (contactFormRef.current = el)} />
       {clientSecret && publicKey && (
-        <Elements stripe={loadStripe(publicKey)} options={{ clientSecret }}>
+        <Elements stripe={stripe} options={{ clientSecret }}>
+          <AppleAndroidBtn amount={total} clientSecret={clientSecret} />
           <CheckoutForm amount={total} checkValidity={checkContactValidity} />
         </Elements>
       )}

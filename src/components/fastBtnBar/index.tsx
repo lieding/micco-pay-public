@@ -34,7 +34,7 @@ function Item(props: {
       <div key="price" className={styles.price}>
         {item.price}€
       </div>,
-      <img src="barquette.png" className={styles.barquette} />,
+      <img key="img" src="barquette.png" className={styles.barquette} />,
     ];
   }
 
@@ -47,7 +47,9 @@ function Item(props: {
       onClick={() => cbk(item)}
     >
       {elements}
-      <span className={cls(styles.badge, "flex-center")}>{badgeChar}</span>
+      <span key="badge" className={cls(styles.badge, "flex-center")}>
+        {badgeChar}
+      </span>
     </div>
   );
 }
