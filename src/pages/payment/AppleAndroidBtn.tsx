@@ -4,7 +4,7 @@ import {
   useStripe,
 } from "@stripe/react-stripe-js";
 import type {
-  PaymentRequestTokenEvent,
+  PaymentRequestPaymentMethodEvent,
   PaymentRequest,
 } from "@stripe/stripe-js";
 import { toast } from "react-toastify";
@@ -31,7 +31,7 @@ function AppleAndroidBtn(props: { amount: number; clientSecret: string }) {
     // Check the availability of the Payment Request API.
     pr.canMakePayment().then((res) => res && setPaymentRequest(pr));
 
-    pr.on("paymentmethod", async (e: PaymentRequestTokenEvent) => {
+    pr.on("paymentmethod", async (e: PaymentRequestPaymentMethodEvent) => {
       const { error: stripeError, paymentIntent } =
         await stripe.confirmCardPayment(
           clientSecret,
@@ -69,7 +69,7 @@ function AppleAndroidBtn(props: { amount: number; clientSecret: string }) {
   }, [stripe]);
 
   const options = useMemo(
-    () => (paymentRequest ? { paymentRequest } : null),
+    () => (paymentRequest ? { paymentRequest } : undefined),
     [paymentRequest]
   );
 

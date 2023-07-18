@@ -3,7 +3,7 @@ import { AwesomeQRCode } from "@awesomeqr/react";
 import cls from "classnames";
 import styles from "./index.module.scss";
 
-function OrderQrcode(props: { id: number; restaurantId: string }) {
+function OrderQrcode(props: { id: string; restaurantId: string }) {
   const options = useMemo(
     () => ({
       text: `${window.location.origin}/scanOrder?id=${props.id}&restaurantId=${props.restaurantId}`,

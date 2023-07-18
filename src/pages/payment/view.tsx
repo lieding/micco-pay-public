@@ -37,7 +37,7 @@ function PaymentPage() {
       <ExpasionOrder summary={summary} />
       <ContactForm ref={(el) => (contactFormRef.current = el)} />
       {clientSecret && publicKey && (
-        <Elements stripe={stripe} options={{ clientSecret }}>
+        <Elements stripe={stripe || null} options={{ clientSecret }}>
           <AppleAndroidBtn amount={total} clientSecret={clientSecret} />
           <CheckoutForm amount={total} checkValidity={checkContactValidity} />
         </Elements>
