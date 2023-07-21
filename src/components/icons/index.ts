@@ -14,3 +14,4 @@ export const PhoneIcon = _PhoneIcon;
 export const SuccessIcon = _SuccessIcon;
 export const FailIcon = _FailIcon;
 export const ClockIcon = _ClockIcon;
+export { default as MinusIcon } from './minus'
