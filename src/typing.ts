@@ -1,5 +1,12 @@
 import { isValidObject, isValidArray } from "./utils";
 
+export enum DayPeriod {
+  MORNING,
+  NOON,
+  AFTERNOON,
+  NIGHT = 'night'
+}
+
 export interface IRestaurant {
   name: string;
   displayName: string;
@@ -10,7 +17,7 @@ export interface IRestaurant {
 }
 
 export interface ICourse {
-  key: string; // must be uniaue
+  key: string; // must be unique
   category: string;
   fastCheckout?: boolean; // default set false
   label: string;
@@ -18,6 +25,9 @@ export interface ICourse {
   price: number;
   restaurantId: string;
   isPack?: boolean;
+  priceChange?: {
+    [key: string]: number
+  }
 }
 
 export type OrderingSummary = Record<
@@ -29,6 +39,7 @@ export type QueryRestInfoResponse = {
   restInfo?: IRestaurant;
   menuInfo?: ICourse[];
   fastCheckouts?: ICourse[];
+  holiday?: string | false;
 };
 
 export type MenuMap = Record<string, ICourse[]>;

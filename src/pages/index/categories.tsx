@@ -9,6 +9,8 @@ const CategoryNameMap: Record<string, string> = {
   ENTRY: "Entrée",
   BUSKET: "Buckets",
   SUSHI: "Sushi",
+  SOFT: "Boissons",
+  BIERE: "Bière",
   ASIAN_STREET_FOOD: "Asian Street Food",
 };
 

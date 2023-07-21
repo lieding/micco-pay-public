@@ -69,9 +69,10 @@ export function getTotalAmount(
   tip?: TipType,
   toRound = false
 ) {
-  const amount =
+  let amount =
     Object.values(summary).reduce((prev, cur) => {
       return prev + cur.count * cur.course.price;
     }, 0) + (tip?.selected ? tip?.amount || 0 : 0);
+  amount = Number(amount.toFixed(2));
   return toRound ? Math.ceil(amount) : amount;
 }

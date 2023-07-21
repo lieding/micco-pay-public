@@ -1,5 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { ICourse, MenuMap, SetMenuInfoPayloadType } from "../typing";
+import type {
+  ICourse,
+  MenuMap,
+  QueryRestInfoResponse,
+  SetMenuInfoPayloadType
+} from "../typing";
+import { CourseUtils, getDayTimeKey } from "../utils";
 
 export const MENU_FEATURE_KEY = "menu";
 
@@ -12,8 +18,13 @@ const { reducer: MenuReducer, actions } = createSlice({
     fastCheckouts: <ICourse[]>[],
   },
   reducers: {
-    setCatesAndCheckouts(state, action) {
-      const { categories, fastCheckouts, menuInfo } = action.payload;
+    setCatesAndCheckouts(state, action: { payload: QueryRestInfoResponse & { categories?: string[] } }) {
+      let { categories = [], fastCheckouts = [], menuInfo = [], holiday } = action.payload;
+      const dayTimeKey = getDayTimeKey();
+      fastCheckouts = fastCheckouts.map(course =>
+        CourseUtils.formatPriceIfNeedChange(course, holiday, dayTimeKey));
+      menuInfo = menuInfo.map(course =>
+        CourseUtils.formatPriceIfNeedChange(course, holiday, dayTimeKey));
       state.fastCheckouts = fastCheckouts;
       state.categories = categories;
       const categoryId = categories[0] as string;

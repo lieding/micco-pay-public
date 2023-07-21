@@ -36,13 +36,14 @@ export const api = createApi({
         try {
           const { data } = await queryFulfilled;
           if (isValidQueryRestInfoRes(data)) {
-            const { restInfo, menuInfo, fastCheckouts } = data;
+            const { restInfo, menuInfo, fastCheckouts, holiday } = data;
             dispatch(setRestInfo(restInfo));
             dispatch(
               setCatesAndCheckouts({
                 fastCheckouts,
                 categories: restInfo?.categories,
                 menuInfo,
+                holiday
               })
             );
           }
