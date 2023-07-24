@@ -33,14 +33,14 @@
       display: none;
       top: 5px;
       left: 3px;
-      &.small {
-        transform: scale(.8, .8);
-      }
-      &.big {
-        transform: scale(1.2, 1.2);
-      }
     }
-  }
+    .smallBarquette {
+      transform: scale(.8, .8);
+    }
+    .bigBarquette {
+      transform: scale(1.2, 1.2);
+    }
+   }
 
   .itemInIndexPage {
     .firstLine {

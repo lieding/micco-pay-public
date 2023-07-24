@@ -4,20 +4,30 @@ import { getBadgeChar } from "../../utils";
 import cls from "classnames";
 import { useDispatch } from "react-redux";
 import { useCallback } from "react";
-import { addOrder } from "../../store/ordering";
+import { addOrder, reduceOrder } from "../../store/ordering";
+import { MinusIcon } from '../../components/icons'
 
 function CourseItem(props: {
   item: ICourse;
   badgeChar: string;
-  cbk: (item: ICourse) => {};
+  cbk: (item: ICourse, isAdd?: boolean) => {};
 }) {
   const { item, badgeChar, cbk } = props;
+  const showReduceIcon = badgeChar !== '+';
   return (
     <div className={styles.item} onClick={() => cbk(item)}>
       <img src={item.pics?.[0]} className={styles.img} />
       <div className={styles.title}>{item.label}</div>
       <div className={styles.price}>{item.price}€</div>
       <div className={cls(styles.badge, "flex-center")}>{badgeChar}</div>
+      {
+         showReduceIcon ? <div
+         className={cls(styles.badge, styles.reduce, 'flex-center')}
+         onClick={(ev) => { ev.stopPropagation(); cbk(item, false); }}
+       >
+         <MinusIcon />
+       </div> : null
+      }
     </div>
   );
 }
@@ -30,7 +40,7 @@ export default function CourseMenu(props: {
 
   const dispatch = useDispatch();
   const cbk = useCallback(
-    (item: ICourse) => dispatch(addOrder(item)),
+    (item: ICourse, isAdd = true) => dispatch(isAdd ? addOrder(item) : reduceOrder(item)),
     [dispatch]
   );
 

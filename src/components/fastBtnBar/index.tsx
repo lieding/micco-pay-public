@@ -38,8 +38,8 @@ function Item(props: {
     ];
   } else {
     let style = '';
-    if (idx === 0) style = 'small';
-    else if (idx === 2) style = 'big';
+    if (idx === 0) style = styles.smallBarquette;
+    else if (idx === 2) style = styles.bigBarquette;
     elements = [
       <div key="title" className={styles.title}>
         {item.label}
