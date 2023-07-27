@@ -32,11 +32,11 @@ function BtnRow(props: { total: number; beforeLeave?: () => void }) {
 
   const eles = showRounded ? (
     <>
-      <div className={styles.left} onClick={() => cbk()}>
-        Payer
-      </div>
-      <div className={styles.right} onClick={() => cbk(true)}>
+      <div className={styles.left} onClick={() => cbk(true)}>
         Arrondi à {ceilNum}€?
+      </div>
+      <div className={styles.right} onClick={() => cbk()}>
+        Payer
       </div>
     </>
   ) : (

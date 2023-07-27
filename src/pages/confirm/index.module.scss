@@ -73,14 +73,15 @@
     text-align: center;
   }
   .left {
-    flex: 1;
+    flex: 5;
     background: #f5f7fe;
-    padding: 6px 0;
+    padding: 7px 0;
     margin-right: 10px;
+    min-width: 130px;
   }
 
   .right {
-    flex: 2;
+    flex: 4;
     color: #fff;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     background: #7842eb;

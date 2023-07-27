@@ -41,7 +41,7 @@ export function formatTime(date: Date): string {
   const hourInNumner = date.getHours();
   if (hourInNumner > 6 && hourInNumner < 12) return DatePeriods.matin;
   else if (hourInNumner >= 12 && hourInNumner <= 13) return DatePeriods.midi;
-  else if (hourInNumner > 13 && hourInNumner <= 18)
+  else if (hourInNumner > 13 && hourInNumner < 18)
     return DatePeriods.apresMidi;
   return DatePeriods.soir;
 }
