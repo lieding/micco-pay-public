@@ -14,10 +14,12 @@
     flex: unset;
   }
   .expanded1 {
-    min-height: calc(100% - 100px);
+    min-height: calc(100% - 114px);
   }
   .expanded2 {
-    min-height: calc(100% - 144px);
+    box-sizing: border-box;
+    padding-bottom: 18px;
+    min-height: calc(100% - 154px);
   }
 }
 

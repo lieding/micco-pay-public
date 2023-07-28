@@ -1,6 +1,6 @@
 .wrapper {
-  margin: 0 auto;
-  width: 90vw;
+  left: 30px;
+  right: 30px;
   position: sticky;
   bottom: 10px;
 
@@ -13,7 +13,7 @@
     background: #7842eb;
     display: flex;
     justify-content: end;
-    padding: 8px 0;
+    padding: 10px 0;
 
     .inner {
       margin-right: 20px;

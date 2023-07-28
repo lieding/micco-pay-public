@@ -1,0 +1,15 @@
+.wrapper {
+  box-shadow: none;
+  background-color: #fff;
+}
+
+.totalAmount {
+  display: flex;
+  justify-content: space-between;
+  font-size: 17px;
+  padding: 0 5px;
+  margin: 0 0 8px;
+  > span {
+    display: inline-block;
+  }
+}

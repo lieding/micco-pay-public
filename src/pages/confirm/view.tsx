@@ -14,6 +14,9 @@ import Tipping from "./tipping";
 import { useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { STRIPE_FEATURE_KEY, resetStripeInfo } from "../../store/stripe";
+import { useScrollTop } from "../../hooks";
+import floatingTotalBtnBarStyles from "../../components/floatingTotalBtnBar/index.module.scss";
+import floatingBtnBarStyles from "../../components/floatingBar/floatingBar.module.scss";
 
 function BtnRow(props: { total: number; beforeLeave?: () => void }) {
   const ceilNum = Math.ceil(props.total);
@@ -33,19 +36,38 @@ function BtnRow(props: { total: number; beforeLeave?: () => void }) {
   const eles = showRounded ? (
     <>
       <div className={styles.left} onClick={() => cbk(true)}>
-        Arrondi à {ceilNum}€?
+        Arrondir à {ceilNum}€?
       </div>
-      <div className={styles.right} onClick={() => cbk()}>
+      <div
+        className={cls(floatingBtnBarStyles.container, styles.right)}
+        onClick={() => cbk()}
+      >
         Payer
       </div>
     </>
   ) : (
-    <div className={styles.right} onClick={() => cbk()}>
+    <div
+      className={cls(floatingBtnBarStyles.container, styles.right)}
+      onClick={() => cbk()}
+    >
       Payer
     </div>
   );
 
-  return <div className={styles.btnRow}>{eles}</div>;
+  return (
+    <div
+      className={cls(
+        floatingBtnBarStyles.wrapper,
+        floatingTotalBtnBarStyles.wrapper
+      )}
+    >
+      <div className={floatingTotalBtnBarStyles.totalAmount}>
+        <div>Total:</div>
+        <div>{props.total}€</div>
+      </div>
+      <div className={styles.btnRow}>{eles}</div>
+    </div>
+  );
 }
 
 function ConfirmPage() {
@@ -57,6 +79,8 @@ function ConfirmPage() {
     stripeInited: state[STRIPE_FEATURE_KEY].initialized,
   }));
 
+  useScrollTop();
+
   const dispatch = useDispatch();
   const prevTotalRef = useRef<number | null>(null);
   const total = getTotalAmount(summary, tip);
@@ -64,7 +88,7 @@ function ConfirmPage() {
     if (!stripeInited) return;
     prevTotalRef.current = getTotalAmount(summary, tip, rounded);
   }, []);
-  // the callbacj ffunction to be executed when it is going to beforeLeave
+  // the callback function is going to be executed when it is going to leave
   // the objective is that when the user has started payment process but stopped and went back
   // in such screnrio, we need to reset the stripe data and make the paylebt start from scratch
   const beforeLeave = () => {
@@ -86,10 +110,7 @@ function ConfirmPage() {
         </div>
         <Tipping tip={tip} />
       </div>
-      <div className={styles.total}>
-        <div>Total:</div>
-        <div>{total}€</div>
-      </div>
+
       <BtnRow total={total} beforeLeave={beforeLeave} />
     </div>
   );

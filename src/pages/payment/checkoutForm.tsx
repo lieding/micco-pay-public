@@ -7,6 +7,7 @@ import { persistStore } from "../../store";
 
 export default function CheckoutForm(props: {
   amount: number;
+  fee: number;
   checkValidity: () => boolean;
 }) {
   const stripe = useStripe();
@@ -48,6 +49,10 @@ export default function CheckoutForm(props: {
     setIsProcessing(false);
   };
 
+  const { amount, fee } = props;
+
+  const subTotal = (amount - fee).toFixed(2);
+
   return (
     <form
       id="payment-form"
@@ -55,9 +60,19 @@ export default function CheckoutForm(props: {
       className={styles.checkoutForm}
     >
       <PaymentElement id="payment-element" />
-      <div className={cls(styles.total, "flex-between")}>
-        <div>Total:</div>
-        <div>{props.amount}€</div>
+      <div className={cls(styles.total)}>
+        <div className={cls("flex-between")}>
+          <div>Sous-total:</div>
+          <div>{subTotal}€</div>
+        </div>
+        <div className={cls("flex-between")}>
+          <div>Frais:</div>
+          <div>{fee}€</div>
+        </div>
+        <div className={cls(styles.last, "flex-between")}>
+          <div>Total:</div>
+          <div>{amount}€</div>
+        </div>
       </div>
       <button
         disabled={isProcessing || !stripe || !elements}

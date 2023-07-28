@@ -54,13 +54,6 @@
   }
 }
 
-.total {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  font-size: 17px;
-}
-
 .btnRow {
   position: sticky;
   bottom: 10px;
@@ -69,22 +62,22 @@
   align-items: center;
   > div {
     border-radius: 16px;
-    font-size: 16px;
     text-align: center;
+    padding: 15px 0;
   }
   .left {
     flex: 5;
     background: #f5f7fe;
-    padding: 7px 0;
     margin-right: 10px;
     min-width: 130px;
   }
 
   .right {
     flex: 4;
+    justify-content: center;
     color: #fff;
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
     background: #7842eb;
-    padding: 8px 0;
+    padding: 15px 0;
   }
 }

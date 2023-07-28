@@ -13,14 +13,19 @@ import { loadStripe } from "@stripe/stripe-js";
 import AppleAndroidBtn from "./AppleAndroidBtn";
 
 function PaymentPage() {
-  const { total, stripeInfo, summary } = useSelector((state: RootState) => {
-    const { summary, tip, rounded } = state[ORDERING_FEATURE_KEY];
-    return {
-      total: getTotalAmount(summary, tip, rounded),
-      summary,
-      stripeInfo: state[STRIPE_FEATURE_KEY],
-    };
-  });
+  const { total, stripeInfo, summary, fee, amtAfterFee } = useSelector(
+    (state: RootState) => {
+      const { summary, fee, amtAfterFee, tip, rounded } =
+        state[ORDERING_FEATURE_KEY];
+      return {
+        total: getTotalAmount(summary, tip, rounded),
+        amtAfterFee,
+        summary,
+        fee,
+        stripeInfo: state[STRIPE_FEATURE_KEY],
+      };
+    }
+  );
 
   const contactFormRef = useRef<any>(null);
   const checkContactValidity = () => contactFormRef.current?.checkValidity();
@@ -38,8 +43,12 @@ function PaymentPage() {
       <ContactForm ref={(el) => (contactFormRef.current = el)} />
       {clientSecret && publicKey && (
         <Elements stripe={stripe || null} options={{ clientSecret }}>
-          <AppleAndroidBtn amount={total} clientSecret={clientSecret} />
-          <CheckoutForm amount={total} checkValidity={checkContactValidity} />
+          <AppleAndroidBtn amount={amtAfterFee} clientSecret={clientSecret} />
+          <CheckoutForm
+            amount={amtAfterFee}
+            checkValidity={checkContactValidity}
+            fee={fee}
+          />
         </Elements>
       )}
     </div>

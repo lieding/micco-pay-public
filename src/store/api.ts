@@ -3,6 +3,7 @@ import { setRestInfo } from "./restaurant";
 import { setCatesAndCheckouts, setMenuInfo } from "./menu";
 import { isValidQueryRestInfoRes, isValidQueryMenuInfoRes } from "../typing";
 import { setStripeInfo, setStripePublicKey } from "./stripe";
+import { setFee } from './ordering'
 import { isValidObject } from "../utils";
 import { BASE_URL } from "../consts";
 
@@ -60,6 +61,7 @@ export const api = createApi({
           const { data } = await queryFulfilled;
           if (isValidObject(data)) {
             dispatch(setStripeInfo(data));
+            dispatch(setFee(data));
           }
         } catch (err) {
           console.error(err);

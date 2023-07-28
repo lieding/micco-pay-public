@@ -13,6 +13,8 @@ const { reducer: OrderingReducer, actions } = createSlice({
   initialState: {
     summary: <OrderingSummary>{},
     tip: <TipType>{ customized: false, amount: 0, selected: false },
+    fee: 0,
+    amtAfterFee: 0,
     rounded: false,
     contact: <Contact>{ phone: "", name: "", mail: "" },
   },
@@ -45,6 +47,11 @@ const { reducer: OrderingReducer, actions } = createSlice({
         };
       }
     },
+    setFee(state, action) {
+      const { fee, amtAfterFee } = action?.payload || {};
+      state.fee = fee || 0;
+      state.amtAfterFee = amtAfterFee || 0;
+    },
     setRounded(state, action) {
       state.rounded = action.payload;
     },
@@ -54,7 +61,7 @@ const { reducer: OrderingReducer, actions } = createSlice({
   },
 });
 
-export const { addOrder, reduceOrder, setTip, setRounded, setContact } =
+export const { addOrder, reduceOrder, setTip, setRounded, setContact, setFee } =
   actions;
 export default OrderingReducer;
 

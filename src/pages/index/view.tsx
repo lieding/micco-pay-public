@@ -13,6 +13,7 @@ import TimeAndTableInfo from "../../components/DatetimeTableBar";
 import LogoHeader from "../../components/logoHeader";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
+import styles from "./index.module.scss";
 
 function IndexPage() {
   const {
@@ -51,6 +52,7 @@ function IndexPage() {
       <div className="expanded1">
         <IntroBg restInfo={restInfo} />
         <TimeAndTableInfo table={table} />
+        <div className={styles.heightBox} />
         <FastBtnBar isCheckout={true} elements={fastCheckouts} />
         <Categories categories={categories} activeKey={activeCategoryId} />
         <CourseMenu items={items} summary={summary} />

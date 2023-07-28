@@ -84,7 +84,7 @@ function ContactForm(_: object, ref: any) {
       <div className={cls(styles.row, styles.firstRow)}>
         <CustomInput
           prefix={<UserIcon />}
-          placeholder="Nom Prénom"
+          placeholder="Prénom"
           onChange={cbk}
           name="name"
           validities={validities}

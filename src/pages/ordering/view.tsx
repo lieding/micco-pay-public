@@ -10,15 +10,16 @@ import {
   getTotalAmount,
   getTotalCount,
 } from "../../store/ordering";
-import CustomizedBtnStyles from "../../components/floatingBar/floatingBar.module.scss";
 import LogoHeader from "../../components/logoHeader";
 import { ICourse } from "../../typing";
-import cls from "classnames";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
+import FloatingTotalBtnBar from "../../components/floatingTotalBtnBar";
+import { useScrollTop } from "../../hooks";
 
 function OrderingPage() {
   const navigate = useNavigate();
+  useScrollTop();
   const {
     orderInfo: { summary },
     restInfo: { table },
@@ -40,21 +41,7 @@ function OrderingPage() {
         <div className={styles.titlePackaging}>A emporter en plus?</div>
         <FastBtnBar isCheckout={false} elements={PackagingOptions} />
       </div>
-      <div className={styles.totalAmount}>
-        <span>Total:</span>
-        <span>{total}€</span>
-      </div>
-      <div
-        className={cls(CustomizedBtnStyles.wrapper, styles.btnWrapper)}
-        onClick={toNext}
-      >
-        <div className={CustomizedBtnStyles.container}>
-          <div className={cls(CustomizedBtnStyles.inner, "flex-center")}>
-            {totalCount}
-          </div>
-          <div className={CustomizedBtnStyles.centerTitle}>Valider</div>
-        </div>
-      </div>
+      <FloatingTotalBtnBar total={total} count={totalCount} cbk={toNext} />
     </div>
   );
 }

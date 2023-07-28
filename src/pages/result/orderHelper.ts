@@ -13,7 +13,7 @@ export function createOrderPostBody(
   searchParams: URLSearchParams
 ) {
   const { restaurantId, table } = state.restaurant;
-  const { tip, summary, contact, rounded } = state.ordering;
+  const { tip, summary, contact, rounded, fee } = state.ordering;
   const paymentIntent = searchParams.get("payment_intent"),
     // paymentClientSecret = searchParams.get("payment_intent_client_secret"),
     paymentStatus = searchParams.get("redirect_status");
@@ -27,6 +27,7 @@ export function createOrderPostBody(
     paymentStatus,
     orderStatus: "PAID",
     contact,
+    fee,
     amount: total,
     tip: tip.selected ? tip.amount : 0,
     rounded,
