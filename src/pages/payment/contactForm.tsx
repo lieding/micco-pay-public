@@ -80,7 +80,7 @@ function ContactForm(_: object, ref: any) {
       noValidate
       ref={(el) => (formRef.current = el)}
     >
-      <div className={styles.title}>Coordonnées</div>
+      <div className={styles.title}>Coordonnées pour la notification</div>
       <div className={cls(styles.row, styles.firstRow)}>
         <CustomInput
           prefix={<UserIcon />}

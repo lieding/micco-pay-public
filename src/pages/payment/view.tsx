@@ -11,6 +11,8 @@ import ContactForm from "./contactForm";
 import { useMemo, useRef } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import AppleAndroidBtn from "./AppleAndroidBtn";
+import cls from "classnames";
+import styles from "./index.module.scss";
 
 function PaymentPage() {
   const { total, stripeInfo, summary, fee, amtAfterFee } = useSelector(
@@ -37,7 +39,7 @@ function PaymentPage() {
   const stripe = useMemo(() => publicKey && loadStripe(publicKey), [publicKey]);
 
   return (
-    <div className="page-wrapper">
+    <div className={cls("page-wrapper", styles.pageWrapper)}>
       <LogoHeader />
       <ExpasionOrder summary={summary} />
       <ContactForm ref={(el) => (contactFormRef.current = el)} />

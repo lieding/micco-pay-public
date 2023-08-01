@@ -12,7 +12,7 @@ export function createOrderPostBody(
   state: RootState,
   searchParams: URLSearchParams
 ) {
-  const { restaurantId, table } = state.restaurant;
+  const { restaurantId, table, restInfo } = state.restaurant;
   const { tip, summary, contact, rounded, fee } = state.ordering;
   const paymentIntent = searchParams.get("payment_intent"),
     // paymentClientSecret = searchParams.get("payment_intent_client_secret"),
@@ -21,6 +21,7 @@ export function createOrderPostBody(
   const id = date.getTime() + Math.round(Math.random() * 10000).toString();
   return {
     id,
+    restaurantName: (restInfo as any)?.displayName,
     paymentIntent,
     restaurantId,
     table,
