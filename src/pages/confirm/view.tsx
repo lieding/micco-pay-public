@@ -15,8 +15,10 @@ import { useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { STRIPE_FEATURE_KEY, resetStripeInfo } from "../../store/stripe";
 import { useScrollTop } from "../../hooks";
+import SubTotalAndFee from "../../components/subTotalAndFee";
 import floatingTotalBtnBarStyles from "../../components/floatingTotalBtnBar/index.module.scss";
 import floatingBtnBarStyles from "../../components/floatingBar/floatingBar.module.scss";
+import { RESTAURANT_FEATURE_KEY } from "../../store/restaurant";
 
 function BtnRow(props: { total: number; beforeLeave?: () => void }) {
   const ceilNum = Math.ceil(props.total);
@@ -58,12 +60,13 @@ function BtnRow(props: { total: number; beforeLeave?: () => void }) {
     <div
       className={cls(
         floatingBtnBarStyles.wrapper,
-        floatingTotalBtnBarStyles.wrapper
+        floatingTotalBtnBarStyles.wrapper,
+        styles.btnWrapper
       )}
     >
       <div className={floatingTotalBtnBarStyles.totalAmount}>
         <div>Total:</div>
-        <div>{props.total}€</div>
+        <div>{props.total.toFixed(2)}€</div>
       </div>
       <div className={styles.btnRow}>{eles}</div>
     </div>
@@ -74,9 +77,11 @@ function ConfirmPage() {
   const {
     orderInfo: { summary, tip, rounded },
     stripeInited,
+    feeConfig,
   } = useSelector((state: RootState) => ({
     orderInfo: state[ORDERING_FEATURE_KEY],
     stripeInited: state[STRIPE_FEATURE_KEY].initialized,
+    feeConfig: state[RESTAURANT_FEATURE_KEY].feeConfig,
   }));
 
   useScrollTop();
@@ -84,6 +89,7 @@ function ConfirmPage() {
   const dispatch = useDispatch();
   const prevTotalRef = useRef<number | null>(null);
   const total = getTotalAmount(summary, tip);
+  const subTotal = getTotalAmount(summary);
   useEffect(() => {
     if (!stripeInited) return;
     prevTotalRef.current = getTotalAmount(summary, tip, rounded);
@@ -96,10 +102,13 @@ function ConfirmPage() {
     if (total !== prevTotalRef.current) dispatch(resetStripeInfo());
   };
 
+  // We need to re-calculate the fee every time the total price changes
+  const fee = feeConfig ? (total * feeConfig.percentage + feeConfig.addition) : 0;
+
   return (
-    <div className="page-wrapper">
+    <div className={cls('flex-column', 'page-wrapper', styles.pageWrapper)}>
       <LogoHeader />
-      <div className="expanded2">
+      <div className={styles.content}>
         <Expasion summary={summary} />
         <div className={cls(styles.promoTitle, styles.title)}>
           Vous avez un code promo?
@@ -110,8 +119,12 @@ function ConfirmPage() {
         </div>
         <Tipping tip={tip} />
       </div>
-
-      <BtnRow total={total} beforeLeave={beforeLeave} />
+      <SubTotalAndFee
+        subTotal={subTotal.toFixed(2)}
+        fee={fee}
+        tip={tip.selected ? tip.amount : 0}
+      />
+      <BtnRow total={total + fee} beforeLeave={beforeLeave} />
     </div>
   );
 }

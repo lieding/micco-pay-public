@@ -15,6 +15,7 @@ import { ICourse } from "../../typing";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
 import FloatingTotalBtnBar from "../../components/floatingTotalBtnBar";
+import FloatingBar from "../../components/floatingBar";
 import { useScrollTop } from "../../hooks";
 
 function OrderingPage() {
@@ -28,20 +29,21 @@ function OrderingPage() {
     orderInfo: state[ORDERING_FEATURE_KEY],
   }));
 
-  const total = getTotalAmount(summary);
-  const totalCount = getTotalCount(summary);
+  // const total = getTotalAmount(summary);
+  // const totalCount = getTotalCount(summary);
   const toNext = useCallback(() => navigate("/confirm"), [navigate]);
 
   return (
     <div className="page-wrapper">
       <LogoHeader />
-      <div className="expanded2">
+      <div className="expanded1">
         <TimeAndTableInfo table={table} />
         <OrderSummary summary={summary} />
         <div className={styles.titlePackaging}>A emporter en plus?</div>
         <FastBtnBar isCheckout={false} elements={PackagingOptions} />
       </div>
-      <FloatingTotalBtnBar total={total} count={totalCount} cbk={toNext} />
+      {/* <FloatingTotalBtnBar total={total} count={totalCount} cbk={toNext} /> */}
+      <FloatingBar cbk={toNext} />
     </div>
   );
 }

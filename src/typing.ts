@@ -40,6 +40,7 @@ export type QueryRestInfoResponse = {
   menuInfo?: ICourse[];
   fastCheckouts?: ICourse[];
   holiday?: string | false;
+  feeConfig?: { percentage: number, addition: number }
 };
 
 export type MenuMap = Record<string, ICourse[]>;

@@ -15,23 +15,26 @@ import cls from "classnames";
 import styles from "./index.module.scss";
 
 function PaymentPage() {
-  const { total, stripeInfo, summary, fee, amtAfterFee } = useSelector(
+  const { total, stripeInfo, summary, fee, amtAfterFee, tip, subTotal, rounded } = useSelector(
     (state: RootState) => {
       const { summary, fee, amtAfterFee, tip, rounded } =
         state[ORDERING_FEATURE_KEY];
       return {
-        total: getTotalAmount(summary, tip, rounded),
+        total: getTotalAmount(summary, tip),
+        rounded,
         amtAfterFee,
         summary,
         fee,
         stripeInfo: state[STRIPE_FEATURE_KEY],
+        tip: tip.selected ? tip.amount : 0,
+        subTotal: getTotalAmount(summary)
       };
     }
   );
 
   const contactFormRef = useRef<any>(null);
   const checkContactValidity = () => contactFormRef.current?.checkValidity();
-  useGetStripeInfoQuery(total, {
+  useGetStripeInfoQuery({ total, rounded }, {
     skip: stripeInfo.initialized,
   });
 
@@ -48,8 +51,10 @@ function PaymentPage() {
           <AppleAndroidBtn amount={amtAfterFee} clientSecret={clientSecret} />
           <CheckoutForm
             amount={amtAfterFee}
+            subTotal={subTotal}
             checkValidity={checkContactValidity}
             fee={fee}
+            tip={tip}
           />
         </Elements>
       )}

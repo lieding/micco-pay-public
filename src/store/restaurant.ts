@@ -20,14 +20,18 @@ const { reducer: RestaurantReducer, actions } = createSlice({
     restaurantId: searchParams.get("restaurantId") ?? DefaultRestInfo.name,
     table: searchParams.get("table") ?? "1",
     restInfo: null,
+    feeConfig: { percentage: 0, addition: 0 },
   },
   reducers: {
     setRestInfo(state, action) {
       state.restInfo = action.payload;
     },
+    setFeeConfig (state, action) {
+      state.feeConfig = action.payload;
+    }
   },
 });
 
-export const { setRestInfo } = actions;
+export const { setRestInfo, setFeeConfig } = actions;
 
 export default RestaurantReducer;

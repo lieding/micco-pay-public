@@ -4,38 +4,13 @@ import { useStripe, useElements } from "@stripe/react-stripe-js";
 import styles from "./index.module.scss";
 import cls from "classnames";
 import { persistStore } from "../../store";
-import { DownIcon } from "../../components/icons";
-
-function FeeExplanation(props: { fee: number }) {
-  const [isAct, setAct] = useState(false);
-
-  return (
-    <>
-      <div
-        className={cls("flex-between")}
-        onClick={() => setAct((act) => !act)}
-      >
-        <div className={styles.feeExplanationTitle}>
-          <span>Paiement instantané</span>
-          <div className={cls(styles.downIcon, isAct ? styles.active : null)}>
-            <DownIcon width="10px" height="10px" />
-          </div>
-        </div>
-        <div>{props.fee}€</div>
-      </div>
-      <div className={cls(styles.expansion, isAct ? styles.active : null)}>
-        <div className={styles.inner}>
-          Paiement instantané est un service payant, si vous ne voulez pas payer
-          ce frais, veuillez vous rédiger vers la caisse
-        </div>
-      </div>
-    </>
-  );
-}
+import SubTotalAndFee from '../../components/subTotalAndFee';
 
 export default function CheckoutForm(props: {
   amount: number;
   fee: number;
+  tip: number;
+  subTotal: number;
   checkValidity: () => boolean;
 }) {
   const stripe = useStripe();
@@ -77,9 +52,7 @@ export default function CheckoutForm(props: {
     setIsProcessing(false);
   };
 
-  const { amount, fee } = props;
-
-  const subTotal = (amount - fee).toFixed(2);
+  const { amount, fee, tip, subTotal } = props;
 
   return (
     <form
@@ -88,12 +61,8 @@ export default function CheckoutForm(props: {
       className={styles.checkoutForm}
     >
       <PaymentElement id="payment-element" />
-      <div className={cls(styles.total)}>
-        <div className={cls("flex-between")}>
-          <div>Sous-total:</div>
-          <div>{subTotal}€</div>
-        </div>
-        <FeeExplanation fee={fee} />
+      <div className={styles.total}>
+        <SubTotalAndFee subTotal={subTotal.toFixed(2)} fee={fee} tip={tip}  />
         <div className={cls(styles.last, "flex-between")}>
           <div>Total:</div>
           <div>{amount}€</div>

@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { setRestInfo } from "./restaurant";
+import { setRestInfo, setFeeConfig } from "./restaurant";
 import { setCatesAndCheckouts, setMenuInfo } from "./menu";
 import { isValidQueryRestInfoRes, isValidQueryMenuInfoRes } from "../typing";
 import { setStripeInfo, setStripePublicKey } from "./stripe";
@@ -37,7 +37,7 @@ export const api = createApi({
         try {
           const { data } = await queryFulfilled;
           if (isValidQueryRestInfoRes(data)) {
-            const { restInfo, menuInfo, fastCheckouts, holiday } = data;
+            const { restInfo, menuInfo, fastCheckouts, holiday, feeConfig } = data;
             dispatch(setRestInfo(restInfo));
             dispatch(
               setCatesAndCheckouts({
@@ -47,6 +47,10 @@ export const api = createApi({
                 holiday
               })
             );
+            dispatch(setFeeConfig({
+              percentage: Number(feeConfig?.percentage) || 0,
+              addition: Number(feeConfig?.addition) || 0,
+            }));
           }
         } catch (err) {
           console.error(err);
@@ -55,7 +59,8 @@ export const api = createApi({
     }),
     // get the stripe initialization information
     getStripeInfo: builder.query({
-      query: (amount) => `/getPaymentInfo?amount=${amount}`,
+      query: ({ total: amount, rounded }) =>
+        `/getPaymentInfo?amount=${amount}&rounded=${rounded}`,
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
