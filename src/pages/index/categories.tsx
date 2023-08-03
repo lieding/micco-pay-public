@@ -10,6 +10,12 @@ const CategoryNameMap: Record<string, string> = {
   BUSKET: "Buckets",
   SUSHI: "Sushi",
   SOFT: "Boissons",
+  COCKTAIL: 'Cocktails',
+  EAU: 'Eau',
+  APERITIF: 'Apéritif',
+  VIN : 'Vin',
+  CHAMPAGNE: 'Champagne',
+  DIGESTIF: 'Digestif',
   BIERE: "Bière",
   ASIAN_STREET_FOOD: "Asian Street Food",
 };
