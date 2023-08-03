@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type {
+import {
   OrderingSummary,
   CoursePayloafType,
   TipType,
   Contact,
+  PaymentOptionEnum,
 } from "../typing";
 
 export const ORDERING_FEATURE_KEY = "ordering";
@@ -17,6 +18,7 @@ const { reducer: OrderingReducer, actions } = createSlice({
     amtAfterFee: 0,
     rounded: false,
     contact: <Contact>{ phone: "", name: "", mail: "" },
+    paymentMethodKey: PaymentOptionEnum.BLUE_CARD,
   },
   reducers: {
     addOrder(state, action: CoursePayloafType) {
@@ -58,11 +60,21 @@ const { reducer: OrderingReducer, actions } = createSlice({
     setContact(state, action: { payload: Contact }) {
       state.contact = { ...state.contact, ...action.payload };
     },
+    setPaymentMethod(state, action: { payload: PaymentOptionEnum }) {
+      state.paymentMethodKey = action.payload;
+    },
   },
 });
 
-export const { addOrder, reduceOrder, setTip, setRounded, setContact, setFee } =
-  actions;
+export const {
+  addOrder,
+  reduceOrder,
+  setTip,
+  setRounded,
+  setContact,
+  setFee,
+  setPaymentMethod,
+} = actions;
 export default OrderingReducer;
 
 export function getTotalCount(summary: OrderingSummary) {
@@ -82,4 +94,8 @@ export function getTotalAmount(
     }, 0) + (tip?.selected ? tip?.amount || 0 : 0);
   amount = Number(amount.toFixed(2));
   return toRound ? Math.ceil(amount) : amount;
+}
+
+export function checkWithoutPayment(paymentMethod: PaymentOptionEnum) {
+  return paymentMethod === PaymentOptionEnum.IN_CASH;
 }

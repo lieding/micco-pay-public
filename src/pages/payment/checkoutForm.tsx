@@ -4,14 +4,13 @@ import { useStripe, useElements } from "@stripe/react-stripe-js";
 import styles from "./index.module.scss";
 import cls from "classnames";
 import { persistStore } from "../../store";
-import SubTotalAndFee from '../../components/subTotalAndFee';
+import SubTotalAndFee from "../../components/subTotalAndFee";
 
 export default function CheckoutForm(props: {
   amount: number;
   fee: number;
   tip: number;
   subTotal: number;
-  checkValidity: () => boolean;
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -22,7 +21,7 @@ export default function CheckoutForm(props: {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!stripe || !elements || !props.checkValidity()) {
+    if (!stripe || !elements) {
       // Stripe.js has not yet loaded.
       // Make sure to disable form submission until Stripe.js has loaded.
       return;
@@ -62,7 +61,7 @@ export default function CheckoutForm(props: {
     >
       <PaymentElement id="payment-element" />
       <div className={styles.total}>
-        <SubTotalAndFee subTotal={subTotal.toFixed(2)} fee={fee} tip={tip}  />
+        <SubTotalAndFee subTotal={subTotal.toFixed(2)} fee={fee} tip={tip} />
         <div className={cls(styles.last, "flex-between")}>
           <div>Total:</div>
           <div>{amount}€</div>

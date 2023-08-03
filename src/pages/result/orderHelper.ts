@@ -1,5 +1,7 @@
 import {
   OrderingSummary,
+  OrderStatus,
+  PaymentOptionEnum,
   PaymentResultEnum,
   PaymentResultParams,
   PaymentStatus,
@@ -13,12 +15,17 @@ export function createOrderPostBody(
   searchParams: URLSearchParams
 ) {
   const { restaurantId, table, restInfo } = state.restaurant;
-  const { tip, summary, contact, rounded, fee } = state.ordering;
-  const paymentIntent = searchParams.get("payment_intent"),
+  const { tip, summary, contact, rounded, fee, paymentMethodKey } =
+    state.ordering;
+  const paymentIntent = searchParams.get("payment_intent") ?? "",
     // paymentClientSecret = searchParams.get("payment_intent_client_secret"),
-    paymentStatus = searchParams.get("redirect_status");
+    paymentStatus = searchParams.get("redirect_status") ?? "";
   const date = new Date();
   const id = date.getTime() + Math.round(Math.random() * 10000).toString();
+  const orderStatus =
+    paymentMethodKey === PaymentOptionEnum.IN_CASH
+      ? OrderStatus.UNPAID
+      : OrderStatus.PAID;
   return {
     id,
     restaurantName: (restInfo as any)?.displayName,
@@ -26,7 +33,7 @@ export function createOrderPostBody(
     restaurantId,
     table,
     paymentStatus,
-    orderStatus: "PAID",
+    orderStatus,
     contact,
     fee,
     amount: total,

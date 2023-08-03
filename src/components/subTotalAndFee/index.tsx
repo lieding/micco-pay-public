@@ -1,10 +1,12 @@
-import cls from 'classnames';
-import styles from './index.module.scss';
+import cls from "classnames";
+import styles from "./index.module.scss";
 import { DownIcon } from "../icons";
-import { useState } from 'react';
+import { useState } from "react";
 
-function FeeExplanation(props: { fee: number }) {
+function FeeExplanation(props: { fee: number; hidden?: boolean }) {
   const [isAct, setAct] = useState(false);
+
+  if (props.hidden) return null;
 
   return (
     <>
@@ -30,17 +32,18 @@ function FeeExplanation(props: { fee: number }) {
   );
 }
 
-
-export default function SubTotalAndFee ({
+export default function SubTotalAndFee({
   subTotal,
   tip,
   fee,
-  showTipAlways = false
+  showTipAlways = false,
+  hideTipInfo,
 }: {
-  subTotal: string
-  tip: number
-  fee: number
-  showTipAlways?: boolean
+  subTotal: string;
+  tip: number;
+  fee: number;
+  showTipAlways?: boolean;
+  hideTipInfo?: boolean;
 }) {
   const showTipInfo = tip || showTipAlways;
   return (
@@ -49,13 +52,13 @@ export default function SubTotalAndFee ({
         <div>Sous-total:</div>
         <div>{subTotal}€</div>
       </div>
-      {
-        showTipInfo && <div className={cls("flex-between")}>
+      {showTipInfo && (
+        <div className={cls("flex-between")}>
           <div>Pourboire:</div>
           <div>{tip}€</div>
         </div>
-      }
-      <FeeExplanation fee={fee} />
+      )}
+      <FeeExplanation fee={fee} hidden={hideTipInfo} />
     </div>
   );
 }

@@ -1,33 +1,31 @@
 .title {
-  padding: 0 3px;
-  font-size: 16px;
-}
-
-.promoTitle {
-  margin-top: 30px;
-}
-
-// pourboire
-.tipTitle {
-  margin: 20px 0 10px;
+  font-size: 17px;
+  font-weight: 500;
+  margin: 10px 0;
 }
 
 .tipping {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 30px;
   font-weight: 800;
+  margin-bottom: 10px;
 
   .item {
     border-radius: 7px;
     background: #e4f4f5;
     color: #4fcfcf;
     padding: 6px 7px;
-
     &.inactive {
       background-color: #aeaeb4;
       color: #fff;
     }
+    &.rounded {
+      flex: 1;
+    }
+  }
+
+  .hidden {
+    display: none;
   }
 
   input {
@@ -57,9 +55,9 @@
 .btnWrapper {
   margin-top: 10px;
   .btnRow {
-    position: sticky;
+    // position: sticky;
     bottom: 10px;
-  
+
     display: flex;
     align-items: center;
     > div {
@@ -73,7 +71,7 @@
       margin-right: 10px;
       min-width: 130px;
     }
-  
+
     .right {
       flex: 4;
       justify-content: center;
@@ -91,5 +89,54 @@
   }
   .content {
     flex: 1;
+  }
+}
+
+.paymentSelectionWrapper {
+  border-radius: 16px;
+  background: #f9f9f9;
+  margin-bottom: 10px;
+  padding: 10px 16px;
+  .item {
+    display: flex;
+    align-items: center;
+    &:last-child {
+      margin-bottom: unset;
+    }
+    &.disabled {
+      color: grey;
+      pointer-events: none;
+      .circle {
+        border-color: grey;
+      }
+    }
+    > div {
+      flex: unset;
+    }
+    .title {
+      flex: 1;
+    }
+    .img {
+      max-height: 16px;
+    }
+    .circle {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid #000;
+      box-sizing: border-box;
+      margin-left: 6px;
+
+      &.selected {
+        &::before {
+          content: "";
+          display: block;
+          width: 10px;
+          height: 10px;
+          border-radius: inherit;
+          background: #000;
+        }
+      }
+    }
   }
 }

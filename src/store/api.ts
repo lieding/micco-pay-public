@@ -3,7 +3,7 @@ import { setRestInfo, setFeeConfig } from "./restaurant";
 import { setCatesAndCheckouts, setMenuInfo } from "./menu";
 import { isValidQueryRestInfoRes, isValidQueryMenuInfoRes } from "../typing";
 import { setStripeInfo, setStripePublicKey } from "./stripe";
-import { setFee } from './ordering'
+import { setFee } from "./ordering";
 import { isValidObject } from "../utils";
 import { BASE_URL } from "../consts";
 
@@ -37,20 +37,23 @@ export const api = createApi({
         try {
           const { data } = await queryFulfilled;
           if (isValidQueryRestInfoRes(data)) {
-            const { restInfo, menuInfo, fastCheckouts, holiday, feeConfig } = data;
+            const { restInfo, menuInfo, fastCheckouts, holiday, feeConfig } =
+              data;
             dispatch(setRestInfo(restInfo));
             dispatch(
               setCatesAndCheckouts({
                 fastCheckouts,
                 categories: restInfo?.categories,
                 menuInfo,
-                holiday
+                holiday,
               })
             );
-            dispatch(setFeeConfig({
-              percentage: Number(feeConfig?.percentage) || 0,
-              addition: Number(feeConfig?.addition) || 0,
-            }));
+            dispatch(
+              setFeeConfig({
+                percentage: Number(feeConfig?.percentage) || 0,
+                addition: Number(feeConfig?.addition) || 0,
+              })
+            );
           }
         } catch (err) {
           console.error(err);

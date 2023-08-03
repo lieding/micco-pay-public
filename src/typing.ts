@@ -4,7 +4,7 @@ export enum DayPeriod {
   MORNING,
   NOON,
   AFTERNOON,
-  NIGHT = 'night'
+  NIGHT = "night",
 }
 
 export interface IRestaurant {
@@ -26,8 +26,8 @@ export interface ICourse {
   restaurantId: string;
   isPack?: boolean;
   priceChange?: {
-    [key: string]: number
-  }
+    [key: string]: number;
+  };
 }
 
 export type OrderingSummary = Record<
@@ -40,7 +40,7 @@ export type QueryRestInfoResponse = {
   menuInfo?: ICourse[];
   fastCheckouts?: ICourse[];
   holiday?: string | false;
-  feeConfig?: { percentage: number, addition: number }
+  feeConfig?: { percentage: number; addition: number };
 };
 
 export type MenuMap = Record<string, ICourse[]>;
@@ -105,6 +105,7 @@ export enum PaymentStatus {
   PROCESSING = "PROCESSING",
   IN_OPERATION = "IN_OPERATION",
   UNKNOWN = "UNKNOWN",
+  IN_CASH = "IN_CASH",
 }
 
 export interface PaymentResultParams {
@@ -134,4 +135,16 @@ export interface ScanOrderResponse {
   rounded: boolean;
   id: string;
   restaurantId: string;
+}
+
+export enum PaymentOptionEnum {
+  DIGITAL_WALLET = "DIGITAL_WALLET",
+  BLUE_CARD = "BLUE_CARD",
+  RESTAURANT_TICKET = "RESTAURANT_TICKET",
+  IN_CASH = "IN_CASH",
+}
+
+export enum OrderStatus {
+  PAID = "PAID",
+  UNPAID = "UNPAID",
 }

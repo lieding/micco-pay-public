@@ -17,6 +17,7 @@ import Loading from "../../components/loading";
 import {
   PaymentResultEnum,
   PaymentStatus as PaymentStatusEnum,
+  PaymentOptionEnum,
 } from "../../typing";
 const LazyQrLibrary = lazy(() => import("./qrcode"));
 
@@ -67,20 +68,28 @@ export default function ResultPage() {
   );
 
   useEffect(() => {
-    const paymentResult = searchParams.get(
-      "redirect_status"
-    ) as PaymentResultEnum;
-    setPaymentStatus(parsePaymentStatus(paymentResult));
     const state = LocalStorageUtils.resumeGlobalStore({
       clear: true,
     }) as RootState;
     if (!state) return;
+    const isWithoutPayment =
+      state.ordering.paymentMethodKey === PaymentOptionEnum.IN_CASH;
+    if (isWithoutPayment) {
+      setPaymentStatus(PaymentStatusEnum.IN_CASH);
+    } else {
+      const paymentResult = searchParams.get(
+        "redirect_status"
+      ) as PaymentResultEnum;
+      setPaymentStatus(parsePaymentStatus(paymentResult));
+    }
+
     const { table, restaurantId } = state[RESTAURANT_FEATURE_KEY];
     const { summary, tip, rounded } = state[ORDERING_FEATURE_KEY];
     const totalWithoutTip = getTotalAmount(summary);
     const total = getTotalAmount(summary, tip, rounded);
     const showTipInfo = Boolean(tip.selected && tip.amount);
     const body = createOrderPostBody(total, state, searchParams);
+
     setLoadig(true);
     createOrder(body)
       .then(() => {

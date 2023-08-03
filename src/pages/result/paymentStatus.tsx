@@ -19,6 +19,8 @@ function getConfig(paymentStatus: PaymentStatusEnum) {
     case PaymentStatusEnum.IN_OPERATION:
       subTitle = "Paiement en cours, l'operation attendue";
       break;
+    case PaymentStatusEnum.IN_CASH:
+      subTitle = "Paiement attendue, il faut rendre visite à la caisse";
     default:
   }
   return { Icon, subTitle };

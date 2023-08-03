@@ -4,6 +4,7 @@ import styles from "./index.module.scss";
 import { setTip } from "../../store/ordering";
 import type { TipType } from "../../typing";
 import cls from "classnames";
+import { setRounded } from "../../store/ordering";
 
 export type TippingCbk = (num: number) => void;
 
@@ -21,7 +22,11 @@ function Tipping(props: { num: number; cbk: TippingCbk; classname: string }) {
   );
 }
 
-function TippingList(props: { tip: TipType }) {
+function TippingList(props: {
+  tip: TipType;
+  rounded: boolean;
+  subPlusTip: number;
+}) {
   const { selected, customized, amount } = props.tip;
   const dispatch = useDispatch();
   const [input, setInput] = useState((customized && amount) || "");
@@ -39,23 +44,49 @@ function TippingList(props: { tip: TipType }) {
     cbk({ customized: true, selected: _selected, amount: Number(input) });
   };
 
+  const ceilNum = Math.ceil(props.subPlusTip);
+  const showRounded = ceilNum !== props.subPlusTip;
+
+  const roundedBtnTxt = props.rounded
+    ? `Déjà arrondi à ${ceilNum}€`
+    : `Arrondir à ${ceilNum}€`;
+
   return (
-    <div className={styles.tipping}>
-      {tippings.map((e) => (
-        <Tipping
-          key={e}
-          num={e}
-          cbk={cbk}
-          classname={getActiveType(selected, !customized && amount === e)}
-        />
-      ))}
-      <div
-        className={cls(styles.item, getActiveType(selected, customized))}
-        onClick={customizedClickHandler}
-      >
-        <input type="number" onChange={inputCbk} value={input} />€
+    <>
+      <div className={cls(styles.tipTitle, styles.title)}>
+        😀Vous êtes content? Laissez un pourboire
       </div>
-    </div>
+      <div className={styles.tipping}>
+        {tippings.map((e) => (
+          <Tipping
+            key={e}
+            num={e}
+            cbk={cbk}
+            classname={getActiveType(selected, !customized && amount === e)}
+          />
+        ))}
+        <div
+          className={cls(styles.item, getActiveType(selected, customized))}
+          onClick={customizedClickHandler}
+        >
+          <input type="number" onChange={inputCbk} value={input} />€
+        </div>
+      </div>
+      <div className={cls(styles.tipping, styles.rounded)}>
+        <div
+          className={cls(
+            styles.item,
+            styles.rounded,
+            "textAlign",
+            props.rounded ? styles.inactive : null,
+            !showRounded ? styles.hidden : null
+          )}
+          onClick={() => dispatch(setRounded(!props.rounded))}
+        >
+          {roundedBtnTxt}
+        </div>
+      </div>
+    </>
   );
 }
 

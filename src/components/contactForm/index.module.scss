@@ -1,0 +1,23 @@
+.contactForm {
+  margin: 10px 0 15px;
+  .title {
+    font-size: 17px;
+    margin-bottom: 10px;
+  }
+  .row {
+    display: flex;
+    margin-bottom: 10px;
+    > div {
+      flex: 1;
+      input:invalid {
+        box-shadow: 0 0 5px 1px var(--error-color);
+      }
+    }
+
+    &.firstRow {
+      input {
+        width: 110px;
+      }
+    }
+  }
+}
