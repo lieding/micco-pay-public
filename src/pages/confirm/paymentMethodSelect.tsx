@@ -76,17 +76,17 @@ const PaymentOptions = [
   {
     key: PaymentOptionEnum.BLUE_CARD,
     title: "Carte Bleue",
-    icon: "bluecard.png",
+    icon: "bluecard.jpg",
   },
   {
     key: PaymentOptionEnum.DIGITAL_WALLET,
-    title: "Portefeuille Numérique",
-    icon: "digitalWallet.png",
+    title: "Portefeuille numérique",
+    icon: "digitalWallet.jpg",
   },
   {
     key: PaymentOptionEnum.RESTAURANT_TICKET,
     title: "Ticket restaurant",
-    icon: "restaurantTicket.png",
+    icon: "restaurantTicket.jpg",
   },
   {
     key: PaymentOptionEnum.IN_CASH,

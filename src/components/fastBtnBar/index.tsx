@@ -2,11 +2,15 @@ import { ICourse } from "../../typing";
 import styles from "./index.module.scss";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-import { ORDERING_FEATURE_KEY, addOrder, reduceOrder } from "../../store/ordering";
+import {
+  ORDERING_FEATURE_KEY,
+  addOrder,
+  reduceOrder,
+} from "../../store/ordering";
 import { getBadgeChar } from "../../utils";
 import { useDispatch } from "react-redux";
 import { useCallback } from "react";
-import { MinusIcon } from '../icons'
+import { MinusIcon } from "../icons";
 import cls from "classnames";
 
 function Item(props: {
@@ -14,13 +18,13 @@ function Item(props: {
   badgeChar: string;
   cbk: (item: ICourse, isAdd?: boolean) => {};
   isCheckout: boolean;
-  idx: number
+  idx: number;
 }) {
   const { item, badgeChar, cbk, isCheckout, idx } = props;
 
   let elements: (JSX.Element | null)[] = [];
   if (isCheckout) {
-    const showReduceIcon = badgeChar !== '+';
+    const showReduceIcon = badgeChar !== "+";
     elements = [
       <div key="price" className={styles.firstLine}>
         {item.price}€
@@ -28,16 +32,21 @@ function Item(props: {
       <div key="label" className={styles.secondLine}>
         {item.label}
       </div>,
-      showReduceIcon ? <div
-        className={cls(styles.badge, styles.reduce, 'flex-center')}
-        onClick={(ev) => { ev.stopPropagation(); cbk(item, false); }}
-        key="reduce"
-      >
-        <MinusIcon />
-      </div> : null
+      showReduceIcon ? (
+        <div
+          className={cls(styles.badge, styles.reduce, "flex-center")}
+          onClick={(ev) => {
+            ev.stopPropagation();
+            cbk(item, false);
+          }}
+          key="reduce"
+        >
+          <MinusIcon />
+        </div>
+      ) : null,
     ];
   } else {
-    let style = '';
+    let style = "";
     if (idx === 0) style = styles.smallBarquette;
     else if (idx === 2) style = styles.bigBarquette;
     elements = [
@@ -47,15 +56,20 @@ function Item(props: {
       <div key="price" className={styles.price}>
         {item.price}€
       </div>,
-      <img key="img" src="barquette.png" className={cls(styles.barquette, style)} />,
+      <img
+        key="img"
+        src="barquette.png"
+        className={cls(styles.barquette, style)}
+      />,
     ];
   }
 
   return (
     <div
-      className={
+      className={cls(
+        styles.item,
         isCheckout ? styles.itemInIndexPage : styles.itemInOrderingPage
-      }
+      )}
       key={item.key}
       onClick={() => cbk(item)}
     >
@@ -75,22 +89,28 @@ function FastBtnBar(props: { isCheckout: boolean; elements: Array<ICourse> }) {
   );
 
   const cbk = useCallback(
-    (item: ICourse, isAdd = true) => dispatch(isAdd ? addOrder(item) : reduceOrder(item)),
+    (item: ICourse, isAdd = true) =>
+      dispatch(isAdd ? addOrder(item) : reduceOrder(item)),
     [dispatch]
   );
 
+  const scrollWrapperStyle =
+    elements.length > 3 ? styles.moreThan3 : styles.notMoreThan3;
+
   return (
     <div className={styles.wrapper}>
-      {elements.map((e, idx) => (
-        <Item
-          key={e.key}
-          item={e}
-          cbk={cbk}
-          badgeChar={getBadgeChar(summary, e.key)}
-          isCheckout={isCheckout}
-          idx={idx}
-        />
-      ))}
+      <div className={cls(styles.scrollWrapper, scrollWrapperStyle)}>
+        {elements.map((e, idx) => (
+          <Item
+            key={e.key}
+            item={e}
+            cbk={cbk}
+            badgeChar={getBadgeChar(summary, e.key)}
+            isCheckout={isCheckout}
+            idx={idx}
+          />
+        ))}
+      </div>
     </div>
   );
 }

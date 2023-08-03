@@ -5,7 +5,7 @@ import cls from "classnames";
 import { useDispatch } from "react-redux";
 import { useCallback } from "react";
 import { addOrder, reduceOrder } from "../../store/ordering";
-import { MinusIcon } from '../../components/icons'
+import { MinusIcon } from "../../components/icons";
 
 function CourseItem(props: {
   item: ICourse;
@@ -13,21 +13,31 @@ function CourseItem(props: {
   cbk: (item: ICourse, isAdd?: boolean) => {};
 }) {
   const { item, badgeChar, cbk } = props;
-  const showReduceIcon = badgeChar !== '+';
+  const showReduceIcon = badgeChar !== "+";
+  const hasSubOrVolInfo = item.subtitle || item.volume;
   return (
     <div className={styles.item} onClick={() => cbk(item)}>
       <img src={item.pics?.[0]} className={styles.img} />
       <div className={styles.title}>{item.label}</div>
+      {hasSubOrVolInfo && (
+        <div className={cls("flex-between", styles.subAndVolInfo)}>
+          <span className={styles.subtitle}>{item.subtitle || ""}</span>
+          <span>{item.volume || ""}</span>
+        </div>
+      )}
       <div className={styles.price}>{item.price}€</div>
       <div className={cls(styles.badge, "flex-center")}>{badgeChar}</div>
-      {
-         showReduceIcon ? <div
-         className={cls(styles.badge, styles.reduce, 'flex-center')}
-         onClick={(ev) => { ev.stopPropagation(); cbk(item, false); }}
-       >
-         <MinusIcon />
-       </div> : null
-      }
+      {showReduceIcon ? (
+        <div
+          className={cls(styles.badge, styles.reduce, "flex-center")}
+          onClick={(ev) => {
+            ev.stopPropagation();
+            cbk(item, false);
+          }}
+        >
+          <MinusIcon />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -40,7 +50,8 @@ export default function CourseMenu(props: {
 
   const dispatch = useDispatch();
   const cbk = useCallback(
-    (item: ICourse, isAdd = true) => dispatch(isAdd ? addOrder(item) : reduceOrder(item)),
+    (item: ICourse, isAdd = true) =>
+      dispatch(isAdd ? addOrder(item) : reduceOrder(item)),
     [dispatch]
   );
 

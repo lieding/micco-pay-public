@@ -28,6 +28,8 @@ export interface ICourse {
   priceChange?: {
     [key: string]: number;
   };
+  subtitle?: string;
+  volume?: string;
 }
 
 export type OrderingSummary = Record<

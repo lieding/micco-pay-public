@@ -18,7 +18,9 @@ import {
   PaymentResultEnum,
   PaymentStatus as PaymentStatusEnum,
   PaymentOptionEnum,
+  ScanOrderResponse,
 } from "../../typing";
+import Table from "../getOrderByScan/table";
 const LazyQrLibrary = lazy(() => import("./qrcode"));
 
 /**
@@ -35,6 +37,7 @@ type Config = {
   id: string;
   restaurantId: string;
   tipInfo: RootState["ordering"]["tip"];
+  orders: ReturnType<typeof createOrderPostBody>["orders"];
 };
 
 function Qrcode(props: {
@@ -101,6 +104,7 @@ export default function ResultPage() {
           totalWithoutTip,
           restaurantId,
           tipInfo: tip,
+          orders: body.orders,
         });
       })
       .catch(console.error)
@@ -123,6 +127,11 @@ export default function ResultPage() {
       </>
     );
   }
+  let courseTableInfo = null;
+  if (config && paymentStatus === PaymentStatusEnum.IN_CASH) {
+    const configg = config as unknown as ScanOrderResponse;
+    courseTableInfo = <Table data={configg} />;
+  }
 
   return (
     <div className="page-wrapper">
@@ -130,6 +139,7 @@ export default function ResultPage() {
       <PaymentStatus paymentStatus={paymentStatus} />
       {content}
       {isLoading && <Loading />}
+      {courseTableInfo}
       <Qrcode
         config={config}
         isLoading={isLoading}

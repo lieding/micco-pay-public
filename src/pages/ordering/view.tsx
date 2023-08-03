@@ -54,7 +54,7 @@ const PackagingOptions: Array<ICourse> = [
   {
     label: "Petite barquette",
     key: "barquette-1",
-    price: 6,
+    price: 7,
     category: "",
     restaurantId: "",
     isPack: true,

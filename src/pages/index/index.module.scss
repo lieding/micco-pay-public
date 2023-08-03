@@ -32,18 +32,23 @@
 }
 
 .categories {
-  display: flex;
   font-size: 15px;
   color: #979797;
   overflow-x: auto;
-  margin: 20px 0 15px 0;
-
+  margin: 20px 0 15px;
   .item {
-    margin-right: 6px;
+    display: inline-block;
+    margin-right: 7px;
     &.active {
       color: #000;
       text-decoration: underline;
     }
+  }
+  .scrollWrapper {
+    width: max-content;
+  }
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -99,6 +104,19 @@
       width: 20px;
       height: 20px;
       font-size: 18px;
+    }
+
+    .subAndVolInfo {
+      span {
+        display: inline-block;
+        &.subtitle {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+      font-size: 8px;
+      font-weight: 300;
     }
   }
 }
