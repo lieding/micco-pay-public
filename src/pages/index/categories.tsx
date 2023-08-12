@@ -21,6 +21,7 @@ const CategoryNameMap: Record<string, string> = {
   DIGESTIF: "Digestif",
   BIERE: "Bière",
   ASIAN_STREET_FOOD: "Asian Street Food",
+  BOISSON_CHAUDE: "Boisson chaude"
 };
 
 export default function Categories({
