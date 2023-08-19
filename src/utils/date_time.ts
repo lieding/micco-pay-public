@@ -27,7 +27,7 @@ const WeekDayInFrench = [
   "Dimanche",
   "Lundi",
   "Mardi",
-  "Meredi",
+  "Mercredi",
   "Jeudi",
   "Vendredi",
   "Samedi",

@@ -1,0 +1,290 @@
+.paygreen-wrapper {
+  margin-top: 20px;
+
+  .button {
+    cursor: pointer;
+    outline: 0;
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    font-size: 1rem;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    width: 33%;
+    color: #fff;
+    background-color: #002B5B;
+    border-color: #002B5B;
+  }
+  
+  .button:hover {
+    color: #fff;
+    background-color: #2B4865;
+    border-color: #2B4865;
+  }
+  
+  .pay-form {
+    padding: 1rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+    visibility: hidden;
+    user-select: none;
+    &.visible {
+      visibility: initial;
+    }
+    &.interactive {
+      user-select: all;
+      opacity: .6;
+      #payButton {
+        align-self: center;
+        margin-top: 1rem;
+        display: block;
+      }
+    }
+    > div {
+      margin-top: 1rem;
+    }
+    
+    > label {
+      color: grey;
+      font-weight: 600;
+    }
+    
+    #payButton {
+      align-self: center;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .field-input-wrapper {
+    }
+  }
+  
+  .paygreen-cvv-container > svg {
+    position: absolute;
+    right: 0.5rem;
+    top: 45%;
+    width: 1rem;
+    cursor: pointer;
+  }
+  
+  
+  .line {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .line > div {
+    max-width: 48%;
+  }
+  
+  .icon-sentence {
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    visibility: hidden;
+    &.visible {
+      visibility: visible;
+    }
+    .time-remaining {
+      display: inline-block;
+      padding: 3px 4px;
+      border-radius: 4px;
+      margin-left: 5px;
+      background: #c8fbde;
+      color: #226047;
+      font-size: 12px;
+    }
+  }
+  
+  .icon-sentence > svg {
+    width: 16px;
+    margin-right: 1rem
+  }
+  
+  .secured-label {
+    text-align: center;
+    font-weight: 400 !important;
+    color: #666 !important;
+    font-size: 12px;
+  }
+  
+  .secured-label > strong {
+    color: #002B5B;
+    font-weight: 800;
+    font-size: 13px;
+  }
+}
+
+#paygreen-reuse-checkbox-container {
+  margin-top: 1rem;
+  height: 60px;
+}
+
+.pg-hidden{
+  display:none !important;
+}
+@keyframes spin{
+  0%{
+      transform:rotate(0deg);
+  }
+  100%{
+      transform:rotate(360deg);
+  }
+}
+.input-container{
+  position:relative;
+  display:flex;
+  height:40px;
+}
+.paygreen-pan-frame,.paygreen-exp-frame,.paygreen-cvv-frame{
+  flex:1 1 auto;
+  overflow:hidden;
+}
+.paygreen-pan-frame iframe,.paygreen-pan-frame input,.paygreen-exp-frame iframe,.paygreen-exp-frame input,.paygreen-cvv-frame iframe,.paygreen-cvv-frame input{
+  height:38px;
+  display:block;
+  width:100%;
+  background: #000;
+  overflow:hidden;
+  border:none;
+  margin:0;
+  padding:0;
+  position:static;
+  -webkit-tap-highlight-color:#000;
+}
+.frame--activated{
+  box-sizing: border-box;
+  padding: 0 6px;
+  opacity:1;
+  border:solid 1px #13395e;
+  border-radius:3px;
+  box-shadow:0 1px 3px 0 rgba(19,57,94,.2);
+}
+.frame--activated.frame--focus{
+  border:solid 1px #709cc9;
+  box-shadow:0 2px 5px 0 rgba(19,57,94,.15);
+}
+.frame--activated.frame--invalid{
+  border:solid 1px red;
+  box-shadow:0 2px 5px 0 rgba(217,104,48,.15);
+}
+.pg-pay-button{
+  border:none;
+  border-radius:3px;
+  color:#fff;
+  font-weight:500;
+  height:40px;
+  width:100%;
+  background-color:#13395e;
+  cursor:pointer;
+  box-shadow:0 1px 3px 0 rgba(19,57,94,.4);
+}
+.pg-pay-button:active{
+  background-color:#0b2a49;
+  box-shadow:0 1px 3px 0 rgba(19,57,94,.4);
+}
+.pg-pay-button:hover{
+  background-color:#15406b;
+  box-shadow:0 2px 5px 0 rgba(19,57,94,.4);
+}
+.pg-pay-button:disabled{
+  background-color:#697887;
+  box-shadow:none;
+  cursor:not-allowed;
+}
+.icon-container{
+  position:absolute;
+  top:0;
+  bottom:0;
+  display:flex;
+  justify-content:center;
+  width:26px;
+  margin:0 7px;
+}
+.icon-container:last-child{
+  right:0
+}
+.icon-container img{
+  width:100%
+}
+.input-container{
+  position:relative;
+  display:flex;
+  height:40px;
+}
+.flex-container{
+  display:flex;
+}
+.pg-payment-method{
+  cursor:pointer;
+  border-radius:.5rem;
+  box-shadow:3px 3px 3px gray;
+  transition:box-shadow .125s ease-in;
+  flex:1;
+  margin:5px;
+  text-align:center;
+  padding:1rem
+}
+.apple-pay-button{
+  display:inline-block;
+  -webkit-appearance:-apple-pay-button;
+  -apple-pay-button-type:check-out;
+}
+.apple-pay-button-black{
+  -apple-pay-button-style:#000;
+}
+.pg-payment-method:hover{
+  box-shadow:20px 15px 15px gray;
+}
+.mockContainer{
+  width:100vw;
+  height:100vh;
+  max-height:600px;
+  max-width:400px;
+  position:relative;
+  margin-inline:auto;
+}
+.mockContainer .loader{
+  position:absolute;
+  width:100%;
+  height:100%;
+  background:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  color:#636363;
+}
+.mockContainer iframe{
+  width:100%;
+  height:100%;
+}
+@media screen and (max-width: 768px){
+  .iframe-three-ds{
+      height:400px;
+      width:390px
+  }
+}
+@media screen and (max-width: 480px){
+  .iframe-three-ds{
+      height:400px;
+      width:250px;
+  }
+}
+@media screen and (min-width: 769px){
+  .iframe-three-ds{
+      height:600px;
+      width:500px;
+  }
+}
+.dialog-three-ds{
+  border:none;
+  border-radius:.5rem;
+  box-shadow:2.8px 2.8px 2.2px rgba(0,0,0,.02),6.7px 6.7px 5.3px rgba(0,0,0,.028),12.5px 12.5px 10px rgba(0,0,0,.035),22.3px 22.3px 17.9px rgba(0,0,0,.042),41.8px 41.8px 33.4px rgba(0,0,0,.05),100px 100px 80px rgba(0,0,0,.07)
+}

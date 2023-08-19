@@ -23,7 +23,7 @@ export default defineConfig({
     },
     preprocessorOptions: {
       scss: {
-        additionalData: `$injectedColor: orange;`,
+        additionalData: '@import "@/styles/variables.scss";',
       },
     },
   },

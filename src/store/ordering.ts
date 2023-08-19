@@ -5,7 +5,10 @@ import {
   TipType,
   Contact,
   PaymentOptionEnum,
+  PgPaymentMethod,
+  IPgPaymentConfig,
 } from "../typing";
+import { platform } from "os";
 
 export const ORDERING_FEATURE_KEY = "ordering";
 
@@ -17,8 +20,10 @@ const { reducer: OrderingReducer, actions } = createSlice({
     fee: 0,
     amtAfterFee: 0,
     rounded: false,
-    contact: <Contact>{ phone: "", name: "", mail: "" },
+    contact: <Contact>{ phone: "", firstName: "", lastName: "", mail: "" },
+    paymentConfigs: null as unknown as IPgPaymentConfig[],
     paymentMethodKey: PaymentOptionEnum.BLUE_CARD,
+    pgPaymentMethod: PgPaymentMethod.BANK_CARD,
   },
   reducers: {
     addOrder(state, action: CoursePayloafType) {
@@ -57,11 +62,23 @@ const { reducer: OrderingReducer, actions } = createSlice({
     setRounded(state, action) {
       state.rounded = action.payload;
     },
-    setContact(state, action: { payload: Contact }) {
+    setContact(state, action: { payload: Partial<Contact> }) {
       state.contact = { ...state.contact, ...action.payload };
     },
-    setPaymentMethod(state, action: { payload: PaymentOptionEnum }) {
-      state.paymentMethodKey = action.payload;
+    setPaymentMethod(state, action: { payload: { pg: PgPaymentMethod | null, methodKey: PaymentOptionEnum } }) {
+      const {
+        pg: pgPaymentMethod,
+        methodKey: paymentMethodKey,
+      } = action.payload;
+      state.paymentMethodKey = paymentMethodKey;
+      state.pgPaymentMethod = pgPaymentMethod as PgPaymentMethod;
+    },
+    setPaymentConfigs(state, action: { payload: IPgPaymentConfig[] }) {
+      state.paymentConfigs = action.payload
+      const hasBanCard = action.payload.some?.(({ platform }) => platform === PgPaymentMethod.BANK_CARD);
+      if (!hasBanCard && action.payload?.length) {
+        state.paymentMethodKey = PaymentOptionEnum.IN_CASH;
+      }
     },
   },
 });
@@ -74,6 +91,7 @@ export const {
   setContact,
   setFee,
   setPaymentMethod,
+  setPaymentConfigs,
 } = actions;
 export default OrderingReducer;
 
@@ -98,4 +116,11 @@ export function getTotalAmount(
 
 export function checkWithoutPayment(paymentMethod: PaymentOptionEnum) {
   return paymentMethod === PaymentOptionEnum.IN_CASH;
+}
+
+export function checkNeedContactInfo (paymentMethod: PaymentOptionEnum) {
+  return [
+    PaymentOptionEnum.BLUE_CARD,
+    PaymentOptionEnum.RESTAURANT_TICKET
+  ].includes(paymentMethod);
 }

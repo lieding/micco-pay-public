@@ -7,6 +7,12 @@ export enum DayPeriod {
   NIGHT = "night",
 }
 
+export interface IPgPaymentConfig {
+  platform: PgPaymentMethod
+  currency: 'eur'
+  reused: boolean
+}
+
 export interface IRestaurant {
   name: string;
   displayName: string;
@@ -81,7 +87,8 @@ export type SetMenuInfoPayloadType = {
 
 export type Contact = {
   phone: string;
-  name: string;
+  firstName: string
+  lastName: string
   mail: string;
 };
 
@@ -92,7 +99,6 @@ export type TipType = {
 };
 
 // All available payment status
-// https://stripe.com/docs/payments/paymentintents/lifecycle
 export enum PaymentResultEnum {
   SUCCEEDED = "succeeded",
   REQ_PAYMENT_METHOD = "requires_payment_method",
@@ -111,8 +117,6 @@ export enum PaymentStatus {
 }
 
 export interface PaymentResultParams {
-  payment_intent?: string;
-  payment_intent_client_secret?: string;
   redirect_status?: PaymentResultEnum;
 }
 
@@ -149,4 +153,30 @@ export enum PaymentOptionEnum {
 export enum OrderStatus {
   PAID = "PAID",
   UNPAID = "UNPAID",
+}
+
+export enum PgPaymentMethod {
+  BANK_CARD = 'bank_card',
+  APPLE_PAY = 'apple_pay',
+  SWILE = 'swile',
+  AMEX = 'amex',
+  ANCV = 'ancv',
+  CONECS = 'conecs',
+  RESTOFLASH = 'restoflash'
+}
+
+export enum RequestStatusEnum {
+  INIT,
+  LOADING,
+  RESOLVED,
+  REJECTED
+}
+
+export enum PgPaymentFlowStatus {
+  INIT,
+  EN_SELECTION,
+  FORM_FILLING,
+  SUBMITING,
+  SUBMIT_SUCCESS,
+  SUBMIT_FAILED
 }

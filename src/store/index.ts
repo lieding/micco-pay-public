@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import RestauranrReducer, { RESTAURANT_FEATURE_KEY } from "./restaurant";
 import OrderingReducer, { ORDERING_FEATURE_KEY } from "./ordering";
 import MenuReducer, { MENU_FEATURE_KEY } from "./menu";
-import StripeReducer, { STRIPE_FEATURE_KEY } from "./stripe";
+import PaygreenReducer, { PAYGREEN_FEATURE_KEY } from "./paygreen";
 import { LocalStorageUtils } from "../utils";
 import { api } from "./api";
 
@@ -16,7 +16,7 @@ const store = configureStore({
     [ORDERING_FEATURE_KEY]: OrderingReducer,
     [MENU_FEATURE_KEY]: MenuReducer,
     [api.reducerPath]: api.reducer,
-    [STRIPE_FEATURE_KEY]: StripeReducer,
+    [PAYGREEN_FEATURE_KEY]: PaygreenReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
   // Adding the api middleware enables caching, invalidation, polling,
@@ -33,7 +33,6 @@ export function persistStore() {
   LocalStorageUtils.persistGlobalStore({
     ...store.getState(),
     [MENU_FEATURE_KEY]: null,
-    [STRIPE_FEATURE_KEY]: null,
     [api.reducerPath]: null,
   });
 }

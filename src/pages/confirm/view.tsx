@@ -6,64 +6,36 @@ import {
   getTotalAmount,
   setRounded,
   checkWithoutPayment,
+  checkNeedContactInfo,
 } from "../../store/ordering";
 import styles from "./index.module.scss";
 import CustomInput from "../../components/customInput";
 import LogoHeader from "../../components/logoHeader";
 import cls from "classnames";
 import Tipping from "./tipping";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { STRIPE_FEATURE_KEY, resetStripeInfo } from "../../store/stripe";
+import { PAYGREEN_FEATURE_KEY, resetPaygreenInfo } from "../../store/paygreen";
 import { useScrollTop } from "../../hooks";
 import SubTotalAndFee from "../../components/subTotalAndFee";
 import floatingTotalBtnBarStyles from "../../components/floatingTotalBtnBar/index.module.scss";
 import floatingBtnBarStyles from "../../components/floatingBar/floatingBar.module.scss";
 import { RESTAURANT_FEATURE_KEY } from "../../store/restaurant";
-import ContactForm from "../../components/contactForm";
+import ContactFormPopup from "../../components/contactForm";
 import PaymentMethosSelect from "./paymentMethodSelect";
 import { persistStore } from "../../store";
+import { Paygreen, simpleDeepEqual } from '../../utils'
+import { Contact } from "../../typing";
+import { useGetPaymentConfigsQuery } from "../../store/api";
 
 function BtnRow(props: {
   total: number;
   beforeLeave: () => boolean | void;
-  withoutPayment: boolean;
 }) {
-  const ceilNum = Math.ceil(props.total);
-  const showRounded = false; // props.total !== ceilNum;
-  const navigate = useNavigate();
-  // const dispatch = useDispatch();
-  const { withoutPayment } = props;
-
-  const cbk = useCallback(
-    (round?: boolean) => {
-      // if (round) dispatch(setRounded(true));
-      const needPrevent = props.beforeLeave();
-      if (needPrevent) return;
-      if (withoutPayment) {
-        persistStore();
-        navigate("/result");
-      } else setTimeout(() => navigate("/payment"), 50);
-    },
-    [navigate, withoutPayment]
-  );
-
-  const eles = showRounded ? (
-    <>
-      <div className={styles.left} onClick={() => cbk(true)}>
-        Arrondir à {ceilNum}€?
-      </div>
-      <div
-        className={cls(floatingBtnBarStyles.container, styles.right)}
-        onClick={() => cbk()}
-      >
-        Confirmer
-      </div>
-    </>
-  ) : (
+  const eles = (
     <div
       className={cls(floatingBtnBarStyles.container, styles.right)}
-      onClick={() => cbk()}
+      onClick={props.beforeLeave}
     >
       Confirmer
     </div>
@@ -97,43 +69,81 @@ function PromoCode() {
   );
 }
 
+function selector (state: RootState) {
+  const {paymentMethodKey} = state[ORDERING_FEATURE_KEY];
+  const withoutPayment =
+    checkWithoutPayment(paymentMethodKey);
+  const needContactInfo = checkNeedContactInfo(paymentMethodKey);
+  return {
+    orderInfo: state[ORDERING_FEATURE_KEY],
+    paygreenInited: state[PAYGREEN_FEATURE_KEY].initialized,
+    feeConfig: state[RESTAURANT_FEATURE_KEY].feeConfig,
+    restaurantId: state.restaurant.restaurantId,
+    withoutPayment,
+    needContactInfo
+  };
+}
+
 function ConfirmPage() {
   const {
-    orderInfo: { summary, tip, rounded },
-    stripeInited,
+    orderInfo: { summary, tip, rounded, contact, paymentConfigs },
+    paygreenInited,
     feeConfig,
     withoutPayment,
-  } = useSelector((state: RootState) => ({
-    orderInfo: state[ORDERING_FEATURE_KEY],
-    stripeInited: state[STRIPE_FEATURE_KEY].initialized,
-    feeConfig: state[RESTAURANT_FEATURE_KEY].feeConfig,
-    withoutPayment: checkWithoutPayment(
-      state[ORDERING_FEATURE_KEY].paymentMethodKey
-    ),
-  }));
+    needContactInfo,
+    restaurantId,
+  } = useSelector(selector);
 
   useScrollTop();
 
   const dispatch = useDispatch();
-  const prevTotalRef = useRef<number | null>(null);
+  const [ popupVisible, togglePopupVisible ] = useState(false);
+  const prevTotalRef = useRef<{ amount: number, contact: Contact } | null>(null);
   const total = getTotalAmount(summary, tip, rounded);
   const subTotal = getTotalAmount(summary);
 
+  useGetPaymentConfigsQuery(restaurantId, { skip: !!paymentConfigs });
+
   useEffect(() => {
-    if (!stripeInited) return;
-    prevTotalRef.current = getTotalAmount(summary, tip, rounded);
+    Paygreen.importResources();
+    if (!paygreenInited) return;
+    prevTotalRef.current = {
+      amount: getTotalAmount(summary, tip, rounded),
+      contact: contact,
+    };
   }, []);
 
   const contactFormRef = useRef<any>(null);
   const checkContactValidity = () => contactFormRef.current?.checkValidity();
 
+  const navigate = useNavigate()
+
   // the callback function is going to be executed when it is going to leave
   // the objective is that when the user has started payment process but stopped and went back
-  // in such screnrio, we need to reset the stripe data and make the paylebt start from scratch
+  // in such screnrio, we need to reset the paygreen data and make the paylebt start from scratch
+  // if 'true' is returned, it would stop the redirecting logic
+  // if 'false/void' is returned, it would continue 
   const beforeLeave = () => {
-    if (!checkContactValidity()) return true;
-    if (prevTotalRef.current === null) return;
-    if (total !== prevTotalRef.current) dispatch(resetStripeInfo());
+    if (needContactInfo) {
+      if (!checkContactValidity()) {
+        togglePopupVisible(true);
+        return true;
+      }
+    }
+    // if 'prevTotalRef.current' is null, it says it is in the first time loaded, it should continue
+    if (prevTotalRef.current) {
+      // the programme runs here, it says the user has already tried the payment process but returned back,
+      // we need to check if the amount and 'contact' configuration has changed
+      // if the changes detected, we need to reset the paygreen configuration
+      const current = { amount: total, contact }
+      if (!simpleDeepEqual(current, prevTotalRef.current))
+        dispatch(resetPaygreenInfo());
+    }
+    if (withoutPayment) {
+      persistStore();
+      navigate("/result");
+    } else
+      setTimeout(() => navigate("/payment"), 50);
   };
 
   const subPlusTip = subTotal + (tip.selected ? tip.amount : 0);
@@ -146,27 +156,33 @@ function ConfirmPage() {
     : 0;
 
   return (
-    <div className={cls("flex-column", "page-wrapper", styles.pageWrapper)}>
-      <LogoHeader />
-      <div className={styles.content}>
-        <Expasion summary={summary} />
-        <PromoCode />
-        <ContactForm ref={(el) => (contactFormRef.current = el)} />
-        <Tipping tip={tip} rounded={rounded} subPlusTip={subPlusTip} />
-        <PaymentMethosSelect />
+    <>
+      <div className={cls("flex-column", "page-wrapper", styles.pageWrapper)}>
+        <LogoHeader />
+        <div className={styles.content}>
+          <Expasion summary={summary} />
+          <PromoCode />
+          <Tipping tip={tip} rounded={rounded} subPlusTip={subPlusTip} />
+          <PaymentMethosSelect configs={paymentConfigs} />
+        </div>
+        <SubTotalAndFee
+          subTotal={subTotal.toFixed(2)}
+          fee={fee}
+          tip={tip.selected ? tip.amount : 0}
+          hideTipInfo={withoutPayment}
+        />
+        <BtnRow
+          total={total + fee}
+          beforeLeave={beforeLeave}
+        />
       </div>
-      <SubTotalAndFee
-        subTotal={subTotal.toFixed(2)}
-        fee={fee}
-        tip={tip.selected ? tip.amount : 0}
-        hideTipInfo={withoutPayment}
+      <ContactFormPopup
+        ref={(el) => (contactFormRef.current = el)}
+        visible={popupVisible}
+        next={beforeLeave}
+        toggleClose={() => togglePopupVisible(false)}
       />
-      <BtnRow
-        total={total + fee}
-        beforeLeave={beforeLeave}
-        withoutPayment={withoutPayment}
-      />
-    </div>
+    </>
   );
 }
 

@@ -77,10 +77,11 @@ export default function ResultPage() {
     if (!state) return;
     const isWithoutPayment =
       state.ordering.paymentMethodKey === PaymentOptionEnum.IN_CASH;
+    let paymentResult = PaymentResultEnum.PROCESSING;
     if (isWithoutPayment) {
       setPaymentStatus(PaymentStatusEnum.IN_CASH);
     } else {
-      const paymentResult = searchParams.get(
+      paymentResult = searchParams.get(
         "redirect_status"
       ) as PaymentResultEnum;
       setPaymentStatus(parsePaymentStatus(paymentResult));
@@ -91,7 +92,7 @@ export default function ResultPage() {
     const totalWithoutTip = getTotalAmount(summary);
     const total = getTotalAmount(summary, tip, rounded);
     const showTipInfo = Boolean(tip.selected && tip.amount);
-    const body = createOrderPostBody(total, state, searchParams);
+    const body = createOrderPostBody(paymentResult, total, state);
 
     setLoadig(true);
     createOrder(body)

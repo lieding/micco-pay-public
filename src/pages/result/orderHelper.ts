@@ -10,16 +10,14 @@ import { RootState } from "../../store";
 import { BASE_URL } from "../../consts";
 
 export function createOrderPostBody(
+  paymentStatus: PaymentResultEnum,
   total: number,
   state: RootState,
-  searchParams: URLSearchParams
 ) {
   const { restaurantId, table, restInfo } = state.restaurant;
   const { tip, summary, contact, rounded, fee, paymentMethodKey } =
     state.ordering;
-  const paymentIntent = searchParams.get("payment_intent") ?? "",
-    // paymentClientSecret = searchParams.get("payment_intent_client_secret"),
-    paymentStatus = searchParams.get("redirect_status") ?? "";
+  const { paymentOrderID: orderId } = state.paygreen;
   const date = new Date();
   const id = date.getTime() + Math.round(Math.random() * 10000).toString();
   const orderStatus =
@@ -29,7 +27,7 @@ export function createOrderPostBody(
   return {
     id,
     restaurantName: (restInfo as any)?.displayName,
-    paymentIntent,
+    orderId,
     restaurantId,
     table,
     paymentStatus,
