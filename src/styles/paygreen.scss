@@ -1,4 +1,5 @@
 .paygreen-wrapper {
+  flex: 1 !important;
   margin-top: 20px;
 
   .button {
@@ -26,10 +27,12 @@
   }
   
   .pay-form {
-    padding: 1rem 0.5rem;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+    padding: 12px 10px 6px;
+    box-sizing: border-box;
+    border-radius: 19px;
+    background: #f9f9f9;
     visibility: hidden;
     user-select: none;
     &.visible {
@@ -37,12 +40,6 @@
     }
     &.interactive {
       user-select: all;
-      opacity: .6;
-      #payButton {
-        align-self: center;
-        margin-top: 1rem;
-        display: block;
-      }
     }
     > div {
       margin-top: 1rem;
@@ -51,15 +48,7 @@
     > label {
       color: grey;
       font-weight: 600;
-    }
-    
-    #payButton {
-      align-self: center;
-      margin-top: 1rem;
-      display: none;
-    }
-
-    .field-input-wrapper {
+      line-height: 1.5;
     }
   }
   
@@ -90,15 +79,6 @@
     visibility: hidden;
     &.visible {
       visibility: visible;
-    }
-    .time-remaining {
-      display: inline-block;
-      padding: 3px 4px;
-      border-radius: 4px;
-      margin-left: 5px;
-      background: #c8fbde;
-      color: #226047;
-      font-size: 12px;
     }
   }
   
@@ -160,11 +140,10 @@
 }
 .frame--activated{
   box-sizing: border-box;
-  padding: 0 6px;
-  opacity:1;
-  border:solid 1px #13395e;
-  border-radius:3px;
-  box-shadow:0 1px 3px 0 rgba(19,57,94,.2);
+  border-radius: 16px;
+  background: #fff;
+  padding: 0 18px;
+  // box-shadow:0 1px 3px 0 rgba(19,57,94,.2);
 }
 .frame--activated.frame--focus{
   border:solid 1px #709cc9;

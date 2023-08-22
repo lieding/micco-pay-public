@@ -65,17 +65,22 @@ const { reducer: OrderingReducer, actions } = createSlice({
     setContact(state, action: { payload: Partial<Contact> }) {
       state.contact = { ...state.contact, ...action.payload };
     },
-    setPaymentMethod(state, action: { payload: { pg: PgPaymentMethod | null, methodKey: PaymentOptionEnum } }) {
-      const {
-        pg: pgPaymentMethod,
-        methodKey: paymentMethodKey,
-      } = action.payload;
+    setPaymentMethod(
+      state,
+      action: {
+        payload: { pg: PgPaymentMethod | null; methodKey: PaymentOptionEnum };
+      }
+    ) {
+      const { pg: pgPaymentMethod, methodKey: paymentMethodKey } =
+        action.payload;
       state.paymentMethodKey = paymentMethodKey;
       state.pgPaymentMethod = pgPaymentMethod as PgPaymentMethod;
     },
     setPaymentConfigs(state, action: { payload: IPgPaymentConfig[] }) {
-      state.paymentConfigs = action.payload
-      const hasBanCard = action.payload.some?.(({ platform }) => platform === PgPaymentMethod.BANK_CARD);
+      state.paymentConfigs = action.payload;
+      const hasBanCard = action.payload.some?.(
+        ({ platform }) => platform === PgPaymentMethod.BANK_CARD
+      );
       if (!hasBanCard && action.payload?.length) {
         state.paymentMethodKey = PaymentOptionEnum.IN_CASH;
       }
@@ -118,9 +123,6 @@ export function checkWithoutPayment(paymentMethod: PaymentOptionEnum) {
   return paymentMethod === PaymentOptionEnum.IN_CASH;
 }
 
-export function checkNeedContactInfo (paymentMethod: PaymentOptionEnum) {
-  return [
-    PaymentOptionEnum.BLUE_CARD,
-    PaymentOptionEnum.RESTAURANT_TICKET
-  ].includes(paymentMethod);
+export function checkNeedContactInfo(paymentMethod: PaymentOptionEnum) {
+  return paymentMethod !== PaymentOptionEnum.IN_CASH;
 }

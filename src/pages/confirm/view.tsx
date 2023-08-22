@@ -24,14 +24,11 @@ import { RESTAURANT_FEATURE_KEY } from "../../store/restaurant";
 import ContactFormPopup from "../../components/contactForm";
 import PaymentMethosSelect from "./paymentMethodSelect";
 import { persistStore } from "../../store";
-import { Paygreen, simpleDeepEqual } from '../../utils'
+import { Paygreen, simpleDeepEqual } from "../../utils";
 import { Contact } from "../../typing";
 import { useGetPaymentConfigsQuery } from "../../store/api";
 
-function BtnRow(props: {
-  total: number;
-  beforeLeave: () => boolean | void;
-}) {
+function BtnRow(props: { total: number; beforeLeave: () => boolean | void }) {
   const eles = (
     <div
       className={cls(floatingBtnBarStyles.container, styles.right)}
@@ -69,10 +66,9 @@ function PromoCode() {
   );
 }
 
-function selector (state: RootState) {
-  const {paymentMethodKey} = state[ORDERING_FEATURE_KEY];
-  const withoutPayment =
-    checkWithoutPayment(paymentMethodKey);
+function selector(state: RootState) {
+  const { paymentMethodKey } = state[ORDERING_FEATURE_KEY];
+  const withoutPayment = checkWithoutPayment(paymentMethodKey);
   const needContactInfo = checkNeedContactInfo(paymentMethodKey);
   return {
     orderInfo: state[ORDERING_FEATURE_KEY],
@@ -80,7 +76,7 @@ function selector (state: RootState) {
     feeConfig: state[RESTAURANT_FEATURE_KEY].feeConfig,
     restaurantId: state.restaurant.restaurantId,
     withoutPayment,
-    needContactInfo
+    needContactInfo,
   };
 }
 
@@ -97,8 +93,10 @@ function ConfirmPage() {
   useScrollTop();
 
   const dispatch = useDispatch();
-  const [ popupVisible, togglePopupVisible ] = useState(false);
-  const prevTotalRef = useRef<{ amount: number, contact: Contact } | null>(null);
+  const [popupVisible, togglePopupVisible] = useState(false);
+  const prevTotalRef = useRef<{ amount: number; contact: Contact } | null>(
+    null
+  );
   const total = getTotalAmount(summary, tip, rounded);
   const subTotal = getTotalAmount(summary);
 
@@ -116,13 +114,13 @@ function ConfirmPage() {
   const contactFormRef = useRef<any>(null);
   const checkContactValidity = () => contactFormRef.current?.checkValidity();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   // the callback function is going to be executed when it is going to leave
   // the objective is that when the user has started payment process but stopped and went back
   // in such screnrio, we need to reset the paygreen data and make the paylebt start from scratch
   // if 'true' is returned, it would stop the redirecting logic
-  // if 'false/void' is returned, it would continue 
+  // if 'false/void' is returned, it would continue
   const beforeLeave = () => {
     if (needContactInfo) {
       if (!checkContactValidity()) {
@@ -135,15 +133,14 @@ function ConfirmPage() {
       // the programme runs here, it says the user has already tried the payment process but returned back,
       // we need to check if the amount and 'contact' configuration has changed
       // if the changes detected, we need to reset the paygreen configuration
-      const current = { amount: total, contact }
+      const current = { amount: total, contact };
       if (!simpleDeepEqual(current, prevTotalRef.current))
         dispatch(resetPaygreenInfo());
     }
     if (withoutPayment) {
       persistStore();
       navigate("/result");
-    } else
-      setTimeout(() => navigate("/payment"), 50);
+    } else setTimeout(() => navigate("/payment"), 50);
   };
 
   const subPlusTip = subTotal + (tip.selected ? tip.amount : 0);
@@ -171,14 +168,12 @@ function ConfirmPage() {
           tip={tip.selected ? tip.amount : 0}
           hideTipInfo={withoutPayment}
         />
-        <BtnRow
-          total={total + fee}
-          beforeLeave={beforeLeave}
-        />
+        <BtnRow total={total + fee} beforeLeave={beforeLeave} />
       </div>
       <ContactFormPopup
         ref={(el) => (contactFormRef.current = el)}
         visible={popupVisible}
+        initialContact={contact}
         next={beforeLeave}
         toggleClose={() => togglePopupVisible(false)}
       />
