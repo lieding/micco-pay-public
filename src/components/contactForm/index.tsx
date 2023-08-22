@@ -124,13 +124,7 @@ function ContactForm(
   },
   ref: any
 ) {
-  const [contactForm, setForm] = useState<Contact>(() => ({
-    firstName: "",
-    phone: "",
-    mail: "",
-    lastName: "",
-    ...initialContact,
-  }));
+  const [contactForm, setForm] = useState<Contact>(() => ({ ...initialContact }));
   const [pageIdx, setPageIdx] = useState(0);
   const [validities, setValities] = useState({});
   const dispatch = useDispatch();
