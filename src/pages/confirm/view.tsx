@@ -131,11 +131,12 @@ function ConfirmPage() {
     // if 'prevTotalRef.current' is null, it says it is in the first time loaded, it should continue
     if (prevTotalRef.current) {
       // the programme runs here, it says the user has already tried the payment process but returned back,
-      // we need to check if the amount and 'contact' configuration has changed
-      // if the changes detected, we need to reset the paygreen configuration
+      // Before, we need to check if the amount and 'contact' configuration has changed, if the changes detected, we need to reset the paygreen configuration
+      // But now, considering the valid payment session is too short (10 mins), we need to reset the payment configs, that is if users
+      // returned to the previous page and they wanted to go gorward to the payment page, we need to reset the whole session
       const current = { amount: total, contact };
-      if (!simpleDeepEqual(current, prevTotalRef.current))
-        dispatch(resetPaygreenInfo());
+      // if (!simpleDeepEqual(current, prevTotalRef.current))
+      dispatch(resetPaygreenInfo());
     }
     if (withoutPayment) {
       persistStore();

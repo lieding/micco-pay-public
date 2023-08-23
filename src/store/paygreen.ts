@@ -33,7 +33,9 @@ const { reducer: PaygreenReducer, actions } = createSlice({
       state.expiresAt = 0;
       state.publicKey = "";
       state.initialized = false;
-      window.paygreenjs?.unmount();
+      try {
+        window.paygreenjs?.unmount();
+      } catch (err) {console.log(err)}
     },
     setInitStatus (state, action: { payload: boolean }) {
       state.initialized = action.payload;
