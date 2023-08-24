@@ -26,7 +26,6 @@ import PaymentMethosSelect from "./paymentMethodSelect";
 import { persistStore } from "../../store";
 import { Paygreen, simpleDeepEqual } from "../../utils";
 import { Contact } from "../../typing";
-import { useGetPaymentConfigsQuery } from "../../store/api";
 
 function BtnRow(props: { total: number; beforeLeave: () => boolean | void }) {
   const eles = (
@@ -74,7 +73,6 @@ function selector(state: RootState) {
     orderInfo: state[ORDERING_FEATURE_KEY],
     paygreenInited: state[PAYGREEN_FEATURE_KEY].initialized,
     feeConfig: state[RESTAURANT_FEATURE_KEY].feeConfig,
-    restaurantId: state.restaurant.restaurantId,
     withoutPayment,
     needContactInfo,
   };
@@ -87,7 +85,6 @@ function ConfirmPage() {
     feeConfig,
     withoutPayment,
     needContactInfo,
-    restaurantId,
   } = useSelector(selector);
 
   useScrollTop();
@@ -99,8 +96,6 @@ function ConfirmPage() {
   );
   const total = getTotalAmount(summary, tip, rounded);
   const subTotal = getTotalAmount(summary);
-
-  useGetPaymentConfigsQuery(restaurantId, { skip: !!paymentConfigs });
 
   useEffect(() => {
     Paygreen.importResources();

@@ -53,19 +53,8 @@ export const api = createApi({
                 addition: Number(feeConfig?.addition) || 0,
               })
             );
+            dispatch(setPaymentConfigs(restInfo?.paymentMethods));
           }
-        } catch (err) {
-          console.error(err);
-        }
-      },
-    }),
-    getPaymentConfigs: builder.query({
-      query: (id) => `/getPaymentConfigs?restaurantId=${id}`,
-      async onQueryStarted(_, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          if (isValidArray(data))
-            dispatch(setPaymentConfigs(data as IPgPaymentConfig[]));
         } catch (err) {
           console.error(err);
         }
@@ -77,5 +66,4 @@ export const api = createApi({
 export const {
   useGetRestInfoQuery,
   useQueryMenuInfoQuery,
-  useGetPaymentConfigsQuery,
 } = api;

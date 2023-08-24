@@ -20,6 +20,7 @@ export interface IRestaurant {
   introImgUrl: string;
   logoUrl: string;
   categories: string[];
+  paymentMethods?: IPgPaymentConfig[]
 }
 
 export interface ICourse {

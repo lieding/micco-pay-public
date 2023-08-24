@@ -8,7 +8,6 @@ import {
   PgPaymentMethod,
   IPgPaymentConfig,
 } from "../typing";
-import { platform } from "os";
 
 export const ORDERING_FEATURE_KEY = "ordering";
 
@@ -21,7 +20,7 @@ const { reducer: OrderingReducer, actions } = createSlice({
     amtAfterFee: 0,
     rounded: false,
     contact: <Contact>{ phone: "", firstName: "", lastName: "", mail: "" },
-    paymentConfigs: null as unknown as IPgPaymentConfig[],
+    paymentConfigs: [] as IPgPaymentConfig[],
     paymentMethodKey: PaymentOptionEnum.BLUE_CARD,
     pgPaymentMethod: PgPaymentMethod.BANK_CARD,
   },
@@ -76,9 +75,10 @@ const { reducer: OrderingReducer, actions } = createSlice({
       state.paymentMethodKey = paymentMethodKey;
       state.pgPaymentMethod = pgPaymentMethod as PgPaymentMethod;
     },
-    setPaymentConfigs(state, action: { payload: IPgPaymentConfig[] }) {
-      state.paymentConfigs = action.payload;
-      const hasBanCard = action.payload.some?.(
+    setPaymentConfigs(state, action: { payload: IPgPaymentConfig[] | undefined }) {
+      const configs = action.payload || [];
+      state.paymentConfigs = configs;
+      const hasBanCard = configs.some(
         ({ platform }) => platform === PgPaymentMethod.BANK_CARD
       );
       if (!hasBanCard && action.payload?.length) {

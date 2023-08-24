@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import { setPaymentMethod } from "../../store/ordering";
 import { IPgPaymentConfig, PaymentOptionEnum, PgPaymentMethod } from "../../typing";
 import { useCallback, useMemo, useState } from "react";
-import { Loading } from '../../components';
 import cls from "classnames";
 import { isValidArray } from "../../utils";
 
@@ -65,11 +64,6 @@ export default function PaymentMethodSelect({
     const enabledMap = formatPaymentOptions(configs);
     return PaymentOptions.filter(({ key }) => enabledMap[key]);
   }, [configs]);
-
-  const loading = !configs;
-
-  if (loading)
-    return <Loading />
 
   return (
     <>
