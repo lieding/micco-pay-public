@@ -208,10 +208,17 @@
   flex:1;
   margin:5px;
   text-align:center;
-  padding:1rem
+  padding:1rem;
+  &.pg-payment-method-bank_card {
+    display: none;
+  }
+  &.pg-payment-method-apple_pay {
+    display: none;
+  }
 }
 .apple-pay-button{
-  display:inline-block;
+  // display:inline-block;
+  color: transparent;
   -webkit-appearance:-apple-pay-button;
   -apple-pay-button-type:check-out;
 }

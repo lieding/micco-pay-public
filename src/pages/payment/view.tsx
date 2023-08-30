@@ -34,6 +34,7 @@ import {
 } from "../../typing";
 import { useNavigate } from "react-router-dom";
 import { IPaymentFlowStatus } from "../../global";
+import { useScrollTop } from "../../hooks";
 
 function selector(state: RootState) {
   const { summary, fee, amtAfterFee, tip, rounded, contact, pgPaymentMethod } =
@@ -93,15 +94,15 @@ function BottomPart({
         <span>Total:</span>
         <span>{total}€</span>
       </div>
+      <div className={cls("textAlign")}>
+        <span className={styles.timeRemaining}>{remainingTimeStr}</span>
+      </div>
       <div
         id="payButton"
         className={cls("full-width-btn", btnDisabled ? "disabled" : "", styles.payButton)}
         onClick={handlePay}
       >
         Payer
-      </div>
-      <div className={cls("textAlign")}>
-        <span className={styles.timeRemaining}>{remainingTimeStr}</span>
       </div>
     </>
   );
@@ -128,6 +129,7 @@ function PaymentPage() {
   } = paygreenInfo;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  useScrollTop();
 
   const [reqStatus, setReqStatus] = useState(() =>
     initialized ? RequestStatusEnum.RESOLVED : RequestStatusEnum.INIT

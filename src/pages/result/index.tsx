@@ -113,8 +113,10 @@ export default function ResultPage() {
   }, []);
 
   let content = null;
+  const isPaymentInCach = paymentStatus === PaymentStatusEnum.IN_CASH;
   if (config) {
     const { table, showTipInfo, total, totalWithoutTip, tipInfo } = config;
+    const titleFotTotalPayment = isPaymentInCach ? 'Reste à payer' : 'Total paiement';
     content = (
       <>
         <div className={cls(styles.tableInfo, "textAlign")}>Table {table}</div>
@@ -124,14 +126,14 @@ export default function ResultPage() {
             <Item title="Pourboire" value={`${tipInfo.amount}€`} />
           </>
         )}
-        <Item title="Total paiement" value={`${total}€`} />
+        <Item title={titleFotTotalPayment} value={`${total}€`} />
       </>
     );
   }
   let courseTableInfo = null;
-  if (config && paymentStatus === PaymentStatusEnum.IN_CASH) {
+  if (config && isPaymentInCach) {
     const configg = config as unknown as ScanOrderResponse;
-    courseTableInfo = <Table data={configg} />;
+    courseTableInfo = <Table data={configg} excludeTableInfo={true} />;
   }
 
   return (

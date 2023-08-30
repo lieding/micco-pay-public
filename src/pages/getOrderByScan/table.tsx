@@ -4,12 +4,15 @@ import styles from "./index.module.scss";
 import cls from "classnames";
 import { ScanOrderResponse } from "../../typing";
 
-export default function (props: { data: ScanOrderResponse }) {
-  const { data } = props;
+export default function (props: {
+  data: ScanOrderResponse
+  excludeTableInfo?: boolean
+}) {
+  const { data, excludeTableInfo } = props;
   const config = useMemo(() => {
     let config: Array<{ title: string; value: string }> = [];
     if (!data) return config;
-    config = formatOrderInfo(data);
+    config = formatOrderInfo(data, { excludeTableInfo });
     return config;
   }, [data]);
 

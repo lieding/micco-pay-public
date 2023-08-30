@@ -11,16 +11,21 @@ export function getOrder(
   }).then((res) => res.json());
 }
 
-export function formatOrderInfo(data: ScanOrderResponse) {
-  const config: Array<{ title: string; value: string }> = [];
+export function formatOrderInfo(
+  data: ScanOrderResponse,
+  config?: { excludeTableInfo: boolean | undefined  }
+) {
+  const ret: Array<{ title: string; value: string }> = [];
   for (const key in data) {
+    if (key === 'table' && config?.excludeTableInfo)
+      continue;
     const title = NameMap[key];
     if (title) {
       let value: any = data[key as keyof ScanOrderResponse];
       if (key === "createdAt") {
         value = new Date(value).toLocaleString();
       }
-      config.push({ title, value });
+      ret.push({ title, value });
     }
   }
   const orders = data.orders;
@@ -28,14 +33,14 @@ export function formatOrderInfo(data: ScanOrderResponse) {
     for (const item of orders) {
       const itemm = item as { count: number; price: number; name: string };
       const value = `${itemm.count || 1} x ${itemm.price}€`;
-      config.push({ title: itemm.name, value });
+      ret.push({ title: itemm.name, value });
     }
   }
-  return config;
+  return ret;
 }
 
 const NameMap: Record<string, string> = {
-  restaurantId: "L'id du restaurant",
+  // restaurantId: "L'id du restaurant",
   table: "Table",
   createdAt: "Temps",
   amount: "Montant payé",

@@ -46,17 +46,7 @@ export default function PayGreenElement({ flowStatus }: IProps) {
           </div>
         </div>
         <div id="paygreen-reuse-checkbox-container"></div>
-        {/* <button id="payButton" className="button" onClick={handlePay}>
-          Payer €
-          <strong>{ total.toFixed(2) }</strong>
-        </button> */}
       </div>
-      {/* <div className={cls("icon-sentence", { visible: flowStatus !== PgPaymentFlowStatus.INIT })}>
-        <i data-feather="lock"></i>
-        <label className="secured-label">
-          Paiement sécurisée par <strong>Paygreen</strong>
-        </label>
-      </div> */}
     </div>
   );
 }

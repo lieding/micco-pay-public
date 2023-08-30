@@ -60,6 +60,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  min-height: 80vh;
   .item {
     position: relative;
     width: 45%;
