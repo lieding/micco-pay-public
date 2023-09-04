@@ -25,6 +25,11 @@
     background-color: #2B4865;
     border-color: #2B4865;
   }
+
+  .title {
+    font-weight: 500;
+    line-height: 1.6;
+  }
   
   .pay-form {
     display: flex;
@@ -200,20 +205,33 @@
 .flex-container{
   display:flex;
 }
-.pg-payment-method{
-  cursor:pointer;
-  border-radius:.5rem;
-  box-shadow:3px 3px 3px gray;
-  transition:box-shadow .125s ease-in;
-  flex:1;
-  margin:5px;
-  text-align:center;
-  padding:1rem;
-  &.pg-payment-method-bank_card {
-    display: none;
-  }
-  &.pg-payment-method-apple_pay {
-    display: none;
+.paygreen-methods-container {
+  padding: 12px 10px;
+  box-sizing: border-box;
+  border-radius: 19px;
+  background: #f9f9f9;
+  .pg-payment-method {
+    height: 25px;
+    margin-bottom: 12px;
+    border: 5px solid #fff;
+    background: #fff;
+    border-radius: 10px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    background-size: contain;
+    color: transparent;
+    &.pg-payment-method-swile {
+      background-image: url(/payment/swile_black.png);
+    }
+    &.pg-payment-method-restoflash {
+      background-image: url(/payment/resto.png);
+    }
+    &.pg-payment-method-conecs {
+      background-image: url(/payment/conecs.png);
+    }
+    &:last-child {
+      margin-bottom: unset;
+    }
   }
 }
 .apple-pay-button{

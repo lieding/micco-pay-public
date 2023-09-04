@@ -22,8 +22,8 @@ export default function PayGreenElement({ flowStatus }: IProps) {
   return (
     <div className={cls("paygreen-wrapper")}>
       <div id="paygreen-container"></div>
+      <div className="title">Méthode de paiement</div>
       <div id="paygreen-methods-container"></div>
-      {/* <h3>Payment method</h3> */}
       <div
         className={cls("pay-form", {
           visible: formVisible,

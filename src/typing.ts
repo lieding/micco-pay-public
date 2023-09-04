@@ -166,6 +166,14 @@ export enum PgPaymentMethod {
   RESTOFLASH = 'restoflash'
 }
 
+export function filterRestaurantTicketPaymentMethods (method: PgPaymentMethod) {
+  return [
+    PgPaymentMethod.CONECS,
+    PgPaymentMethod.RESTOFLASH,
+    PgPaymentMethod.SWILE
+  ].includes(method);
+}
+
 export enum RequestStatusEnum {
   INIT,
   LOADING,

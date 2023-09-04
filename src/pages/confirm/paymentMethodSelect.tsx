@@ -38,14 +38,16 @@ function PaymentOptionItem({
 }
 
 export default function PaymentMethodSelect({
-  disabledPaymentMethods = [],
+  disabledPaymentMethodKeys = [],
   configs,
+  initialPaymentMethodKey,
 }: {
-  disabledPaymentMethods?: PaymentOptionEnum[];
-  configs: IPgPaymentConfig[]
+  disabledPaymentMethodKeys?: PaymentOptionEnum[];
+  configs: IPgPaymentConfig[];
+  initialPaymentMethodKey: PaymentOptionEnum
 }) {
   const [selectedPaymentKey, setPaymentMethodKey] = useState(
-    PaymentOptionEnum.BLUE_CARD
+    initialPaymentMethodKey ?? PaymentOptionEnum.BLUE_CARD
   );
   const dispatch = useDispatch();
 
@@ -59,23 +61,23 @@ export default function PaymentMethodSelect({
     [dispatch, setPaymentMethodKey]
   );
 
-  const enabledConfigs = useMemo(() => {
-    if (!isValidArray(configs)) return [];
-    const enabledMap = formatPaymentOptions(configs);
-    return PaymentOptions.filter(({ key }) => enabledMap[key]);
-  }, [configs]);
+  // const enabledConfigs = useMemo(() => {
+  //   if (!isValidArray(configs)) return [];
+  //   const enabledMap = formatPaymentOptions(configs);
+  //   return PaymentOptions.filter(({ key }) => enabledMap[key]);
+  // }, [configs]);
 
   return (
     <>
       <div className={cls(styles.title)}>Méthode de Paiement</div>
       <div className={styles.paymentSelectionWrapper}>
-        {enabledConfigs.map((item) => (
+        {PaymentOptions.map((item) => (
           <PaymentOptionItem
             key={item.key}
             item={item}
             activeKey={selectedPaymentKey}
             setPaymentKey={setPaymentKey}
-            disabled={disabledPaymentMethods.includes(item.key)}
+            disabled={disabledPaymentMethodKeys.includes(item.key)}
           />
         ))}
       </div>
@@ -121,7 +123,7 @@ const PaymentOptions = [
   {
     key: PaymentOptionEnum.RESTAURANT_TICKET,
     title: "Ticket restaurant",
-    icon: "restaurantTicket.jpg",
+    icon: "restaurantTicket.png",
   },
   {
     key: PaymentOptionEnum.IN_CASH,

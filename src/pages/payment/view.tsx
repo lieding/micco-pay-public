@@ -28,18 +28,35 @@ import {
 import cls from "classnames";
 import styles from "./index.module.scss";
 import {
+  PaymentOptionEnum,
   PaymentResultEnum,
   PgPaymentFlowStatus,
   RequestStatusEnum,
+  filterRestaurantTicketPaymentMethods,
 } from "../../typing";
 import { useNavigate } from "react-router-dom";
 import { IPaymentFlowStatus } from "../../global";
 import { useScrollTop } from "../../hooks";
 
 function selector(state: RootState) {
-  const { summary, fee, amtAfterFee, tip, rounded, contact, pgPaymentMethod } =
-    state[ORDERING_FEATURE_KEY];
+  const {
+    summary,
+    fee,
+    amtAfterFee,
+    tip,
+    rounded,
+    contact,
+    pgPaymentMethod,
+    paymentMethodKey,
+    paymentConfigs,
+  } = state[ORDERING_FEATURE_KEY];
   const { restaurantId } = state[RESTAURANT_FEATURE_KEY];
+  let platforms = undefined;
+  if (paymentMethodKey === PaymentOptionEnum.RESTAURANT_TICKET) {
+    platforms = paymentConfigs
+      .map(item => item.platform)
+      .filter(filterRestaurantTicketPaymentMethods);
+  }
   return {
     restaurantId,
     total: getTotalAmount(summary, tip),
@@ -52,6 +69,7 @@ function selector(state: RootState) {
     subTotal: getTotalAmount(summary),
     contact,
     pgPaymentMethod,
+    platforms,
   };
 }
 
@@ -118,6 +136,7 @@ function PaymentPage() {
     rounded,
     contact,
     pgPaymentMethod,
+    platforms
   } = useSelector(selector);
   const {
     paymentOrderID,
@@ -137,7 +156,7 @@ function PaymentPage() {
 
   useEffect(() => {
     setReqStatus(RequestStatusEnum.LOADING);
-    queryPgOrderInfo(restaurantId, total, rounded, contact)
+    queryPgOrderInfo(restaurantId, total, rounded, contact, platforms)
       .then((data) => {
         dispatch(setFee(data));
         dispatch(setPaygreenInfo(data));
@@ -148,7 +167,7 @@ function PaymentPage() {
         console.error(err);
         setReqStatus(RequestStatusEnum.REJECTED);
       });
-  }, [dispatch, setReqStatus]);
+  }, []);
 
   useEffect(() => {
     const havingAllParams = paymentOrderID && publicKey && objectSecret;

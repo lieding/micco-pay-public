@@ -8,6 +8,7 @@ import {
   PgPaymentMethod,
   IPgPaymentConfig,
 } from "../typing";
+import { isValidArray } from "../utils";
 
 export const ORDERING_FEATURE_KEY = "ordering";
 
@@ -78,12 +79,7 @@ const { reducer: OrderingReducer, actions } = createSlice({
     setPaymentConfigs(state, action: { payload: IPgPaymentConfig[] | undefined }) {
       const configs = action.payload || [];
       state.paymentConfigs = configs;
-      const hasBanCard = configs.some(
-        ({ platform }) => platform === PgPaymentMethod.BANK_CARD
-      );
-      if (!hasBanCard && action.payload?.length) {
-        state.paymentMethodKey = PaymentOptionEnum.IN_CASH;
-      }
+      state.paymentMethodKey = getInitialPaymentMethod(configs);
     },
   },
 });
@@ -99,6 +95,28 @@ export const {
   setPaymentConfigs,
 } = actions;
 export default OrderingReducer;
+
+function getInitialPaymentMethod (paymentConfigs: IPgPaymentConfig[]) {
+  if (!paymentConfigs.length) return PaymentOptionEnum.IN_CASH;
+  if (paymentConfigs.some(
+    ({ platform }) => platform === PgPaymentMethod.BANK_CARD
+  ))
+    return PaymentOptionEnum.BLUE_CARD;
+  if (paymentConfigs.some(
+    ({ platform }) => platform === PgPaymentMethod.APPLE_PAY
+  ))
+    return PaymentOptionEnum.DIGITAL_WALLET;
+  const restaurantTicketPlatforms = [
+    PgPaymentMethod.SWILE,
+    PgPaymentMethod.CONECS,
+    PgPaymentMethod.RESTOFLASH
+  ];
+  if (paymentConfigs.some(
+    ({ platform }) => restaurantTicketPlatforms.includes(platform)
+  ))
+    return PaymentOptionEnum.RESTAURANT_TICKET;
+    return PaymentOptionEnum.IN_CASH;
+}
 
 export function getTotalCount(summary: OrderingSummary) {
   let cnt = 0;
@@ -125,4 +143,31 @@ export function checkWithoutPayment(paymentMethod: PaymentOptionEnum) {
 
 export function checkNeedContactInfo(paymentMethod: PaymentOptionEnum) {
   return paymentMethod !== PaymentOptionEnum.IN_CASH;
+}
+
+export function getDisabledPaymentMethodKeys (paymentConfigs: IPgPaymentConfig[]) {
+  if (!isValidArray(paymentConfigs)) return [];
+  const disaledMap = {
+    [PaymentOptionEnum.BLUE_CARD]: 0,
+    [PaymentOptionEnum.DIGITAL_WALLET]: 0,
+    [PaymentOptionEnum.RESTAURANT_TICKET]: 0
+  };
+  for (const item of paymentConfigs) {
+    const { platform } = item;
+    if (PgPaymentMethod.BANK_CARD === platform) {
+      // @ts-ignore
+      delete disaledMap[PaymentOptionEnum.BLUE_CARD];
+    } else if (PgPaymentMethod.APPLE_PAY === platform) {
+      // @ts-ignore
+      delete disaledMap[PaymentOptionEnum.DIGITAL_WALLET];
+    } else if ([
+      PgPaymentMethod.SWILE,
+      PgPaymentMethod.CONECS,
+      PgPaymentMethod.RESTOFLASH
+    ].includes(platform)) {
+      // @ts-ignore
+      delete disaledMap.RESTAURANT_TICKET;
+    }
+  }
+  return Object.keys(disaledMap) as PaymentOptionEnum[];
 }

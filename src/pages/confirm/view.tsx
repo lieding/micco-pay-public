@@ -7,13 +7,14 @@ import {
   setRounded,
   checkWithoutPayment,
   checkNeedContactInfo,
+  getDisabledPaymentMethodKeys,
 } from "../../store/ordering";
 import styles from "./index.module.scss";
 import CustomInput from "../../components/customInput";
 import LogoHeader from "../../components/logoHeader";
 import cls from "classnames";
 import Tipping from "./tipping";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PAYGREEN_FEATURE_KEY, resetPaygreenInfo } from "../../store/paygreen";
 import { useScrollTop } from "../../hooks";
@@ -80,7 +81,14 @@ function selector(state: RootState) {
 
 function ConfirmPage() {
   const {
-    orderInfo: { summary, tip, rounded, contact, paymentConfigs },
+    orderInfo: {
+      summary,
+      tip,
+      rounded,
+      contact,
+      paymentConfigs,
+      paymentMethodKey
+    },
     paygreenInited,
     feeConfig,
     withoutPayment,
@@ -110,6 +118,9 @@ function ConfirmPage() {
   const checkContactValidity = () => contactFormRef.current?.checkValidity();
 
   const navigate = useNavigate();
+  const initialPaymentMethod = useRef(paymentMethodKey);
+  const disabledPaymentMethodKeys =
+    useMemo(() => getDisabledPaymentMethodKeys(paymentConfigs), [paymentConfigs]);
 
   // the callback function is going to be executed when it is going to leave
   // the objective is that when the user has started payment process but stopped and went back
@@ -156,7 +167,11 @@ function ConfirmPage() {
           <Expasion summary={summary} />
           <PromoCode />
           <Tipping tip={tip} rounded={rounded} subPlusTip={subPlusTip} />
-          <PaymentMethosSelect configs={paymentConfigs} />
+          <PaymentMethosSelect
+            configs={paymentConfigs}
+            initialPaymentMethodKey={initialPaymentMethod.current}
+            disabledPaymentMethodKeys={disabledPaymentMethodKeys}
+          />
         </div>
         <SubTotalAndFee
           subTotal={subTotal.toFixed(2)}
