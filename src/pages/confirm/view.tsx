@@ -34,7 +34,7 @@ function BtnRow(props: { total: number; beforeLeave: () => boolean | void }) {
       className={cls(floatingBtnBarStyles.container, styles.right)}
       onClick={props.beforeLeave}
     >
-      Confirmer
+      Continue
     </div>
   );
 

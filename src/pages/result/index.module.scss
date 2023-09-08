@@ -1,6 +1,5 @@
 .iconWrapper {
-  margin: 50px auto 35px;
-
+  margin: 10px auto 10px;
   svg {
     width: 80px;
     height: 80px;
@@ -21,19 +20,29 @@
 }
 
 .tableInfo {
-  margin: 20px 0 30px;
   font-size: 20px;
+  font-weight: 500;
+}
+
+.orderId {
+  margin: 0 0 20px;
 }
 
 .tableItem {
-  font-size: 17px;
-  margin-bottom: 22px;
-  display: flex;
-  justify-content: center;
-
-  .title {
-    margin-right: 30px;
+  margin-left: 28px;
+  font-size: 16px;
+  font-weight: 600;
+  span {
+    display: inline-block;
   }
+  .title {
+    margin-right: 10px;
+  }
+}
+
+.qrDivider {
+  margin: 10px 0 0;
+  text-align: center;
 }
 
 .qrCodeWrapper {

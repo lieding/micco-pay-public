@@ -45,3 +45,12 @@ export function formatTime(date: Date): string {
     return DatePeriods.apresMidi;
   return DatePeriods.soir;
 }
+
+export function getDateAndPeriodInfo () {
+  const date = new Date();
+  const monthStr = formateMonth(date.getMonth()),
+    yearStr = date.getFullYear(),
+    weekdayStr = formatWeekDay(date.getDay()),
+    period = formatTime(date);
+  return `${date.getDate()} ${monthStr} ${yearStr}, ${weekdayStr} ${period}`;
+}

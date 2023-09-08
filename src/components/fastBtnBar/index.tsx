@@ -9,9 +9,35 @@ import {
 } from "../../store/ordering";
 import { getBadgeChar } from "../../utils";
 import { useDispatch } from "react-redux";
-import { useCallback } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { MinusIcon } from "../icons";
 import cls from "classnames";
+
+function itemClickHandler (ev: MouseEvent, item: ICourse, cbk: Function, badgeChar: string) {
+  try {
+    ev.stopPropagation();
+    let el = (ev.target || ev.srcElement || ev.currentTarget) as HTMLDivElement;
+    if (!el) return;
+    if (badgeChar === '+')
+      return cbk(item, true);
+    let nodeName = el.nodeName.toLowerCase();
+    if (nodeName === 'path') {
+      el = el.parentNode as HTMLDivElement;
+      nodeName = el.nodeName.toLowerCase();
+    }
+    if (nodeName === 'svg') {
+      el = el.parentNode as HTMLDivElement;
+      nodeName = el.nodeName.toLowerCase();
+    }
+    if (nodeName === 'span') {
+      return cbk(item, !el.className.includes('reduce'));
+    }
+    const { offsetX } = ev;
+    if (isNaN(offsetX)) return;
+    const threshold = el.getBoundingClientRect().width / 2;
+    cbk(item, offsetX > threshold);
+  } catch (err) { console.error(err); }
+}
 
 function Item(props: {
   item: ICourse;
@@ -21,6 +47,9 @@ function Item(props: {
   idx: number;
 }) {
   const { item, badgeChar, cbk, isCheckout, idx } = props;
+  const divRef = useRef<HTMLDivElement | null>(null);
+  const badgeRef = useRef('+');
+  badgeRef.current = badgeChar;
 
   let elements: (JSX.Element | null)[] = [];
   if (isCheckout) {
@@ -33,16 +62,12 @@ function Item(props: {
         {item.label}
       </div>,
       showReduceIcon ? (
-        <div
+        <span
           className={cls(styles.badge, styles.reduce, "flex-center")}
-          onClick={(ev) => {
-            ev.stopPropagation();
-            cbk(item, false);
-          }}
           key="reduce"
         >
           <MinusIcon />
-        </div>
+        </span>
       ) : null,
     ];
   } else {
@@ -64,6 +89,14 @@ function Item(props: {
     ];
   }
 
+  useEffect(() => {
+    const el = divRef.current;
+    if (!el) return;
+    const listener = (ev: any) => itemClickHandler(ev, item, cbk, badgeRef.current);
+    el.addEventListener('click', listener);
+    return () => el.removeEventListener('click', listener);
+  }, [cbk, item]);
+
   return (
     <div
       className={cls(
@@ -71,7 +104,8 @@ function Item(props: {
         isCheckout ? styles.itemInIndexPage : styles.itemInOrderingPage
       )}
       key={item.key}
-      onClick={() => cbk(item)}
+      // only when the number of selected is equal to zero
+      ref={el => divRef.current = el}
     >
       {elements}
       <span key="badge" className={cls(styles.badge, "flex-center")}>

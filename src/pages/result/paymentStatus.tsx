@@ -8,7 +8,7 @@ function getConfig(paymentStatus: PaymentStatusEnum) {
     subTitle = "Status inconnue";
   switch (paymentStatus) {
     case PaymentStatusEnum.SUCCEEDED:
-      (Icon = SuccessIcon), (subTitle = "Paiement réussie");
+      (Icon = SuccessIcon), subTitle = '';
       break;
     case PaymentStatusEnum.FAILED:
       (Icon = FailIcon), (subTitle = "Paiement échoué");
@@ -39,10 +39,13 @@ export default function PaymentStatus(props: {
       </div>
       {paymentStatus === PaymentStatusEnum.SUCCEEDED ? (
         <div className={cls(styles.congra, "textAlign")}>
-          Congratulations 🎉
+          Paiement réussie 🎉
         </div>
       ) : null}
-      <div className={cls(styles.subTitle, "textAlign")}>{subTitle}</div>
+      {
+        subTitle &&
+        <div className={cls(styles.subTitle, "textAlign")}>{subTitle}</div>
+      }
     </>
   );
 }

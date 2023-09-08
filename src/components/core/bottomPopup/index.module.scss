@@ -1,0 +1,27 @@
+.wrapper {
+  position: fixed;
+  box-sizing: border-box;
+  padding: 8px 14px 20px;
+  z-index: 2;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  transition: all .4s ease-in;
+  transform: translateY(100%);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  &.visible {
+    transform: translateY(0);
+  }
+  > div {
+    flex: unset;
+  }
+  .close {
+    text-align: right;
+    height: 20px;
+    svg {
+      transform: translateX(10px);
+    }
+  }
+}

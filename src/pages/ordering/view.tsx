@@ -7,16 +7,14 @@ import styles from "./index.module.scss";
 import { RESTAURANT_FEATURE_KEY } from "../../store/restaurant";
 import {
   ORDERING_FEATURE_KEY,
-  getTotalAmount,
-  getTotalCount,
 } from "../../store/ordering";
 import LogoHeader from "../../components/logoHeader";
 import { ICourse } from "../../typing";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
-import FloatingTotalBtnBar from "../../components/floatingTotalBtnBar";
 import FloatingBar from "../../components/floatingBar";
 import { useScrollTop } from "../../hooks";
+import cls from 'classnames'
 
 function OrderingPage() {
   const navigate = useNavigate();
@@ -36,7 +34,7 @@ function OrderingPage() {
   return (
     <div className="page-wrapper">
       <LogoHeader />
-      <div className="expanded1">
+      <div className={cls('expanded1', styles.contentWrapper)}>
         <TimeAndTableInfo table={table} />
         <OrderSummary summary={summary} />
         <div className={styles.titlePackaging}>A emporter en plus?</div>

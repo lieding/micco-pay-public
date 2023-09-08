@@ -13,28 +13,16 @@ import { UserIcon, MailIcon, PhoneIcon } from "../../components/icons";
 import { setContact } from "../../store/ordering";
 import cls from "classnames";
 import type { Contact } from "../../typing";
-import { createPortal } from "react-dom";
-import { CloseIcon } from "../icons";
 import { FullWidthBtn } from "../";
+import { InputValidtors } from '../../utils';
+import { BottomPopup } from '../core';
 
 type KeyofContactType = keyof Contact;
 
-function checkPhoneOrMail(form: string, val: string) {
-  if (form === "phone") {
-    return /^\d{9,10}$/.test(val) ? "" : "invalide";
-  } else if (form === "mail") {
-    return /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/.test(
-      val
-    )
-      ? ""
-      : "invalide";
-  }
-  return "";
-}
-
 function checkInputItem(name: string, str: string) {
-  if (!str) return "il faut pas être vide";
-  return checkPhoneOrMail(name, str);
+  if (!str) return "Obligatoire";
+  return InputValidtors.checkPhoneOrMail(name, str) ||
+    InputValidtors.verifyNameInput(name, str);
 }
 
 function checkValidity(
@@ -168,28 +156,21 @@ function ContactForm(
     <Comp validities={validities} cbk={formChangeHandler} form={contactForm} />
   );
 
-  return createPortal(
+  return <BottomPopup visible={visible} toggleClose={toggleClose} height="425px">
     <>
-      {visible && <div className="curtain"></div>}
-      <div className={cls(styles.wrapper, visible ? styles.visible : null)}>
-        <div className={styles.close}>
-          <CloseIcon onClick={toggleClose} />
-        </div>
-        <div className={cls(styles.title, "textAlign")}>{title}</div>
-        <form
-          className={styles.contactForm}
-          noValidate
-          ref={(el) => (formRef.current = el)}
-        >
-          {formContent}
-        </form>
-        <FullWidthBtn cbk={btnClickHandler}>
-          <span>Continuer</span>
-        </FullWidthBtn>
-      </div>
-    </>,
-    document.body
-  );
+      <div className={cls(styles.title, "textAlign")}>{title}</div>
+      <form
+        className={styles.contactForm}
+        noValidate
+        ref={(el) => (formRef.current = el)}
+      >
+        {formContent}
+      </form>
+      <FullWidthBtn cbk={btnClickHandler}>
+        <span>Continue</span>
+      </FullWidthBtn>
+    </>
+  </BottomPopup>
 }
 
 export default forwardRef(ContactForm);

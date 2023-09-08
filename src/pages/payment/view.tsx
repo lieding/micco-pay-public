@@ -8,6 +8,7 @@ import {
 import { RESTAURANT_FEATURE_KEY } from "../../store/restaurant";
 import {
   PAYGREEN_FEATURE_KEY,
+  resetPaygreenInfo,
   setPaygreenInfo,
   setPaygreenInitStatus,
   setPaymentFlowStatus,
@@ -37,6 +38,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { IPaymentFlowStatus } from "../../global";
 import { useScrollTop } from "../../hooks";
+import PaymentFailurePopup from './paymentFailurePopup'
 
 function selector(state: RootState) {
   const {
@@ -82,8 +84,6 @@ function BottomPart({
   expiresAt: number;
   flowStatus: PgPaymentFlowStatus;
 }) {
-  const dispatch = useDispatch();
-
   const [remainingTimeStr, setReaminingTimeStr] = useState("");
   useEffect(() => {
     const id = setInterval(() => {
@@ -98,7 +98,6 @@ function BottomPart({
 
   const handlePay = () => {
     window.paygreenjs?.submitPayment();
-    dispatch(setPaymentFlowStatus(PgPaymentFlowStatus.SUBMITING));
   };
 
   const btnDisabled = !checkPaymentFormInteractive(flowStatus);
@@ -107,7 +106,7 @@ function BottomPart({
   if (!visible) return null;
 
   return (
-    <>
+    <div className={styles.bottomPart}>
       <div className={cls("flex-between")}>
         <span>Total:</span>
         <span>{total}€</span>
@@ -120,9 +119,11 @@ function BottomPart({
         className={cls("full-width-btn", btnDisabled ? "disabled" : "", styles.payButton)}
         onClick={handlePay}
       >
-        Payer
+        {
+          btnDisabled ? <span className="animation-loader" /> : 'Payer'
+        }
       </div>
-    </>
+    </div>
   );
 }
 
@@ -153,8 +154,10 @@ function PaymentPage() {
   const [reqStatus, setReqStatus] = useState(() =>
     initialized ? RequestStatusEnum.RESOLVED : RequestStatusEnum.INIT
   );
+  const [ failPopupMsg, setFailPopupMsg ] = useState('');
 
   useEffect(() => {
+    if (reqStatus !== RequestStatusEnum.INIT) return;
     setReqStatus(RequestStatusEnum.LOADING);
     queryPgOrderInfo(restaurantId, total, rounded, contact, platforms)
       .then((data) => {
@@ -167,7 +170,7 @@ function PaymentPage() {
         console.error(err);
         setReqStatus(RequestStatusEnum.REJECTED);
       });
-  }, []);
+  }, [reqStatus]);
 
   useEffect(() => {
     const havingAllParams = paymentOrderID && publicKey && objectSecret;
@@ -180,11 +183,22 @@ function PaymentPage() {
     const onFormFilling = (paymentFlow: IPaymentFlowStatus) => {
       dispatch(setPaymentFlowStatus(PgPaymentFlowStatus.FORM_FILLING));
     };
-    const onError = () =>
-      dispatch(setPaymentFlowStatus(PgPaymentFlowStatus.SUBMIT_FAILED));
+    const onError = (err?: { message: string, reset?: boolean }) => {
+      if (!err) return;
+      const { message, reset } = err;
+      setFailPopupMsg(message || 'Echec paiment');
+      // if 'reset' parameter is set ti True, it means we need to to re-initilize the paygreenjs,
+      // the wholepayment flox begins from the scratch
+      if (reset) {
+        dispatch(resetPaygreenInfo());
+        setTimeout(() => setReqStatus(RequestStatusEnum.INIT), 500);
+      }
+    }
+    const onSubmit = () =>
+      dispatch(setPaymentFlowStatus(PgPaymentFlowStatus.SUBMITING));
     const onSelection = () =>
       dispatch(setPaymentFlowStatus(PgPaymentFlowStatus.EN_SELECTION));
-    setTimeout(() => {
+    const init = () => {
       try {
         dispatch(setPaymentFlowStatus(PgPaymentFlowStatus.INIT));
         Paygreen.init(
@@ -192,7 +206,7 @@ function PaymentPage() {
           objectSecret,
           publicKey,
           pgPaymentMethod,
-          { onFinished, onFormFilling, onError, onSelection }
+          { onFinished, onFormFilling, onError, onSelection, onSubmit }
         );
         // dispatch(setPaymentFlowStatus(PgPaymentFlowStatus.EN_SELECTION));
         dispatch(setPaygreenInitStatus(true));
@@ -200,7 +214,8 @@ function PaymentPage() {
         console.error("fail to initialize the paygreenjs", err);
         dispatch(setPaygreenInitStatus(false));
       }
-    }, 1000);
+    };
+    setTimeout(init, 1000);
   }, [paymentOrderID, publicKey, objectSecret, initialized, pgPaymentMethod]);
 
   return (
@@ -213,6 +228,11 @@ function PaymentPage() {
         flowStatus={paymentFlowStatus}
         total={amtAfterFee}
         expiresAt={expiresAt}
+      />
+      <PaymentFailurePopup
+        visible={!!failPopupMsg}
+        message={failPopupMsg}
+        toggleClose={() => setFailPopupMsg('')}
       />
     </div>
   );

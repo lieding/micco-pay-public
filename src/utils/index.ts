@@ -8,6 +8,10 @@ export * as CourseUtils from './courseUtils';
 
 export * as Paygreen from './paygreen';
 
+export * as SessionStorageUtils from './sessionStorage';
+
+export * as InputValidtors from './validator';
+
 export function formatTabledisplay(table: String) {
   const lenOfCharsToFill = 3 - table.length;
   if (lenOfCharsToFill < 1) return table;

@@ -32,8 +32,9 @@ export function formatOrderInfo(
   if (isValidArray(orders)) {
     for (const item of orders) {
       const itemm = item as { count: number; price: number; name: string };
-      const value = `${itemm.count || 1} x ${itemm.price}€`;
-      ret.push({ title: itemm.name, value });
+      const count = ((itemm.count || 1) * itemm.price).toFixed(2);
+      const title = `${itemm.count || 1} x ${itemm.name} = ${count} EUR`;
+      ret.push({ title, value: '' });
     }
   }
   return ret;

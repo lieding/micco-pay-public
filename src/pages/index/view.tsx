@@ -1,4 +1,3 @@
-import IntroBg from "./introBg";
 import { useSelector } from "react-redux";
 import { RESTAURANT_FEATURE_KEY } from "../../store/restaurant";
 import { MENU_FEATURE_KEY } from "../../store/menu";
@@ -9,11 +8,27 @@ import FastBtnBar from "../../components/fastBtnBar";
 import Categories from "./categories";
 import FloatingBar from "../../components/floatingBar";
 import CourseMenu from "./courseMenu";
-import TimeAndTableInfo from "../../components/DatetimeTableBar";
 import LogoHeader from "../../components/logoHeader";
 import { useNavigate } from "react-router-dom";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import styles from "./index.module.scss";
+import { IRestaurant } from "../../typing";
+import { DateTimeUtils } from '../../utils';
+import cls from 'classnames';
+
+function TableAndDateInfo ({ restInfo, table }: {
+  restInfo: IRestaurant;
+  table: string;
+}) {
+  const dateAndPeriodStr = useMemo(DateTimeUtils.getDateAndPeriodInfo, []);
+  return <div className={cls('flex-between', styles.tableAndDateInfo)}>
+    <img src={restInfo.logoUrl} className={styles.logo} alt="logo" />
+    <div className={styles.dateAndTableInfo}>
+      <div>{ dateAndPeriodStr }</div>
+      <div>Table { table }</div>
+    </div>
+  </div>
+}
 
 function IndexPage() {
   const {
@@ -50,12 +65,13 @@ function IndexPage() {
     <div className="page-wrapper">
       <LogoHeader hideBackArrow={true} />
       <div className="expanded1">
-        <IntroBg restInfo={restInfo} />
-        <TimeAndTableInfo table={table} />
-        <div className={styles.heightBox} />
+        <TableAndDateInfo restInfo={restInfo} table={table} />
+        <div className={styles.buffetTitle}>
+          Nos formules Buffet
+        </div>
         <FastBtnBar isCheckout={true} elements={fastCheckouts} />
         <Categories categories={categories} activeKey={activeCategoryId} />
-        <CourseMenu items={items} summary={summary} />
+        <CourseMenu items={items} summary={summary} key={activeCategoryId} />
       </div>
       <FloatingBar cbk={toOrder} />
     </div>

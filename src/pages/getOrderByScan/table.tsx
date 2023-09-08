@@ -7,8 +7,9 @@ import { ScanOrderResponse } from "../../typing";
 export default function (props: {
   data: ScanOrderResponse
   excludeTableInfo?: boolean
+  style?: object
 }) {
-  const { data, excludeTableInfo } = props;
+  const { data, excludeTableInfo, ...params } = props;
   const config = useMemo(() => {
     let config: Array<{ title: string; value: string }> = [];
     if (!data) return config;
@@ -17,11 +18,11 @@ export default function (props: {
   }, [data]);
 
   return (
-    <div className={styles.tableWrapper}>
+    <div className={styles.tableWrapper} {...params}>
       {config.map((item) => (
-        <div key={item.title} className={cls(styles.row, "flex-center")}>
-          <div className={styles.title}>{item.title}:</div>
-          <div className={styles.value}>{item.value}</div>
+        <div key={item.title} className={cls(styles.row)}>
+          <span className={styles.title}>{item.title}</span>
+          <span className={styles.value}>{item.value}</span>
         </div>
       ))}
     </div>

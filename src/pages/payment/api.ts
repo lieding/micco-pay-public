@@ -1,7 +1,7 @@
 import { BASE_URL } from "../../consts";
 import { Contact, PgPaymentMethod } from "../../typing";
 
-// get the stripe initialization information
+// get the paygreen initialization information
 export function queryPgOrderInfo (
   restaurantId: string,
   amount: number,

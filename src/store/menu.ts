@@ -39,8 +39,29 @@ const { reducer: MenuReducer, actions } = createSlice({
       const { categoryId, menuInfo } = action.payload;
       state.menuMap[categoryId] = menuInfo;
     },
+    slideMenu (state, action: { payload: { toRight: boolean } }) {
+      const { payload: { toRight } } = action;
+      const { activeCategoryId, categories } = state;
+      const idx = categories.findIndex(id => id === activeCategoryId);
+      // if nox is the most right
+      if (
+        (toRight && idx === categories.length - 1) ||
+        (!toRight && idx === 0)
+      ) {
+        window.$resetMenuPosBeforeSlide?.(); 
+      } else {
+        let newIdx = toRight ? idx + 1 : idx - 1;
+        state.activeCategoryId = categories[newIdx];
+      }
+      window.$resetMenuPosBeforeSlide = undefined;
+    }
   },
 });
 
-export const { setActiveCategory, setCatesAndCheckouts, setMenuInfo } = actions;
+export const {
+  setActiveCategory,
+  setCatesAndCheckouts,
+  setMenuInfo,
+  slideMenu,
+} = actions;
 export default MenuReducer;

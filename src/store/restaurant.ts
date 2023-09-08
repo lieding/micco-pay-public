@@ -1,4 +1,6 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
+import { SessionStorageUtils } from '../utils';
+import { IRestaurant } from "../typing";
 
 export const RESTAURANT_FEATURE_KEY = "restaurant";
 
@@ -14,12 +16,27 @@ const DefaultRestInfo = {
 
 const searchParams = new URL(window.location.href).searchParams;
 
+const sessionStorageObj = SessionStorageUtils.loadRestConfig(); 
+
+let restaurantId = sessionStorageObj?.restaurantId || DefaultRestInfo.name;
+let table = sessionStorageObj?.table || "1";
+
+const paramOfRestaurantId = searchParams.get("restaurantId");
+const paramOfTable = searchParams.get("table");
+if (paramOfRestaurantId) {
+  restaurantId = paramOfRestaurantId;
+}
+if (paramOfTable) {
+  table = paramOfTable;
+}
+SessionStorageUtils.saveRestConfig({ restaurantId, table });
+
 const { reducer: RestaurantReducer, actions } = createSlice({
   name: RESTAURANT_FEATURE_KEY,
   initialState: {
-    restaurantId: searchParams.get("restaurantId") ?? DefaultRestInfo.name,
-    table: searchParams.get("table") ?? "1",
-    restInfo: null,
+    restaurantId,
+    table,
+    restInfo: null as (IRestaurant | null),
     feeConfig: { percentage: 0, addition: 0 },
   },
   reducers: {

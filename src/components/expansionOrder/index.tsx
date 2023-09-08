@@ -5,6 +5,30 @@ import cls from "classnames";
 import { DownIcon } from "../../components/icons";
 import { formatCourseLabel } from "../../utils";
 
+function Simple ({ strs, title }: { strs: string[], title: React.ReactElement | string }) {
+  const [isActive, setActive] = useState(false);
+  return (
+    <div className={styles.wrapper}>
+      <div
+        className={styles.title}
+        onClick={() => setActive((status) => !status)}
+      >
+        <div>{ title }</div>
+        <div>
+          <DownIcon
+            className={cls(styles.icon, { [styles.active]: isActive })}
+          />
+        </div>
+      </div>
+      <div className={cls(styles.expasion, { [styles.active]: isActive })}>
+        {
+          strs.map((str, idx) => <div key={idx} className={styles.row}>{ str }</div>)
+        }
+      </div>
+    </div>
+  );
+}
+
 function Row(props: { item: OrderingSummary[string] }) {
   const { item } = props;
   return (
@@ -42,5 +66,7 @@ function ExpasionOrder(props: { summary: OrderingSummary }) {
     </div>
   );
 }
+
+ExpasionOrder.Simple = Simple;
 
 export default ExpasionOrder;

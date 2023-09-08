@@ -1,14 +1,15 @@
 .tableWrapper {
   .row {
-    > div {
-      flex: 1;
+    span {
+      display: inline-block;
+      font-size: 16px;
+      font-weight: 600;
     }
     .title {
-      margin-right: 20px;
-      text-align: right;
+      margin-right: 10px;
     }
     .value {
-      font-weight: 700;
+      
     }
   }
 }

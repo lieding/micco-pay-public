@@ -13,7 +13,7 @@ function FloatingBar(props: { cbk?: () => void }) {
     <div className={styles.wrapper} onClick={props.cbk}>
       <div className={styles.container}>
         <div className={cls(styles.inner, "flex-center")}>{totalCount}</div>
-        <div className={styles.centerTitle}>Commande</div>
+        <div className={styles.centerTitle}>Continue</div>
       </div>
     </div>
   );

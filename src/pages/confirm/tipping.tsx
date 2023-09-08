@@ -44,12 +44,12 @@ function TippingList(props: {
     cbk({ customized: true, selected: _selected, amount: Number(input) });
   };
 
-  const ceilNum = Math.ceil(props.subPlusTip);
-  const showRounded = ceilNum !== props.subPlusTip;
+  // const ceilNum = Math.ceil(props.subPlusTip);
+  // const showRounded = ceilNum !== props.subPlusTip;
 
-  const roundedBtnTxt = props.rounded
-    ? `Déjà arrondi à ${ceilNum}€`
-    : `Arrondir à ${ceilNum}€`;
+  // const roundedBtnTxt = props.rounded
+  //   ? `Déjà arrondi à ${ceilNum}€`
+  //   : `Arrondir à ${ceilNum}€`;
 
   return (
     <>
@@ -72,7 +72,7 @@ function TippingList(props: {
           <input type="number" onChange={inputCbk} value={input} />€
         </div>
       </div>
-      <div className={cls(styles.tipping, styles.rounded)}>
+      {/* <div className={cls(styles.tipping, styles.rounded)}>
         <div
           className={cls(
             styles.item,
@@ -85,7 +85,7 @@ function TippingList(props: {
         >
           {roundedBtnTxt}
         </div>
-      </div>
+      </div> */}
     </>
   );
 }

@@ -181,6 +181,12 @@ export enum RequestStatusEnum {
   REJECTED
 }
 
+export enum PgPaymentFlowStatusEnum {
+  PENDING = 'pending',
+  SUCCESS = 'success',
+  FAILED= 'failed'
+}
+
 export enum PgPaymentFlowStatus {
   INIT,
   EN_SELECTION,
