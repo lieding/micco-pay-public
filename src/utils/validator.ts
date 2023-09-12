@@ -15,7 +15,7 @@ export function verifyNameInput (form: string, val: string) {
   if (form === 'firstName' || form === 'lastName') {
     const valid = /^[a-zA-Z]{2,}$/.test(val);
     if (valid) return '';
-    if (val.length < 2) return '2 Chars minimum';
+    if (val.length < 2) return '2 lettres minimum';
     return 'Nom invalid';
   }
   return '';

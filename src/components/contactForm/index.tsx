@@ -41,6 +41,13 @@ function checkValidity(
   return Object.keys(validities).length < 1;
 }
 
+interface ICOntactForm {
+  visible: boolean;
+  next: () => void;
+  toggleClose: () => void;
+  initialContact: Contact;
+}
+
 interface IFormContent {
   cbk: (e: React.ChangeEvent<HTMLInputElement>, formName?: string) => void;
   validities: Record<string, string>;
@@ -70,12 +77,14 @@ function Second({ cbk, validities, form }: IFormContent) {
   );
 }
 
-function First({ cbk, validities, form }: IFormContent) {
+function First({ cbk, validities, form, nameRequired = true }: IFormContent & { nameRequired?: boolean }) {
   return (
     <>
-      <div className={cls(styles.imgWrapper, "textAlign")}>
-        <img src="cardName.png" alt="" />
-      </div>
+      {
+        nameRequired ? <div className={cls(styles.imgWrapper, "textAlign")}>
+          <img src="cardName.png" alt="" />
+        </div> : null
+      }
       <div className={cls(styles.row, styles.first)}>
         <CustomInput
           prefix={<UserIcon />}
@@ -98,19 +107,12 @@ function First({ cbk, validities, form }: IFormContent) {
   );
 }
 
-function ContactForm(
-  {
-    visible,
-    next,
-    toggleClose,
-    initialContact,
-  }: {
-    visible: boolean;
-    next: () => void;
-    toggleClose: () => void;
-    initialContact: Contact;
-  },
-  ref: any
+function useContactFormHook (
+  initialContact: Contact,
+  visible: boolean,
+  next: Function,
+  ref: any,
+  formsNeedCheck?: KeyofContactType[]
 ) {
   const [contactForm, setForm] = useState<Contact>(() => ({ ...initialContact }));
   const [pageIdx, setPageIdx] = useState(0);
@@ -133,7 +135,7 @@ function ContactForm(
     ref,
     () => ({
       checkValidity() {
-        return checkValidity(contactForm, setValities);
+        return checkValidity(contactForm, setValities, formsNeedCheck);
       },
     }),
     [setValities, contactForm]
@@ -147,6 +149,34 @@ function ContactForm(
     if (pageIdx) next();
     else setPageIdx(1);
   };
+  return {
+    contactForm,
+    validities,
+    pageIdx,
+    formRef,
+    btnClickHandler,
+    formChangeHandler,
+    setValities
+  }
+}
+
+function ContactForm(
+  {
+    visible,
+    next,
+    toggleClose,
+    initialContact,
+  }: ICOntactForm,
+  ref: any
+) {
+  const {
+    pageIdx,
+    validities,
+    contactForm,
+    formChangeHandler,
+    formRef,
+    btnClickHandler
+  } = useContactFormHook(initialContact, visible, next, ref);
   const title =
     pageIdx === 0
       ? "Quel est le Nom et Prénom figure sur votre carte bancaire?"
@@ -172,5 +202,70 @@ function ContactForm(
     </>
   </BottomPopup>
 }
+
+function InOnePage(
+  {
+    visible,
+    next,
+    toggleClose,
+    initialContact,
+    nameRequired,
+  }: ICOntactForm & { nameRequired: boolean },
+  ref: any
+) {
+  const formsNeedCheck: KeyofContactType[] = ["firstName", "lastName", "mail"];
+  const {
+    validities,
+    contactForm,
+    formChangeHandler,
+    formRef,
+    setValities
+  } = useContactFormHook(initialContact, visible, next, ref, formsNeedCheck);
+
+  const btnClickHandler = () => {
+    const valid = checkValidity(contactForm, setValities, formsNeedCheck);
+    if (!valid) return;
+    next();
+  };
+
+  const title = (<div className={cls(styles.title, "textAlign")}>
+    {
+      nameRequired ? "Quel est le Nom et Prénom figure sur votre carte bancaire?" :
+        "Vos coordonnées pour recevoir la notification de paiement?"
+    }
+  </div>);
+  
+  return <BottomPopup visible={visible} toggleClose={toggleClose}>
+    <>
+      { title }
+      <form
+        className={styles.contactForm}
+        noValidate
+        ref={(el) => (formRef.current = el)}
+      >
+        <>
+          <First form={contactForm} validities={validities} nameRequired={nameRequired} cbk={formChangeHandler} />
+          <div className={styles.divider}></div>
+          <div className={cls(styles.row, styles.second)}>
+            <CustomInput
+              prefix={<MailIcon />}
+              placeholder="Email"
+              onChange={formChangeHandler}
+              name="mail"
+              validities={validities}
+              value={contactForm.mail}
+            />
+          </div>
+          <div className={styles.dividerBottom}></div>
+        </>
+      </form>
+      <FullWidthBtn cbk={btnClickHandler}>
+        <span>Continue</span>
+      </FullWidthBtn>
+    </>
+  </BottomPopup>
+}
+
+export const InOnePageForm = forwardRef(InOnePage)
 
 export default forwardRef(ContactForm);

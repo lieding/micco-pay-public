@@ -16,3 +16,8 @@ export const ClockIcon = _ClockIcon;
 export { default as MinusIcon } from "./minus";
 export { default as DownIcon } from "./down";
 export { default as CloseIcon } from './close';
+export { default as StarIcon } from './star';
+export { default as PositiveEmoji } from './positieEmoji';
+// @ts-ignore
+export { default as NeutralEmoji } from './neutralEmoji';
+export { default as NegativeEmoji } from './negativeEmoji';

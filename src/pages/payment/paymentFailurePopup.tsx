@@ -1,4 +1,5 @@
-import { FullWidthBtn } from '../../components';
+import { useEffect, useRef, useState } from 'react';
+import { FullWidthBtn, Loading } from '../../components';
 import { BottomPopup } from '../../components/core';
 import { CloseIcon } from '../../components/icons';
 import styles from './index.module.scss';
@@ -29,4 +30,55 @@ function PaymentFailurePopup ({ visible, message, toggleClose }: IPaymentFailure
   </BottomPopup>
 }
 
-export default PaymentFailurePopup
+export default PaymentFailurePopup;
+
+enum ApplePayFailedPopup {
+  PENDING,
+  TIMEOUT,
+}
+
+export function ApplePayFailedWaiting4BtnPopup ({ visible, reset }: {
+  visible: boolean,
+  reset: () => void
+}) {
+  const [ status, setStatus ] = useState(ApplePayFailedPopup.PENDING);
+  let title = "En initialisation d'Apple Pay";
+
+  const isPending = status === ApplePayFailedPopup.PENDING;
+  const timeoutIdRef = useRef<any>(null);
+
+  useEffect(() => {
+    clearTimeout(timeoutIdRef.current);
+    if (visible) {
+      setStatus(ApplePayFailedPopup.PENDING);
+      timeoutIdRef.current =
+        setTimeout(() => setStatus(ApplePayFailedPopup.TIMEOUT), 8000)
+    }
+  }, [visible]);
+
+  useEffect(() => () => clearTimeout(timeoutIdRef.current), []);
+
+  if (status === ApplePayFailedPopup.TIMEOUT) {
+    title = "Échec de l'initialisation d'Apple Pay";
+  }
+
+  return <BottomPopup
+    visible={visible}
+    toggleClose={() => {}}
+    customClass={styles.applePayFailedPopup}
+    hideCloseBtn
+  >
+    <>
+      <div className={cls('textAlign', styles.title)}>{ title }</div>
+      {
+        isPending ?
+        <div className={cls('textAlign', styles.loading)}>
+          <Loading />
+        </div> : null
+      }
+        <FullWidthBtn disabled={isPending} cbk={reset}>
+          <span>Réessayer</span>
+        </FullWidthBtn>
+    </>
+  </BottomPopup>
+} 

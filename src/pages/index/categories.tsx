@@ -3,13 +3,14 @@ import { useDispatch } from "react-redux";
 import styles from "./index.module.scss";
 import { useCallback, useMemo } from "react";
 import cls from "classnames";
+import { Tabs, ConfigProvider } from "react-vant";
 
 const CategoryNameMap: Record<string, string> = {
   MENU: "Menu",
   ENTRY: "Entrée",
   BUSKET: "Bucket",
   SUSHI: "Sushi",
-  SOFT: "Boisson",
+  SOFT: "Soda",
   COCKTAIL: "Cocktail",
   EAU: "Eau",
   APERITIF: "Apéritif",
@@ -24,18 +25,19 @@ const CategoryNameMap: Record<string, string> = {
   BOISSONCHAUDE: "Boisson chaude"
 };
 
-export default function Categories({
-  categories,
-  activeKey,
-}: {
+interface ICategory {
   categories: string[];
   activeKey: string;
-}) {
+}
+
+function useCategoryHook (categories: string[]) {
   const dispatch = useDispatch();
   const cbk = useCallback(
     (catId: string) => dispatch(setActiveCategory(catId)),
     [dispatch]
   );
+  const tabPaneClickHandler = useCallback((_: any, index: number) =>
+    cbk(categories[index]), [categories]);
   const categoryArr = useMemo(
     () =>
       categories
@@ -43,6 +45,12 @@ export default function Categories({
         .filter((item) => Boolean(item.txt)),
     [categories]
   );
+
+  return { cbk, categoryArr, tabPaneClickHandler };
+}
+
+function Categories({ categories, activeKey, }: ICategory) {
+  const { cbk, categoryArr } = useCategoryHook(categories);
 
   return (
     <div className={styles.categories}>
@@ -62,3 +70,33 @@ export default function Categories({
     </div>
   );
 }
+
+const ThemeVars = {
+  tabTextColor: '#828282',
+  tabActiveTextColor: '#fff',
+  tabCapsulePadding: '0',
+  tabsNavBackgroundColor: 'transparent',
+  tabsBottomBarColor: 'transparent',
+}
+
+function CategoryTabs ({
+  categories,
+  activeKey,
+  children
+}: ICategory & { children: React.ReactElement }) {
+  const { tabPaneClickHandler, categoryArr } = useCategoryHook(categories);
+
+  return <ConfigProvider themeVars={ThemeVars}>
+    <Tabs swipeable type='capsule' onChange={tabPaneClickHandler}>
+      {categoryArr.map((item) => (
+        <Tabs.TabPane key={item.key} title={item.txt}>
+          { item.key === activeKey ? children : null }
+        </Tabs.TabPane>
+      ))}
+    </Tabs>
+  </ConfigProvider>
+}
+
+Categories.Tabs = CategoryTabs;
+
+export default Categories;

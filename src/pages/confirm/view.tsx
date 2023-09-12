@@ -22,11 +22,11 @@ import SubTotalAndFee from "../../components/subTotalAndFee";
 import floatingTotalBtnBarStyles from "../../components/floatingTotalBtnBar/index.module.scss";
 import floatingBtnBarStyles from "../../components/floatingBar/floatingBar.module.scss";
 import { RESTAURANT_FEATURE_KEY } from "../../store/restaurant";
-import ContactFormPopup from "../../components/contactForm";
+import ContactFormPopup, { InOnePageForm } from "../../components/contactForm";
 import PaymentMethosSelect from "./paymentMethodSelect";
 import { persistStore } from "../../store";
-import { Paygreen, simpleDeepEqual } from "../../utils";
-import { Contact } from "../../typing";
+import { Paygreen } from "../../utils";
+import { Contact, PaymentOptionEnum } from "../../typing";
 
 function BtnRow(props: { total: number; beforeLeave: () => boolean | void }) {
   const eles = (
@@ -76,6 +76,7 @@ function selector(state: RootState) {
     feeConfig: state[RESTAURANT_FEATURE_KEY].feeConfig,
     withoutPayment,
     needContactInfo,
+    nameRequired: paymentMethodKey === PaymentOptionEnum.BLUE_CARD,
   };
 }
 
@@ -93,6 +94,7 @@ function ConfirmPage() {
     feeConfig,
     withoutPayment,
     needContactInfo,
+    nameRequired,
   } = useSelector(selector);
 
   useScrollTop();
@@ -181,9 +183,10 @@ function ConfirmPage() {
         />
         <BtnRow total={total + fee} beforeLeave={beforeLeave} />
       </div>
-      <ContactFormPopup
+      <InOnePageForm
         ref={(el) => (contactFormRef.current = el)}
         visible={popupVisible}
+        nameRequired={nameRequired}
         initialContact={contact}
         next={beforeLeave}
         toggleClose={() => togglePopupVisible(false)}

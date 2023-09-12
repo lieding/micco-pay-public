@@ -14,7 +14,7 @@ import {
   setPaymentFlowStatus,
 } from "../../store/paygreen";
 import { RootState, persistStore } from "../../store";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import PaygreenCustomElement, {
   checkPaymentFormInteractive,
   checkShowPaymentForm,
@@ -36,9 +36,8 @@ import {
   filterRestaurantTicketPaymentMethods,
 } from "../../typing";
 import { useNavigate } from "react-router-dom";
-import { IPaymentFlowStatus } from "../../global";
 import { useScrollTop } from "../../hooks";
-import PaymentFailurePopup from './paymentFailurePopup'
+import PaymentFailurePopup, { ApplePayFailedWaiting4BtnPopup } from './paymentFailurePopup'
 
 function selector(state: RootState) {
   const {
@@ -129,6 +128,42 @@ function BottomPart({
 
 function PaymentPage() {
   const {
+    summary,
+    reqStatus,
+    paymentFlowStatus,
+    amtAfterFee,
+    expiresAt,
+    failPopupMsg,
+    setFailPopupMsg,
+    applePatFailPopupVis,
+    reset4ApplePay
+  } = usePaymentPageHook();
+
+  return (
+    <div className={cls("page-wrapper", "flex-column", styles.pageWrapper)}>
+      <LogoHeader />
+      <ExpasionOrder summary={summary} />
+      {reqStatus !== RequestStatusEnum.RESOLVED ? <Loading /> : null}
+      <PaygreenCustomElement flowStatus={paymentFlowStatus} />
+      <BottomPart
+        flowStatus={paymentFlowStatus}
+        total={amtAfterFee}
+        expiresAt={expiresAt}
+      />
+      <PaymentFailurePopup
+        visible={!!failPopupMsg}
+        message={failPopupMsg}
+        toggleClose={() => setFailPopupMsg('')}
+      />
+      <ApplePayFailedWaiting4BtnPopup visible={applePatFailPopupVis} reset={reset4ApplePay}  />
+    </div>
+  );
+}
+
+export default PaymentPage;
+
+function usePaymentPageHook () {
+  const {
     restaurantId,
     total,
     paygreenInfo,
@@ -154,7 +189,16 @@ function PaymentPage() {
   const [reqStatus, setReqStatus] = useState(() =>
     initialized ? RequestStatusEnum.RESOLVED : RequestStatusEnum.INIT
   );
+  const reset = useCallback(() => {
+    dispatch(resetPaygreenInfo());
+    setTimeout(() => setReqStatus(RequestStatusEnum.INIT), 500);
+  }, []);
   const [ failPopupMsg, setFailPopupMsg ] = useState('');
+  const [ applePatFailPopupVis, setApplePayFailVis ] = useState(false);
+  const reset4ApplePay = () => {
+    setApplePayFailVis(false);
+    reset();
+  };
 
   useEffect(() => {
     if (reqStatus !== RequestStatusEnum.INIT) return;
@@ -180,18 +224,17 @@ function PaymentPage() {
       persistStore();
       navigate(`/result?redirect_status=${PaymentResultEnum.SUCCEEDED}`);
     };
-    const onFormFilling = (paymentFlow: IPaymentFlowStatus) => {
+    const onFormFilling = () => {
       dispatch(setPaymentFlowStatus(PgPaymentFlowStatus.FORM_FILLING));
     };
     const onError = (err?: { message: string, reset?: boolean }) => {
       if (!err) return;
-      const { message, reset } = err;
+      const { message, reset: isReset } = err;
       setFailPopupMsg(message || 'Echec paiment');
       // if 'reset' parameter is set ti True, it means we need to to re-initilize the paygreenjs,
       // the wholepayment flox begins from the scratch
-      if (reset) {
-        dispatch(resetPaygreenInfo());
-        setTimeout(() => setReqStatus(RequestStatusEnum.INIT), 500);
+      if (isReset) {
+        reset();
       }
     }
     const onSubmit = () =>
@@ -206,7 +249,7 @@ function PaymentPage() {
           objectSecret,
           publicKey,
           pgPaymentMethod,
-          { onFinished, onFormFilling, onError, onSelection, onSubmit }
+          { onFinished, onFormFilling, onError, onSelection, onSubmit, setApplePayFailVis }
         );
         // dispatch(setPaymentFlowStatus(PgPaymentFlowStatus.EN_SELECTION));
         dispatch(setPaygreenInitStatus(true));
@@ -218,24 +261,15 @@ function PaymentPage() {
     setTimeout(init, 1000);
   }, [paymentOrderID, publicKey, objectSecret, initialized, pgPaymentMethod]);
 
-  return (
-    <div className={cls("page-wrapper", "flex-column", styles.pageWrapper)}>
-      <LogoHeader />
-      <ExpasionOrder summary={summary} />
-      {reqStatus !== RequestStatusEnum.RESOLVED ? <Loading /> : null}
-      <PaygreenCustomElement flowStatus={paymentFlowStatus} />
-      <BottomPart
-        flowStatus={paymentFlowStatus}
-        total={amtAfterFee}
-        expiresAt={expiresAt}
-      />
-      <PaymentFailurePopup
-        visible={!!failPopupMsg}
-        message={failPopupMsg}
-        toggleClose={() => setFailPopupMsg('')}
-      />
-    </div>
-  );
+  return {
+    failPopupMsg,
+    summary,
+    reqStatus,
+    setFailPopupMsg,
+    paymentFlowStatus,
+    expiresAt,
+    amtAfterFee,
+    applePatFailPopupVis,
+    reset4ApplePay
+  }
 }
-
-export default PaymentPage;

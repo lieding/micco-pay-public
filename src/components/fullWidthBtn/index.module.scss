@@ -7,6 +7,9 @@
   background: #7842eb;
   border-radius: 16px;
   padding: 14px 0;
+  &.disabled {
+    background: #697887;
+  }
   span {
     display: inline-block;
   }

@@ -9,6 +9,7 @@ interface IBottomPopup {
   toggleClose: () => void
   height?: string
   customClass?: string
+  hideCloseBtn?: boolean
 }
 
 function BottomPopup ({
@@ -17,6 +18,7 @@ function BottomPopup ({
   toggleClose,
   height,
   customClass,
+  hideCloseBtn,
 }: IBottomPopup) {
   return createPortal(
     <>
@@ -25,9 +27,11 @@ function BottomPopup ({
         className={cls(styles.wrapper, visible ? styles.visible : null, customClass)}
         style={{ height }}
       >
-        <div className={styles.close}>
-          <CloseIcon onClick={toggleClose} />
-        </div>
+        {
+          hideCloseBtn ? null : <div className={styles.close}>
+            <CloseIcon onClick={toggleClose} />
+          </div>
+        }
         { children }
       </div>
     </>,

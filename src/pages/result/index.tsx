@@ -18,9 +18,9 @@ import {
   PaymentResultEnum,
   PaymentStatus as PaymentStatusEnum,
   PaymentOptionEnum,
-  ScanOrderResponse,
+  IRestaurant,
 } from "../../typing";
-import Table from "../getOrderByScan/table";
+import Review from './review';
 const LazyQrLibrary = lazy(() => import("./qrcode"));
 import { ExpasionOrder } from '../../components';
 
@@ -34,6 +34,7 @@ type Config = {
   tipInfo: RootState["ordering"]["tip"];
   orders: ReturnType<typeof createOrderPostBody>["orders"];
   amtAfterFee: number;
+  restInfo: RootState['restaurant']['restInfo'];
 };
 
 function Qrcode(props: {
@@ -102,7 +103,8 @@ export default function ResultPage() {
           restaurantId,
           tipInfo: tip,
           orders: body.orders,
-          amtAfterFee
+          amtAfterFee,
+          restInfo: state[RESTAURANT_FEATURE_KEY].restInfo,
         });
       })
       .catch(console.error)
@@ -113,26 +115,26 @@ export default function ResultPage() {
   const isPaymentInCach = paymentStatus === PaymentStatusEnum.IN_CASH;
   if (config) {
     const { showTipInfo, total, totalWithoutTip, tipInfo, id, amtAfterFee, orders } = config;
-    if (isPaymentInCach) {
-      const configg = { orders } as unknown as ScanOrderResponse;
-      const courseTableInfo =
-        <Table data={configg} excludeTableInfo={true} style={{ marginLeft: '28px' }} />;
-      return <>
-        {courseTableInfo}
-        {showTipInfo && <Item title="Pourboire" value={`${tipInfo.amount} EUR`} />}
-        <Item title="Reste à payer" value={`${total} EUR`} />
-      </>
-    }
     const title = <div>Commande <strong>{id}</strong></div>;
     const strs = courseInfo2StrArr(orders);
     if (showTipInfo) strs.push(`Pourboire =  EUR`);
-    strs.push(...['  ', '   ', `Total = ${amtAfterFee} EUR`]);
-    content = (
-      <ExpasionOrder.Simple
-        title={title}
-        strs={strs}
-      />
-    );
+    if (isPaymentInCach) {
+      strs.push(...['  ', '   ',  `Reste à payer: ${total} EUR`]);
+      content = (
+        <>
+          <div className={styles.qrDivider}></div>
+          <ExpasionOrder.Simple title={title} strs={strs} />
+        </>
+      );
+    } else {
+      strs.push(...['  ', '   ',  `Total = ${amtAfterFee} EUR`]);
+      content = (
+        <>
+          <ExpasionOrder.Simple title={title} strs={strs} />
+          <div className={styles.qrDivider}>Vous allez recevoir un email</div>
+        </>
+      );
+    }
   }
 
   return (
@@ -145,14 +147,12 @@ export default function ResultPage() {
       <PaymentStatus paymentStatus={paymentStatus} />
       {content}
       {isLoading && <Loading />}
-      <div className={styles.qrDivider}>
-        Vous allez recevoir un email 
-      </div>
       <Qrcode
         config={config}
         isLoading={isLoading}
         paymentStatus={paymentStatus}
       />
+      <Review restInfo={config?.restInfo ?? null} />
     </div>
   );
 }
@@ -167,14 +167,4 @@ function courseInfo2StrArr (orders: Config['orders']) {
     }
   }
   return ret;
-}
-
-function Item(props: { title: string; value: string | React.ReactElement }) {
-  const { title, value } = props;
-  return (
-    <div className={styles.tableItem}>
-      <span className={styles.title}>{title}:</span>
-      <span>{value}</span>
-    </div>
-  );
 }

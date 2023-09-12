@@ -25,7 +25,7 @@ function TableAndDateInfo ({ restInfo, table }: {
     <img src={restInfo.logoUrl} className={styles.logo} alt="logo" />
     <div className={styles.dateAndTableInfo}>
       <div>{ dateAndPeriodStr }</div>
-      <div>Table { table }</div>
+      <div className={styles.tableInfo}>Table { table }</div>
     </div>
   </div>
 }
@@ -64,14 +64,20 @@ function IndexPage() {
   return (
     <div className="page-wrapper">
       <LogoHeader hideBackArrow={true} />
-      <div className="expanded1">
+      <div className={cls("expanded1")}>
         <TableAndDateInfo restInfo={restInfo} table={table} />
-        <div className={styles.buffetTitle}>
+        <div className={cls(styles.sectionTitle, styles.buffetTitle)}>
           Nos formules Buffet
         </div>
         <FastBtnBar isCheckout={true} elements={fastCheckouts} />
-        <Categories categories={categories} activeKey={activeCategoryId} />
-        <CourseMenu items={items} summary={summary} key={activeCategoryId} />
+        {/* <Categories categories={categories} activeKey={activeCategoryId} />
+        <CourseMenu items={items} summary={summary} key={activeCategoryId} /> */}
+        <div className={cls(styles.sectionTitle, styles.drinkTitle)}>
+          Nos boissons
+        </div>
+        <Categories.Tabs categories={categories} activeKey={activeCategoryId}>
+          <CourseMenu items={items} summary={summary} key={activeCategoryId} />
+        </Categories.Tabs>
       </div>
       <FloatingBar cbk={toOrder} />
     </div>

@@ -1,5 +1,13 @@
 import { IS_DEV } from "../consts";
 import { PgPaymentFlowStatus, PgPaymentFlowStatusEnum, PgPaymentMethod } from "../typing";
+import { submitErrLog } from './log';
+
+function getLastFlow (log?: boolean) {
+  const flows = window.paygreenjs.status()?.flows;
+  if (log) console.log(flows);
+  const lastFlow = flows?.length ? flows[flows.length - 1] : {};
+  return { method: lastFlow?.method, status: lastFlow?.status };
+}
 
 export function importResources() {
   // <link href="https://pgjs.paygreen.fr/latest/paygreen.min.css" type="text/css" rel="stylesheet" />
@@ -25,10 +33,11 @@ export function init(
   paymentMethod: PgPaymentMethod,
   callbacks: {
     onFinished?: () => void;
-    onFormFilling?: (paymentFlow?: any) => void;
+    onFormFilling?: () => void;
     onError?: (err?: { message: string, reset?: boolean }) => void;
     onSelection?: () => void;
     onSubmit?: () => void;
+    setApplePayFailVis?: (visible: boolean) => void
   }
 ) {
   const paygreenjs = window.paygreenjs;
@@ -50,11 +59,7 @@ export function init(
   paygreenjs.attachEventListener(
     paygreenjs.Events.PAYMENT_FLOW_ONCHANGE,
     () => {
-      const flows = paygreenjs.status()?.flows;
-      console.log("PAYMENT_FLOW_ONCHANGE", flows);
-      const lastFlow = flows[flows.length - 1];
-      if (!lastFlow) return;
-      const { method, status } = lastFlow;
+      const { method, status } = getLastFlow(true); 
       // if the payment method/platform is "conecs", once payment is done, it would not redirect automatically
       // so we need to detect its payment status update manually, just like below
       if (method === PgPaymentMethod.CONECS) {
@@ -65,7 +70,7 @@ export function init(
         else if (status === PgPaymentFlowStatusEnum.PENDING)
           callbacks.onFormFilling?.();
       } else if (method && status === PgPaymentFlowStatusEnum.PENDING) {
-        callbacks.onFormFilling?.(lastFlow);
+        callbacks.onFormFilling?.();
       } else if (!method && status === PgPaymentFlowStatusEnum.PENDING) {
         callbacks.onSelection?.();
       } else {
@@ -83,7 +88,7 @@ export function init(
     paygreenjs.Events.TOKEN_FAIL,
     () => {
       console.log('TOKEN_FAIL');
-      callbacks.onFormFilling?.(null);
+      callbacks.onFormFilling?.();
     }
   )
 
@@ -95,8 +100,13 @@ export function init(
     }
   );
 
-  paygreenjs.attachEventListener(paygreenjs.Events.PAYMENT_FAIL, (err: any) => {
-    console.error("payment authorization has been refused", err);
+  paygreenjs.attachEventListener(paygreenjs.Events.PAYMENT_FAIL, (ev: CustomEvent) => {
+    console.error("payment authorization has been refused", ev);
+    const flows = paygreenjs.status()?.flows;
+    if (flows?.length) {
+      const lastFlow = flows[flows.length - 1];
+      submitErrLog({ desc: 'payment authorization has been refused', flow: lastFlow  });
+    }
     callbacks.onError?.({ message: "L'autorisation de paiement est refusée. Veuillez réessayer le paiement", reset: true });
   });
   const params = {
@@ -111,6 +121,7 @@ export function init(
   if (paymentMethod === PgPaymentMethod.APPLE_PAY) {
     // @ts-ignore
     delete params.paymentMethod;
+    applePayExceptionHandler = applePayExceptionHandlerCreator(callbacks.setApplePayFailVis);
     paygreenjs.attachEventListener(
       paygreenjs.Events.PAYMENT_FLOW_ONCHANGE,
       displayOnlyApplePayBtn
@@ -163,6 +174,30 @@ const style = {
   },
 };
 
+let applePayExceptionHandler: Function | undefined
+
+function applePayExceptionHandlerCreator (setApplePayFailVis: Function | undefined) {
+  const ONCHANGE_EV = window.paygreenjs.Events.PAYMENT_FLOW_ONCHANGE;
+  function listener4AppleBtn () {
+    window.paygreenjs.detachEventListener(ONCHANGE_EV, listener4AppleBtn);
+    const { method, status } = getLastFlow();
+    if (!method && status === PgPaymentFlowStatusEnum.PENDING)
+      setApplePayFailVis?.(false);
+  }
+  function listener4Failed () {
+    const { method, status } = getLastFlow();
+    if (method === PgPaymentMethod.APPLE_PAY) {
+      if (status === PgPaymentFlowStatusEnum.PENDING) return;
+      if (status === PgPaymentFlowStatusEnum.FAILED) {
+        window.paygreenjs.attachEventListener(ONCHANGE_EV, listener4AppleBtn);
+        setApplePayFailVis?.(true);
+      }
+    }
+    window.paygreenjs.detachEventListener(ONCHANGE_EV, listener4Failed);
+  }
+  return () => window.paygreenjs.attachEventListener(ONCHANGE_EV, listener4Failed);
+}
+
 /**
  * it is asked by paygreenjs, when it comes to apple_pay,
  * this detailed info: https://developers.paygreen.fr/docs/apple-pay
@@ -181,7 +216,10 @@ function displayOnlyApplePayBtn () {
       el.style['-webkit-appearance'] = '-apple-pay-button';
       // @ts-ignore
       el.style['-apple-pay-button-type'] = 'check-out';
-      el.onclick = () => window.paygreenjs.setPaymentMethod("apple_pay" as PgPaymentMethod);
+      el.onclick = () => {
+        applePayExceptionHandler?.();
+        window.paygreenjs.setPaymentMethod("apple_pay" as PgPaymentMethod);
+      }
     } else {
       el.style.display = 'none';
     }

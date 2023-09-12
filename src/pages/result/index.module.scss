@@ -48,3 +48,37 @@
 .qrCodeWrapper {
   height: 250px;
 }
+
+.review {
+  padding-top: 30px;
+  border-top: 2px solid #000;
+  margin: 40px 0 10px;
+  .title {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0 auto;
+  }
+  .startIcons {
+    margin-top: 20px;
+    svg {
+      display: inline-block;
+      margin: 0 4px;
+    }
+  }
+  .subrateTitle {
+    margin: 20px 0 20px;
+  }
+  .subRates {
+    margin-bottom: 20px;
+    .subRateItem {
+      margin-bottom: 6px;
+      span {
+        display: inline-block;
+      }
+      svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+}

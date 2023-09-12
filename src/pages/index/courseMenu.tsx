@@ -3,10 +3,9 @@ import styles from "./index.module.scss";
 import { getBadgeChar } from "../../utils";
 import cls from "classnames";
 import { useDispatch } from "react-redux";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback } from "react";
 import { addOrder, reduceOrder } from "../../store/ordering";
 import { MinusIcon } from "../../components/icons";
-import { slideMenu } from "../../store/menu";
 
 function itemClickHandler (ev: React.MouseEvent<HTMLDivElement>) {
   try {
@@ -28,12 +27,17 @@ function CourseItem(props: {
   const { item, badgeChar, cbk } = props;
   const showReduceIcon = badgeChar !== "+";
   const hasSubOrVolInfo = item.subtitle || item.volume;
+  const imgClickHandler = (ev: React.MouseEvent<HTMLDivElement>) => {
+    if (!showReduceIcon)
+      return cbk(item, true);
+    cbk(item, itemClickHandler(ev));
+  }
   return (
     <div className={styles.item}>
       <img
         src={item.pics?.[0]}
         className={styles.img}
-        onClick={(ev:any) => cbk(item, itemClickHandler(ev))}
+        onClick={imgClickHandler}
       />
       <div className={styles.title}>{item.label}</div>
       {hasSubOrVolInfo && (
@@ -77,39 +81,11 @@ export default function CourseMenu(props: {
       dispatch(isAdd ? addOrder(item) : reduceOrder(item)),
     [dispatch]
   );
-
-  const divRef = useRef<HTMLDivElement | null>(null);
-  
-  const touchStart = useCallback((ev: React.TouchEvent<HTMLDivElement>) => {
-    ev.stopPropagation();
-    const el = divRef.current;
-    if (!el) return;
-    const reset = () => el.style.transform = 'translateX(0)'
-    const startX = ev.changedTouches[0].clientX;
-    const listener = (ev: TouchEvent) => {
-      el.removeEventListener('touchend', listener);
-      el.removeEventListener('touchmove', moveListener);
-      const endX = ev.changedTouches[0].clientX;
-      const delta = endX - startX;
-      if (Math.abs(delta) < 50) return reset();
-      const toRight = delta < 0;
-      window.$resetMenuPosBeforeSlide = reset;
-      dispatch(slideMenu({ toRight }));
-    }
-    const moveListener = (ev: TouchEvent) => {
-      const delta = ev.changedTouches[0].clientX - startX;
-      el.style.transform = `translateX(${delta}px)`
-    }
-    el.addEventListener('touchmove', moveListener);
-    el.addEventListener('touchend', listener);
-  }, []);
   if (!items) return null;
 
   return (
     <div
-      onTouchStart={touchStart}
       className={styles.menu}
-      ref={el => divRef.current = el}
     >
       {items.map((e) => (
         <CourseItem
