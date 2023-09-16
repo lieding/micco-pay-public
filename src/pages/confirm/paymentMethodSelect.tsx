@@ -22,7 +22,7 @@ function PaymentOptionItem({
   const isSelected = activeKey === item.key;
   const onClick = () => setPaymentKey(item.key);
   return (
-    <div className={cls(styles.item, disabled ? styles.disabled : null)}>
+    <div className={cls(styles.item, disabled ? styles.disabled : null)} onClick={onClick}>
       <div className={styles.title}>{item.title}</div>
       {item.icon && <img className={styles.img} src={item.icon} />}
       <div
@@ -31,8 +31,7 @@ function PaymentOptionItem({
           "flex-center",
           isSelected ? styles.selected : null
         )}
-        onClick={onClick}
-      ></div>
+      />
     </div>
   );
 }

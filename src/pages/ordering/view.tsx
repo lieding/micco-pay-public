@@ -1,18 +1,15 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-import TimeAndTableInfo from "../../components/DatetimeTableBar";
+import { TableAndDateInfo, FastBtnBar, FloatingBar, LogoHeader } from "../../components";
 import OrderSummary from "./OrderingSummary";
-import FastBtnBar from "../../components/fastBtnBar";
 import styles from "./index.module.scss";
 import { RESTAURANT_FEATURE_KEY } from "../../store/restaurant";
 import {
   ORDERING_FEATURE_KEY,
 } from "../../store/ordering";
-import LogoHeader from "../../components/logoHeader";
 import { ICourse } from "../../typing";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
-import FloatingBar from "../../components/floatingBar";
 import { useScrollTop } from "../../hooks";
 import cls from 'classnames'
 
@@ -21,26 +18,23 @@ function OrderingPage() {
   useScrollTop();
   const {
     orderInfo: { summary },
-    restInfo: { table },
+    restInfo: { table, restInfo },
   } = useSelector((state: RootState) => ({
     restInfo: state[RESTAURANT_FEATURE_KEY],
     orderInfo: state[ORDERING_FEATURE_KEY],
   }));
 
-  // const total = getTotalAmount(summary);
-  // const totalCount = getTotalCount(summary);
   const toNext = useCallback(() => navigate("/confirm"), [navigate]);
 
   return (
     <div className="page-wrapper">
       <LogoHeader />
       <div className={cls('expanded1', styles.contentWrapper)}>
-        <TimeAndTableInfo table={table} />
+        <TableAndDateInfo table={table} restInfo={restInfo} />
         <OrderSummary summary={summary} />
         <div className={styles.titlePackaging}>A emporter en plus?</div>
         <FastBtnBar isCheckout={false} elements={PackagingOptions} />
       </div>
-      {/* <FloatingTotalBtnBar total={total} count={totalCount} cbk={toNext} /> */}
       <FloatingBar cbk={toNext} />
     </div>
   );

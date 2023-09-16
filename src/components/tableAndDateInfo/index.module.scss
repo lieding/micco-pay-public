@@ -1,0 +1,14 @@
+.tableAndDateInfo {
+  align-items: center;
+  .logo {
+    max-height: 30px;
+  }
+  .dateAndTableInfo {
+    text-align: right;
+    font-size: 12px;
+    .tableInfo {
+      font-size: 16px;
+      font-weight: 700;
+    }
+  }
+}

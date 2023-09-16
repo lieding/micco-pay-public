@@ -10,25 +10,10 @@ import FloatingBar from "../../components/floatingBar";
 import CourseMenu from "./courseMenu";
 import LogoHeader from "../../components/logoHeader";
 import { useNavigate } from "react-router-dom";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
+import { TableAndDateInfo } from '../../components'
 import styles from "./index.module.scss";
-import { IRestaurant } from "../../typing";
-import { DateTimeUtils } from '../../utils';
 import cls from 'classnames';
-
-function TableAndDateInfo ({ restInfo, table }: {
-  restInfo: IRestaurant;
-  table: string;
-}) {
-  const dateAndPeriodStr = useMemo(DateTimeUtils.getDateAndPeriodInfo, []);
-  return <div className={cls('flex-between', styles.tableAndDateInfo)}>
-    <img src={restInfo.logoUrl} className={styles.logo} alt="logo" />
-    <div className={styles.dateAndTableInfo}>
-      <div>{ dateAndPeriodStr }</div>
-      <div className={styles.tableInfo}>Table { table }</div>
-    </div>
-  </div>
-}
 
 function IndexPage() {
   const {

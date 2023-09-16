@@ -39,7 +39,7 @@ export default function PaymentStatus(props: {
       </div>
       {paymentStatus === PaymentStatusEnum.SUCCEEDED ? (
         <div className={cls(styles.congra, "textAlign")}>
-          Paiement réussie 🎉
+          Paiement réussi 🎉
         </div>
       ) : null}
       {

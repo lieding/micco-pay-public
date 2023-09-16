@@ -67,12 +67,14 @@ function Review ({ restInfo }: IReview) {
     setSubmitStatus(RequestStatusEnum.RESOLVED);
   }
 
-  const title = rate ? (
-    <div className={cls(styles.title, 'textAlign')}>Merci d’avoir partagé votre avis</div>
-  ) : (<>
+  const isSubmitInit = submitStatus === RequestStatusEnum.INIT;
+
+  const title = isSubmitInit ? (<>
     <div className={cls(styles.title, 'textAlign')}>Partagez votre expérience au</div>
     <div className={cls(styles.title, 'textAlign')}>{ restInfo?.displayName }</div>
-  </>);
+  </>) : (
+    <div className={cls(styles.title, 'textAlign')}>Merci d'avoir partagé votre avis</div>
+  );
 
   return (
     <div className={styles.review}>
@@ -91,7 +93,7 @@ function Review ({ restInfo }: IReview) {
         }
       </div>
       {
-        submitStatus === RequestStatusEnum.INIT ?
+        isSubmitInit ?
         <FullWidthBtn disabled={!rate} cbk={btnClickHandler}>
           <span>Envoyer</span>
         </FullWidthBtn> : null

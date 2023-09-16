@@ -179,12 +179,14 @@ let applePayExceptionHandler: Function | undefined
 function applePayExceptionHandlerCreator (setApplePayFailVis: Function | undefined) {
   const ONCHANGE_EV = window.paygreenjs.Events.PAYMENT_FLOW_ONCHANGE;
   function listener4AppleBtn () {
+    console.log("listener4AppleBtn");
     window.paygreenjs.detachEventListener(ONCHANGE_EV, listener4AppleBtn);
     const { method, status } = getLastFlow();
     if (!method && status === PgPaymentFlowStatusEnum.PENDING)
       setApplePayFailVis?.(false);
   }
   function listener4Failed () {
+    console.log("listener4Failed");
     const { method, status } = getLastFlow();
     if (method === PgPaymentMethod.APPLE_PAY) {
       if (status === PgPaymentFlowStatusEnum.PENDING) return;
