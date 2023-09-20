@@ -1,0 +1,16 @@
+.searchBar {
+  margin: 14px 0;
+  border-radius: 12px;
+  background: #fafafa;
+  padding: 8px 12px;
+  justify-content: initial !important;
+
+  svg {
+    display: inline-block;
+    margin-right: 6px;
+  }
+
+  input {
+    flex: 1;
+  }
+}

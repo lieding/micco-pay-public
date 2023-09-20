@@ -5,7 +5,7 @@ import type {
   QueryRestInfoResponse,
   SetMenuInfoPayloadType
 } from "../typing";
-import { CourseUtils, getDayTimeKey } from "../utils";
+import { CourseUtils, getDayTimeKey, isValidArray } from "../utils";
 
 export const MENU_FEATURE_KEY = "menu";
 
@@ -16,6 +16,9 @@ const { reducer: MenuReducer, actions } = createSlice({
     activeCategoryId: "",
     categories: <string[]>[],
     fastCheckouts: <ICourse[]>[],
+    activeKw: '',
+    labelSearchMenus: <ICourse[]>[],
+    searchMode: false,
   },
   reducers: {
     setCatesAndCheckouts(state, action: { payload: QueryRestInfoResponse & { categories?: string[] } }) {
@@ -54,6 +57,21 @@ const { reducer: MenuReducer, actions } = createSlice({
         state.activeCategoryId = categories[newIdx];
       }
       window.$resetMenuPosBeforeSlide = undefined;
+    },
+    toggleSearch (state, action: { payload: { activeKw: string } }) {
+      const { activeKw } = action.payload;
+      const searchMode = Boolean(activeKw.length);
+      state.searchMode = searchMode;
+      state.activeKw = activeKw;
+    },
+    setSearchRes (
+      state, 
+      action: { payload: { keyword: string, labelSearchMenus: ICourse[] } }
+    ) {
+      const { keyword, labelSearchMenus } = action.payload;
+      if (keyword === state.activeKw && isValidArray(labelSearchMenus)) {
+        state.labelSearchMenus = labelSearchMenus;
+      }
     }
   },
 });
@@ -63,5 +81,7 @@ export const {
   setCatesAndCheckouts,
   setMenuInfo,
   slideMenu,
+  toggleSearch,
+  setSearchRes,
 } = actions;
 export default MenuReducer;

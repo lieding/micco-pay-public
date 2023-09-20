@@ -4,7 +4,7 @@ import { FullWidthBtn } from '../../components'
 import styles from './index.module.scss';
 import cls from 'classnames';
 import { RootState } from '../../store';
-import { RequestStatusEnum } from '../../typing';
+import { IReviewInfo, RequestStatusEnum } from '../../typing';
 
 type OnActive = (idx: number, activeIdx: number) => { [idx: string]: any };
 
@@ -56,15 +56,18 @@ function SubRateItem ({ rate, idx, setRate }: {
 
 interface IReview {
   restInfo: RootState['restaurant']['restInfo']
+  postReviewInfo: (reviewInfo: IReviewInfo) => void
 }
 
-function Review ({ restInfo }: IReview) {
+function Review ({ restInfo, postReviewInfo }: IReview) {
   const [rate, setRate] = useState(0);
   const cbk = useCallback((idx: number) => setRate(idx + 1), []);
   const [subRates, setSubRates] = useState([0, 0, 0, 0]);
   const [ submitStatus, setSubmitStatus ] = useState(RequestStatusEnum.INIT);
   const btnClickHandler = () => {
     setSubmitStatus(RequestStatusEnum.RESOLVED);
+    const [ plat, service, atmosphere, ratio ] = subRates;
+    postReviewInfo({ general: rate, plat, service, atmosphere, ratio });
   }
 
   const isSubmitInit = submitStatus === RequestStatusEnum.INIT;

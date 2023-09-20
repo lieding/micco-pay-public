@@ -1,9 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setRestInfo, setFeeConfig } from "./restaurant";
-import { setCatesAndCheckouts, setMenuInfo } from "./menu";
-import { isValidQueryRestInfoRes, isValidQueryMenuInfoRes, IPgPaymentConfig } from "../typing";
+import { setCatesAndCheckouts, setMenuInfo, setSearchRes } from "./menu";
+import { isValidQueryRestInfoRes, isValidQueryMenuInfoRes } from "../typing";
 import { BASE_URL } from "../consts";
-import { isValidArray } from "../utils";
 import { setPaymentConfigs } from "./ordering";
 
 export const api = createApi({
@@ -60,10 +59,23 @@ export const api = createApi({
         }
       },
     }),
+    // search menus by label name
+    queryMebuByLabel: builder.query({
+      query: ({ restaurantId, keyword }) => `/search-by-label?restaurantId=${restaurantId}&keyword=${keyword}`,
+      async onQueryStarted({ keyword }: { keyword: string }, { dispatch, queryFulfilled }) {
+        try {
+          const { data: labelSearchMenus } = await queryFulfilled;
+          dispatch(setSearchRes({ keyword, labelSearchMenus }));
+        } catch (err) {
+          console.error(err);
+        }
+      },
+    }),
   }),
 });
 
 export const {
   useGetRestInfoQuery,
   useQueryMenuInfoQuery,
+  useQueryMebuByLabelQuery,
 } = api;

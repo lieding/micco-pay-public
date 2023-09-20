@@ -4,6 +4,7 @@ import { getBadgeChar } from "../../utils";
 import cls from "classnames";
 import { useDispatch } from "react-redux";
 import { useCallback } from "react";
+import { Image, Loading } from 'react-vant'
 import { addOrder, reduceOrder } from "../../store/ordering";
 import { MinusIcon } from "../../components/icons";
 
@@ -28,13 +29,24 @@ function CourseItem(props: {
   const showReduceIcon = badgeChar !== "+";
   const hasSubOrVolInfo = item.subtitle || item.volume;
   const imgClickHandler = (ev: React.MouseEvent<HTMLDivElement>) => {
+    // if we use Loading component, which displays loading spinner during image loading, we need to ignore its
+    // click event emitted from itself
+    // Attention, it is for the compatability consideration for react-vant component library,
+    // if you use compoennt from other libraries, you dont need to depend on the same logic
+    if (ev.currentTarget?.className?.includes('loading')) return;
     if (!showReduceIcon)
       return cbk(item, true);
     cbk(item, itemClickHandler(ev));
   }
   return (
     <div className={styles.item}>
-      <img
+      {/* <img
+        src={item.pics?.[0]}
+        className={styles.img}
+        onClick={imgClickHandler}
+      /> */}
+      <Image
+        loadingIcon={<Loading type='spinner' />}
         src={item.pics?.[0]}
         className={styles.img}
         onClick={imgClickHandler}

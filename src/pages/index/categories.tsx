@@ -28,6 +28,7 @@ const CategoryNameMap: Record<string, string> = {
 interface ICategory {
   categories: string[];
   activeKey: string;
+  hideCategory?: boolean
 }
 
 function useCategoryHook (categories: string[]) {
@@ -82,12 +83,18 @@ const ThemeVars = {
 function CategoryTabs ({
   categories,
   activeKey,
-  children
+  children,
+  hideCategory,
 }: ICategory & { children: React.ReactElement }) {
   const { tabPaneClickHandler, categoryArr } = useCategoryHook(categories);
 
   return <ConfigProvider themeVars={ThemeVars}>
-    <Tabs swipeable type='capsule' onChange={tabPaneClickHandler}>
+    <Tabs
+      swipeable
+      type="capsule"
+      className={cls(styles.categoryTabs, hideCategory ? styles.hidden : null)}
+      onChange={tabPaneClickHandler}
+    >
       {categoryArr.map((item) => (
         <Tabs.TabPane key={item.key} title={item.txt}>
           { item.key === activeKey ? children : null }

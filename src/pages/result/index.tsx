@@ -6,12 +6,13 @@ import { RootState } from "../../store";
 import { ORDERING_FEATURE_KEY, getTotalAmount } from "../../store/ordering";
 import { RESTAURANT_FEATURE_KEY } from "../../store/restaurant";
 import cls from "classnames";
-import { useEffect, useState, lazy, Suspense } from "react";
+import { useEffect, useState, lazy, Suspense, useCallback } from "react";
 import { LocalStorageUtils, isValidArray } from "../../utils";
 import {
   createOrder,
   createOrderPostBody,
   parsePaymentStatus,
+  addReview,
 } from "./orderHelper";
 import Loading from "../../components/loading";
 import {
@@ -19,6 +20,7 @@ import {
   PaymentStatus as PaymentStatusEnum,
   PaymentOptionEnum,
   IRestaurant,
+  IReviewInfo,
 } from "../../typing";
 import Review from './review';
 const LazyQrLibrary = lazy(() => import("./qrcode"));
@@ -66,6 +68,12 @@ export default function ResultPage() {
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatusEnum | null>(
     null
   );
+
+  const postReviewInfo = useCallback((reviewInfo: IReviewInfo) => {
+    if (config) {
+      addReview(config.restaurantId, config.id, reviewInfo);
+    }
+  }, [config]);
 
   useEffect(() => {
     const state = LocalStorageUtils.resumeGlobalStore({
@@ -152,7 +160,7 @@ export default function ResultPage() {
         isLoading={isLoading}
         paymentStatus={paymentStatus}
       />
-      <Review restInfo={config?.restInfo ?? null} />
+      <Review restInfo={config?.restInfo ?? null} postReviewInfo={postReviewInfo} />
     </div>
   );
 }

@@ -21,3 +21,4 @@ export { default as PositiveEmoji } from './positieEmoji';
 // @ts-ignore
 export { default as NeutralEmoji } from './neutralEmoji';
 export { default as NegativeEmoji } from './negativeEmoji';
+export { default as SearchIcon } from './search';

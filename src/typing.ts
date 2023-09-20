@@ -195,3 +195,11 @@ export enum PgPaymentFlowStatus {
   SUBMIT_SUCCESS,
   SUBMIT_FAILED
 }
+
+export interface IReviewInfo {
+  general: number
+  plat: number
+  service: number
+  atmosphere: number
+  ratio: number
+}

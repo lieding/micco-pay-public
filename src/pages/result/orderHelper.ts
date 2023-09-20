@@ -1,4 +1,5 @@
 import {
+  IReviewInfo,
   OrderingSummary,
   OrderStatus,
   PaymentOptionEnum,
@@ -49,6 +50,17 @@ function extractMenuOrders(summary: OrderingSummary) {
     name: course.label,
     price: course.price,
   }));
+}
+
+export function addReview(restaurantId: string, id: string, reviewInfo: IReviewInfo) {
+  const body = JSON.stringify({ restaurantId, id, reviewInfo });
+  return fetch(`${BASE_URL}/add-review`, {
+    method: "POST",
+    body,
+    headers: { "Content-Type": "application/json" },
+  })
+    .then((res) => res.json())
+    .catch(console.error);
 }
 
 export function createOrder(data: any) {

@@ -106,3 +106,14 @@ export function intFormatingInto2Digits (num: number) {
   const numStr = num.toFixed(0);
   return numStr.length < 2 ? `0${numStr}` : numStr;
 }
+
+export function debounce (fun: Function, timeout: number) {
+  let timeoutId: any;
+  return (...params: any) => {
+    if (timeoutId) clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      fun(...params);
+      timeoutId = null;
+    }, timeout);
+  }
+}

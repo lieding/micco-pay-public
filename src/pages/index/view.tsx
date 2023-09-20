@@ -11,20 +11,33 @@ import CourseMenu from "./courseMenu";
 import LogoHeader from "../../components/logoHeader";
 import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
-import { TableAndDateInfo } from '../../components'
+import { TableAndDateInfo } from '../../components';
+import SearchComp from './search';
 import styles from "./index.module.scss";
 import cls from 'classnames';
+
+function selector (state: RootState) {
+  return {
+    restInfo: state[RESTAURANT_FEATURE_KEY],
+    menuInfo: state[MENU_FEATURE_KEY],
+    orderInfo: state[ORDERING_FEATURE_KEY],
+  }
+}
 
 function IndexPage() {
   const {
     restInfo: { restInfo, restaurantId, table },
-    menuInfo: { activeCategoryId, fastCheckouts, categories, menuMap },
+    menuInfo: {
+      activeCategoryId,
+      fastCheckouts,
+      categories,
+      menuMap,
+      activeKw,
+      searchMode,
+      labelSearchMenus,
+    },
     orderInfo: { summary },
-  } = useSelector((state: RootState) => ({
-    restInfo: state[RESTAURANT_FEATURE_KEY],
-    menuInfo: state[MENU_FEATURE_KEY],
-    orderInfo: state[ORDERING_FEATURE_KEY],
-  }));
+  } = useSelector(selector);
 
   const navigate = useNavigate();
 
@@ -45,7 +58,7 @@ function IndexPage() {
   );
 
   if (!restInfo) return null;
-  const items = menuMap[activeCategoryId] ?? [];
+  const items = searchMode ? labelSearchMenus : menuMap[activeCategoryId] ?? [];
   return (
     <div className="page-wrapper">
       <LogoHeader hideBackArrow={true} />
@@ -55,12 +68,15 @@ function IndexPage() {
           Nos formules Buffet
         </div>
         <FastBtnBar isCheckout={true} elements={fastCheckouts} />
-        {/* <Categories categories={categories} activeKey={activeCategoryId} />
-        <CourseMenu items={items} summary={summary} key={activeCategoryId} /> */}
         <div className={cls(styles.sectionTitle, styles.drinkTitle)}>
           Nos boissons
         </div>
-        <Categories.Tabs categories={categories} activeKey={activeCategoryId}>
+        {/* <SearchComp restaurantId={restaurantId} activeKw={activeKw} /> */}
+        <Categories.Tabs
+          hideCategory={searchMode}
+          categories={categories}
+          activeKey={activeCategoryId}
+        >
           <CourseMenu items={items} summary={summary} key={activeCategoryId} />
         </Categories.Tabs>
       </div>

@@ -6,3 +6,4 @@ export { default as TableAndDateInfo } from './tableAndDateInfo';
 export { default as FloatingBar } from './floatingBar';
 export { default as FastBtnBar } from './fastBtnBar';
 export { default as DefaultErrorBoundary } from './defaultErrorBoundary';
+export { default as SearchBar } from './searchBar';
