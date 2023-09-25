@@ -37,6 +37,7 @@ type Config = {
   orders: ReturnType<typeof createOrderPostBody>["orders"];
   amtAfterFee: number;
   restInfo: RootState['restaurant']['restInfo'];
+  orderNumber: string;
 };
 
 function Qrcode(props: {
@@ -45,18 +46,16 @@ function Qrcode(props: {
   paymentStatus: PaymentStatusEnum | null;
 }) {
   const { config, isLoading, paymentStatus } = props;
-  const [showQrcode, setShowQrcode] = useState(false);
   if (!config || isLoading || paymentStatus !== PaymentStatusEnum.SUCCEEDED)
     return null;
-  if (!showQrcode)
-    return (
-      <div onClick={() => setShowQrcode(true)} className="textAlign">
-        Montrez-moi le Qrcode comme preuve
-      </div>
-    );
   return (
-    <Suspense>
-      <LazyQrLibrary id={config.id} restaurantId={config.restaurantId} />
+    <Suspense fallback="Chargement du QR code...">
+      <LazyQrLibrary
+        id={config.id}
+        restaurantId={config.restaurantId}
+        orderNumber={config.orderNumber}
+        restaurantName={config.restInfo?.displayName}
+      />
     </Suspense>
   );
 }
@@ -101,7 +100,8 @@ export default function ResultPage() {
 
     setLoadig(true);
     createOrder(body)
-      .then(() => {
+      .then((res) => {
+        const { orderNumber = 1 } = res || {};
         setConfig({
           id: body.id,
           table,
@@ -113,6 +113,7 @@ export default function ResultPage() {
           orders: body.orders,
           amtAfterFee,
           restInfo: state[RESTAURANT_FEATURE_KEY].restInfo,
+          orderNumber: orderNumber.toString().padStart(3, '0')
         });
       })
       .catch(console.error)
@@ -122,12 +123,13 @@ export default function ResultPage() {
   let content = null;
   const isPaymentInCach = paymentStatus === PaymentStatusEnum.IN_CASH;
   if (config) {
-    const { showTipInfo, total, totalWithoutTip, tipInfo, id, amtAfterFee, orders } = config;
-    const title = <div>Commande <strong>{id}</strong></div>;
+    const { showTipInfo, total, totalWithoutTip, tipInfo, id, amtAfterFee, orders, orderNumber } = config;
+    const title = <div>Commande <strong>{orderNumber}</strong></div>;
     const strs = courseInfo2StrArr(orders);
+    strs.unshift(`L'identification de l'order: ${id}`);
     if (showTipInfo) strs.push(`Pourboire =  EUR`);
     if (isPaymentInCach) {
-      strs.push(...['  ', '   ',  `Reste à payer: ${total} EUR`]);
+      strs.push(...['   ',  `Reste à payer: ${total} EUR`]);
       content = (
         <>
           <div className={styles.qrDivider}></div>
@@ -135,7 +137,7 @@ export default function ResultPage() {
         </>
       );
     } else {
-      strs.push(...['  ', '   ',  `Total = ${amtAfterFee} EUR`]);
+      strs.push(...['   ',  `Total = ${amtAfterFee} EUR`]);
       content = (
         <>
           <ExpasionOrder.Simple title={title} strs={strs} />

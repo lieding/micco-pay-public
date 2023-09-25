@@ -13,9 +13,10 @@ export function checkPhoneOrMail(form: string, val: string) {
 
 export function verifyNameInput (form: string, val: string) {
   if (form === 'firstName' || form === 'lastName') {
-    const valid = /^[a-zA-Z]{2,}$/.test(val);
+    const valid = /^[a-zA-Z\s]{2,50}$/.test(val);
     if (valid) return '';
     if (val.length < 2) return '2 lettres minimum';
+    else if (val.length > 50) return '50 lettres maximum';
     return 'Nom invalid';
   }
   return '';
