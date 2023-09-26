@@ -4,7 +4,6 @@ import { RootState } from "../../store";
 import {
   ORDERING_FEATURE_KEY,
   getTotalAmount,
-  setRounded,
   checkWithoutPayment,
   checkNeedContactInfo,
   getDisabledPaymentMethodKeys,
@@ -14,7 +13,7 @@ import CustomInput from "../../components/customInput";
 import LogoHeader from "../../components/logoHeader";
 import cls from "classnames";
 import Tipping from "./tipping";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PAYGREEN_FEATURE_KEY, resetPaygreenInfo } from "../../store/paygreen";
 import { useScrollTop } from "../../hooks";
@@ -22,11 +21,13 @@ import SubTotalAndFee from "../../components/subTotalAndFee";
 import floatingTotalBtnBarStyles from "../../components/floatingTotalBtnBar/index.module.scss";
 import floatingBtnBarStyles from "../../components/floatingBar/floatingBar.module.scss";
 import { RESTAURANT_FEATURE_KEY } from "../../store/restaurant";
-import ContactFormPopup, { InOnePageForm } from "../../components/contactForm";
+import { InOnePageForm } from "../../components/contactForm";
+import MarketInfoForm from './marketInfoForm';
 import PaymentMethosSelect from "./paymentMethodSelect";
 import { persistStore } from "../../store";
 import { Paygreen } from "../../utils";
 import { Contact, PaymentOptionEnum } from "../../typing";
+import { CONFIG_FEATURE_KEY, checkHideMiccopayLogo } from "../../store/config";
 
 function BtnRow(props: { total: number; beforeLeave: () => boolean | void }) {
   const eles = (
@@ -68,8 +69,10 @@ function PromoCode() {
 
 function selector(state: RootState) {
   const { paymentMethodKey } = state[ORDERING_FEATURE_KEY];
+  const { displayMode } = state[CONFIG_FEATURE_KEY];
   const withoutPayment = checkWithoutPayment(paymentMethodKey);
-  const needContactInfo = checkNeedContactInfo(paymentMethodKey);
+  const needContactInfo = checkNeedContactInfo(paymentMethodKey, displayMode);
+  const hideLogo = checkHideMiccopayLogo(displayMode);
   return {
     orderInfo: state[ORDERING_FEATURE_KEY],
     paygreenInited: state[PAYGREEN_FEATURE_KEY].initialized,
@@ -77,10 +80,11 @@ function selector(state: RootState) {
     withoutPayment,
     needContactInfo,
     nameRequired: paymentMethodKey === PaymentOptionEnum.BLUE_CARD,
+    hideLogo,
   };
 }
 
-function ConfirmPage() {
+function useConfirmPageHook () {
   const {
     orderInfo: {
       summary,
@@ -95,6 +99,7 @@ function ConfirmPage() {
     withoutPayment,
     needContactInfo,
     nameRequired,
+    hideLogo
   } = useSelector(selector);
 
   useScrollTop();
@@ -160,20 +165,67 @@ function ConfirmPage() {
     : feeConfig
     ? total * feeConfig.percentage + feeConfig.addition
     : 0;
+  
+  return {
+    hideLogo,
+    summary,
+    tip,
+    rounded,
+    subPlusTip,
+    paymentConfigs,
+    initialPaymentMethod,
+    disabledPaymentMethodKeys,
+    subTotal,
+    total,
+    fee,
+    withoutPayment,
+    beforeLeave,
+    contactFormRef,
+    popupVisible,
+    nameRequired,
+    contact,
+    togglePopupVisible
+  };
+}
+
+function ConfirmPage() {
+  const {
+    hideLogo,
+    summary,
+    tip,
+    rounded,
+    subPlusTip,
+    paymentConfigs,
+    initialPaymentMethod,
+    disabledPaymentMethodKeys,
+    subTotal,
+    total,
+    fee,
+    withoutPayment,
+    beforeLeave,
+    contactFormRef,
+    popupVisible,
+    nameRequired,
+    contact,
+    togglePopupVisible
+  } = useConfirmPageHook();
 
   return (
     <>
       <div className={cls("flex-column", "page-wrapper", styles.pageWrapper)}>
-        <LogoHeader />
+        <LogoHeader hideLogo={hideLogo} />
         <div className={styles.content}>
           <Expasion summary={summary} />
           <PromoCode />
           <Tipping tip={tip} rounded={rounded} subPlusTip={subPlusTip} />
-          <PaymentMethosSelect
-            configs={paymentConfigs}
-            initialPaymentMethodKey={initialPaymentMethod.current}
-            disabledPaymentMethodKeys={disabledPaymentMethodKeys}
-          />
+          { hideLogo ?
+            <MarketInfoForm /> :
+            <PaymentMethosSelect
+              configs={paymentConfigs}
+              initialPaymentMethodKey={initialPaymentMethod.current}
+              disabledPaymentMethodKeys={disabledPaymentMethodKeys}
+            />
+          }
         </div>
         <SubTotalAndFee
           subTotal={subTotal.toFixed(2)}
@@ -187,6 +239,7 @@ function ConfirmPage() {
         ref={(el) => (contactFormRef.current = el)}
         visible={popupVisible}
         nameRequired={nameRequired}
+        phoneRequired={hideLogo}
         initialContact={contact}
         next={beforeLeave}
         toggleClose={() => togglePopupVisible(false)}

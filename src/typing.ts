@@ -1,5 +1,10 @@
 import { isValidObject, isValidArray } from "./utils";
 
+export enum DisplayMode {
+  DEFAULT_RESTAUTANT = 'R',
+  DEFAULT_MARKET = 'M'
+}
+
 export enum DayPeriod {
   MORNING,
   NOON,

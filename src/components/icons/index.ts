@@ -22,3 +22,5 @@ export { default as PositiveEmoji } from './positieEmoji';
 export { default as NeutralEmoji } from './neutralEmoji';
 export { default as NegativeEmoji } from './negativeEmoji';
 export { default as SearchIcon } from './search';
+export { default as LocationIcon } from './location';
+export { default as CalendarIcon } from './calendar';

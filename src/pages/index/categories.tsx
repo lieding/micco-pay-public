@@ -22,7 +22,13 @@ const CategoryNameMap: Record<string, string> = {
   DIGESTIF: "Digestif",
   BIERE: "Bière",
   ASIAN_STREET_FOOD: "Asian Street Food",
-  BOISSONCHAUDE: "Boisson chaude"
+  BOISSONCHAUDE: "Boisson chaude",
+  NOUILLE: "Nouille",
+  CONSERVE: "Conserve",
+  HUILE: "Huile",
+  LEGUME: "Légume",
+  ASSAISONNEMENT: "Assaisonnement",
+  BOISSON: "Boisson"
 };
 
 interface ICategory {

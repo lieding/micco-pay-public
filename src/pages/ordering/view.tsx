@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
 import { useScrollTop } from "../../hooks";
 import cls from 'classnames'
+import { CONFIG_FEATURE_KEY, checkHideMiccopayLogo } from "../../store/config";
 
 function OrderingPage() {
   const navigate = useNavigate();
@@ -19,18 +20,23 @@ function OrderingPage() {
   const {
     orderInfo: { summary },
     restInfo: { table, restInfo },
-  } = useSelector((state: RootState) => ({
-    restInfo: state[RESTAURANT_FEATURE_KEY],
-    orderInfo: state[ORDERING_FEATURE_KEY],
-  }));
+    hideLogo
+  } = useSelector((state: RootState) => {
+    const hideLogo = checkHideMiccopayLogo(state[CONFIG_FEATURE_KEY]);
+    return {
+      restInfo: state[RESTAURANT_FEATURE_KEY],
+      orderInfo: state[ORDERING_FEATURE_KEY],
+      hideLogo,
+    };
+  });
 
   const toNext = useCallback(() => navigate("/confirm"), [navigate]);
-
+  
   return (
     <div className="page-wrapper">
-      <LogoHeader />
+      <LogoHeader hideLogo={hideLogo} />
       <div className={cls('expanded1', styles.contentWrapper)}>
-        <TableAndDateInfo table={table} restInfo={restInfo} />
+        <TableAndDateInfo restInfo={restInfo} table={hideLogo ? undefined : table} />
         <OrderSummary summary={summary} />
         <div className={styles.titlePackaging}>A emporter en plus?</div>
         <FastBtnBar isCheckout={false} elements={PackagingOptions} />

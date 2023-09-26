@@ -26,12 +26,13 @@ function Img() {
 function LogoHeader(props: {
   hideBackArrow?: boolean;
   backArrowCbk?: () => void;
+  hideLogo?: boolean
 }) {
   const navigate = useNavigate();
   const back = useCallback(() => navigate(-1), [navigate]);
   return (
     <div className={cls(styles.logoWrapper, "textAlign")}>
-      <Img />
+      { props.hideLogo ? null : <Img /> }
       {props.hideBackArrow ?? false ? null : (
         <ChevronBackIcon className={styles.backArrow} onClick={back} />
       )}

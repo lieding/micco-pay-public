@@ -1,5 +1,6 @@
 import styles from "./index.module.scss";
 import { useCallback } from "react";
+import cls from 'classnames';
 
 function CustomInput(props: {
   prefix?: React.ReactElement;
@@ -24,11 +25,11 @@ function CustomInput(props: {
     <div className={styles.wrapper}>
       {prefix}
       <input
-        className={styles.customInput}
         onChange={changeHandler}
         placeholder={placeholder}
         id={name}
         {...params}
+        className={cls(styles.customInput, params.className)}
       />
       {validity && <span className={styles.validity}>{validity}</span>}
     </div>

@@ -4,7 +4,7 @@ import cls from 'classnames';
 import { CloseIcon } from '../../icons'
 
 interface IBottomPopup {
-  children: React.ReactElement,
+  children: React.ReactElement | React.ReactElement[],
   visible: boolean
   toggleClose: () => void
   height?: string

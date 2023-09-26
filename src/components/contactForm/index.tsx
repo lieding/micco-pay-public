@@ -54,7 +54,11 @@ interface IFormContent {
   form: Contact;
 }
 
-function Second({ cbk, validities, form }: IFormContent) {
+function Second({ cbk, validities, form, phoneRequired }:
+  IFormContent & {
+    phoneRequired?: boolean
+  }
+) {
   return (
     <div className={cls(styles.row, styles.second)}>
       <CustomInput
@@ -65,19 +69,22 @@ function Second({ cbk, validities, form }: IFormContent) {
         validities={validities}
         value={form.phone}
       />
-      <CustomInput
-        prefix={<MailIcon />}
-        placeholder="Email"
-        onChange={cbk}
-        name="mail"
-        validities={validities}
-        value={form.mail}
-      />
+      {
+        phoneRequired ?
+        <CustomInput
+          prefix={<MailIcon />}
+          placeholder="Email"
+          onChange={cbk}
+          name="mail"
+          validities={validities}
+          value={form.mail}
+        /> : null
+      }
     </div>
   );
 }
 
-function First({ cbk, validities, form, nameRequired = true }: IFormContent & { nameRequired?: boolean }) {
+function First({ cbk, validities, form, nameRequired }: IFormContent & { nameRequired?: boolean }) {
   return (
     <>
       {
@@ -210,10 +217,13 @@ function InOnePage(
     toggleClose,
     initialContact,
     nameRequired,
-  }: ICOntactForm & { nameRequired: boolean },
+    phoneRequired,
+  }: ICOntactForm & { nameRequired: boolean, phoneRequired?: boolean },
   ref: any
 ) {
   const formsNeedCheck: KeyofContactType[] = ["firstName", "lastName", "mail"];
+  if (phoneRequired)
+    formsNeedCheck.push('phone');
   const {
     validities,
     contactForm,
@@ -246,16 +256,7 @@ function InOnePage(
         <>
           <First form={contactForm} validities={validities} nameRequired={nameRequired} cbk={formChangeHandler} />
           <div className={styles.divider}></div>
-          <div className={cls(styles.row, styles.second)}>
-            <CustomInput
-              prefix={<MailIcon />}
-              placeholder="Email"
-              onChange={formChangeHandler}
-              name="mail"
-              validities={validities}
-              value={contactForm.mail}
-            />
-          </div>
+          <Second cbk={formChangeHandler} form={contactForm} validities={validities} phoneRequired={phoneRequired} />
           <div className={styles.dividerBottom}></div>
         </>
       </form>

@@ -140,3 +140,47 @@
     }
   }
 }
+
+.inputWrapper {
+  border-radius: 19px;
+  background: #f9f9f9;
+  padding: 8px 14px;
+}
+
+.datetimeInputWrapper {
+  .innerSpan {
+    flex: 1;
+    align-items: center;
+  }
+}
+
+.locationInfo {
+  margin: 10px 0;
+}
+
+.locationOptions {
+  margin: 20px 0 0 16px;
+  li {
+    margin-bottom: 14px;
+  }
+}
+
+.locationItem {
+  font-size: 14px;
+  span {
+    display: block;
+  }
+  .context {
+    font-size: 12px;
+    color: #333;
+  }
+}
+
+.extraInfoWrapper {
+  display: flex;
+  .extraInput {
+    font-size: 12px;
+    min-height: 80px;
+    flex: 1;
+  }
+}

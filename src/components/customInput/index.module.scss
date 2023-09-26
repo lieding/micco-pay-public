@@ -9,6 +9,13 @@
     flex: unset;
   }
 
+  .customInput {
+    flex: 1;
+    color: #000;
+    box-sizing: border-box;
+    padding-left: 6px;
+  }
+
   .validity {
     position: absolute;
     font-size: 8px;
@@ -18,10 +25,3 @@
   }
 }
 
-.customInput {
-  flex: 1;
-  color: #000;
-  box-sizing: border-box;
-  padding-left: 6px;
-  font-size: 15px;
-}

@@ -7,6 +7,7 @@ import {
   PaymentOptionEnum,
   PgPaymentMethod,
   IPgPaymentConfig,
+  DisplayMode,
 } from "../typing";
 import { isValidArray } from "../utils";
 
@@ -141,8 +142,13 @@ export function checkWithoutPayment(paymentMethod: PaymentOptionEnum) {
   return paymentMethod === PaymentOptionEnum.IN_CASH;
 }
 
-export function checkNeedContactInfo(paymentMethod: PaymentOptionEnum) {
-  return paymentMethod !== PaymentOptionEnum.IN_CASH;
+export function checkNeedContactInfo(
+  paymentMethod: PaymentOptionEnum,
+  displayMode?: DisplayMode
+) {
+  const notInCash = paymentMethod !== PaymentOptionEnum.IN_CASH;
+  const marketMode = displayMode && (displayMode === DisplayMode.DEFAULT_MARKET);
+  return notInCash || marketMode;
 }
 
 export function getDisabledPaymentMethodKeys (paymentConfigs: IPgPaymentConfig[]) {

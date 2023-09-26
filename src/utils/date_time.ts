@@ -16,6 +16,13 @@ export function formateMonth(monthNum: number): string {
   return MonthsInFrench[Math.min(11, monthNum)];
 }
 
+function formateMonthInShort(monthNum: number): string {
+  const monthStr = MonthsInFrench[Math.min(11, monthNum)];
+  if (monthStr.startsWith('Jui'))
+    return monthStr.slice(0, 4);
+  return monthStr.slice(0, 3);
+}
+
 const DatePeriods = {
   matin: "matin",
   midi: "midi",
@@ -46,6 +53,13 @@ export function formatTime(date: Date): string {
   return DatePeriods.soir;
 }
 
+export function formatDate (date: Date) {
+  const monthStr = formateMonthInShort(date.getMonth());
+  const dateStr = date.getDate().toString().padStart(2, '0');
+
+  return `${monthStr} ${dateStr}, ${formatWeekDay(date.getDay())}`;
+}
+
 export function getDateAndPeriodInfo () {
   const date = new Date();
   const monthStr = formateMonth(date.getMonth()),
@@ -53,4 +67,11 @@ export function getDateAndPeriodInfo () {
     weekdayStr = formatWeekDay(date.getDay()),
     period = formatTime(date);
   return `${date.getDate()} ${monthStr} ${yearStr}, ${weekdayStr} ${period}`;
+}
+
+const DayTimeDelta = 1000 * 3600 * 24;
+
+export function deltaDays (date: Date, days = 7) {
+  const timestamp = date.getTime() + DayTimeDelta * days;
+  return new Date(timestamp);
 }

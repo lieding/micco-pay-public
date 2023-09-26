@@ -20,6 +20,7 @@ export interface InitConfiguration {
 
 declare global {
   interface Window {
+    initParams: any
     paygreenjs: {
       init(confguration: InitConfiguration): void
       unmount(): void
