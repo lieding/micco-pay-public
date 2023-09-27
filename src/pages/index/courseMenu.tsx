@@ -50,6 +50,7 @@ function CourseItem(props: {
         src={item.pics?.[0]}
         className={styles.img}
         onClick={imgClickHandler}
+        fit="contain"
       />
       <div className={styles.title}>{item.label}</div>
       {hasSubOrVolInfo && (

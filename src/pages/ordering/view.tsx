@@ -22,7 +22,8 @@ function OrderingPage() {
     restInfo: { table, restInfo },
     hideLogo
   } = useSelector((state: RootState) => {
-    const hideLogo = checkHideMiccopayLogo(state[CONFIG_FEATURE_KEY]);
+    const hideLogo =
+      checkHideMiccopayLogo(state[CONFIG_FEATURE_KEY].displayMode);
     return {
       restInfo: state[RESTAURANT_FEATURE_KEY],
       orderInfo: state[ORDERING_FEATURE_KEY],
