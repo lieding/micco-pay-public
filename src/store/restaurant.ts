@@ -1,18 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IRestaurant } from "../typing";
+import { IClient, IRestaurant, QueryRestInfoResponse } from "../typing";
 import { getInitParameters } from './'
 
 export const RESTAURANT_FEATURE_KEY = "restaurant";
 
-const { restaurantId, table } = getInitParameters();
+const { restaurantId, table, clientId } = getInitParameters();
+
+interface IRestaurantState {
+  restaurantId: string
+  table: string
+  clientId: string | undefined
+  restInfo: IRestaurant | null
+  feeConfig: { percentage: number, addition: number }
+  clientInfo: IClient | null
+}
 
 const { reducer: RestaurantReducer, actions } = createSlice({
   name: RESTAURANT_FEATURE_KEY,
-  initialState: {
+  initialState: <IRestaurantState> {
     restaurantId,
+    clientId,
     table,
-    restInfo: null as (IRestaurant | null),
+    restInfo: null,
     feeConfig: { percentage: 0, addition: 0 },
+    clientInfo: null
   },
   reducers: {
     setRestInfo(state, action) {
@@ -20,10 +31,13 @@ const { reducer: RestaurantReducer, actions } = createSlice({
     },
     setFeeConfig (state, action) {
       state.feeConfig = action.payload;
+    },
+    setClientInfo (state, action) {
+      state.clientInfo = action.payload;
     }
   },
 });
 
-export const { setRestInfo, setFeeConfig } = actions;
+export const { setRestInfo, setFeeConfig, setClientInfo } = actions;
 
 export default RestaurantReducer;

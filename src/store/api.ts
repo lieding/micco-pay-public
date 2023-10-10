@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { setRestInfo, setFeeConfig } from "./restaurant";
+import { setRestInfo, setFeeConfig, setClientInfo } from "./restaurant";
 import { setCatesAndCheckouts, setMenuInfo, setSearchRes } from "./menu";
-import { isValidQueryRestInfoRes, isValidQueryMenuInfoRes } from "../typing";
+import { isValidQueryRestInfoRes, isValidQueryMenuInfoRes, DisplayMode } from "../typing";
 import { BASE_URL } from "../consts";
 import { setPaymentConfigs } from "./ordering";
 
@@ -30,12 +30,24 @@ export const api = createApi({
     }),
     // get the initial restaurat information
     getRestInfo: builder.query({
-      query: (id) => `/getRestData?restaurantId=${id}`,
+      query: ({ restaurantId, clientId, displayMode }: {
+        restaurantId: string,
+        clientId: string | undefined,
+        displayMode: DisplayMode
+      }) => {
+        const params = { restaurantId } as { [key: string]: any };
+        if (clientId)
+          params.clientId = clientId;
+        if (displayMode === DisplayMode.DEFAULT_MARKET)
+          params.fastCheckout = false;
+        const paramStr = Object.entries(params).map(([k, v]) => `${k}=${v}`).join('&');
+        return `/getRestData?${paramStr}`;
+      },
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
           if (isValidQueryRestInfoRes(data)) {
-            const { restInfo, menuInfo, fastCheckouts, holiday, feeConfig } =
+            const { restInfo, menuInfo, fastCheckouts, holiday, feeConfig, clientInfo } =
               data;
             dispatch(setRestInfo(restInfo));
             dispatch(
@@ -53,6 +65,7 @@ export const api = createApi({
               })
             );
             dispatch(setPaymentConfigs(restInfo?.paymentMethods));
+            dispatch(setClientInfo(clientInfo));
           }
         } catch (err) {
           console.error(err);

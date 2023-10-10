@@ -184,3 +184,18 @@
     flex: 1;
   }
 }
+
+.deliverySwitcher {
+  padding: 3px;
+  span {
+    display: inline-block;
+    width: 48%;
+    text-align: center;
+  }
+  .active {
+    color: #fff;
+    background-color: #7842EB;
+    padding: 4px 0;
+    border-radius: 19px;
+  }
+}

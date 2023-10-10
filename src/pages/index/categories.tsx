@@ -1,7 +1,7 @@
 import { setActiveCategory } from "../../store/menu";
 import { useDispatch } from "react-redux";
 import styles from "./index.module.scss";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import cls from "classnames";
 import { Tabs, ConfigProvider } from "react-vant";
 
@@ -28,7 +28,13 @@ const CategoryNameMap: Record<string, string> = {
   HUILE: "Huile",
   LEGUME: "Légume",
   ASSAISONNEMENT: "Assaisonnement",
-  BOISSON: "Boisson"
+  BOISSON: "Boisson",
+  PY_ZWFC: "中午饭菜",
+  PY_HFWM: "盒饭外卖",
+  PY_DXTM: "点心汤面",
+  PY_MZLW: "秘制卤味",
+  PY_ZCTS: "主厨特色",
+  PY_HXPP: "海鲜拼盘"
 };
 
 interface ICategory {
@@ -37,7 +43,7 @@ interface ICategory {
   hideCategory?: boolean
 }
 
-function useCategoryHook (categories: string[]) {
+function useCategoryHook (categories: string[], initActiveKey?: string) {
   const dispatch = useDispatch();
   const cbk = useCallback(
     (catId: string) => dispatch(setActiveCategory(catId)),
@@ -52,8 +58,9 @@ function useCategoryHook (categories: string[]) {
         .filter((item) => Boolean(item.txt)),
     [categories]
   );
+  const defaultActiveIdx = initActiveKey ? categories.indexOf(initActiveKey) : 0;
 
-  return { cbk, categoryArr, tabPaneClickHandler };
+  return { cbk, categoryArr, tabPaneClickHandler, defaultActiveIdx };
 }
 
 function Categories({ categories, activeKey, }: ICategory) {
@@ -92,12 +99,17 @@ function CategoryTabs ({
   children,
   hideCategory,
 }: ICategory & { children: React.ReactElement }) {
-  const { tabPaneClickHandler, categoryArr } = useCategoryHook(categories);
+  const {
+    tabPaneClickHandler,
+    categoryArr,
+    defaultActiveIdx
+  } = useCategoryHook(categories, activeKey);
 
   return <ConfigProvider themeVars={ThemeVars}>
     <Tabs
       swipeable
       type="capsule"
+      defaultActive={defaultActiveIdx}
       className={cls(styles.categoryTabs, hideCategory ? styles.hidden : null)}
       onChange={tabPaneClickHandler}
     >

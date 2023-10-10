@@ -76,7 +76,7 @@ function selector(state: RootState) {
   return {
     orderInfo: state[ORDERING_FEATURE_KEY],
     paygreenInited: state[PAYGREEN_FEATURE_KEY].initialized,
-    feeConfig: state[RESTAURANT_FEATURE_KEY].feeConfig,
+    restState: state[RESTAURANT_FEATURE_KEY],
     withoutPayment,
     needContactInfo,
     nameRequired: paymentMethodKey === PaymentOptionEnum.BLUE_CARD,
@@ -94,8 +94,8 @@ function useConfirmPageHook () {
       paymentConfigs,
       paymentMethodKey
     },
+    restState: { feeConfig, clientInfo },
     paygreenInited,
-    feeConfig,
     withoutPayment,
     needContactInfo,
     nameRequired,
@@ -184,7 +184,8 @@ function useConfirmPageHook () {
     popupVisible,
     nameRequired,
     contact,
-    togglePopupVisible
+    togglePopupVisible,
+    clientLocation: clientInfo?.location,
   };
 }
 
@@ -207,7 +208,8 @@ function ConfirmPage() {
     popupVisible,
     nameRequired,
     contact,
-    togglePopupVisible
+    togglePopupVisible,
+    clientLocation,
   } = useConfirmPageHook();
 
   return (
@@ -218,14 +220,12 @@ function ConfirmPage() {
           <Expasion summary={summary} />
           <PromoCode />
           <Tipping tip={tip} rounded={rounded} subPlusTip={subPlusTip} />
-          { hideLogo ?
-            <MarketInfoForm /> :
-            <PaymentMethosSelect
-              configs={paymentConfigs}
-              initialPaymentMethodKey={initialPaymentMethod.current}
-              disabledPaymentMethodKeys={disabledPaymentMethodKeys}
-            />
-          }
+          { hideLogo ? <MarketInfoForm defaultLocation={clientLocation} /> : null }
+          <PaymentMethosSelect
+            configs={paymentConfigs}
+            initialPaymentMethodKey={initialPaymentMethod.current}
+            disabledPaymentMethodKeys={disabledPaymentMethodKeys}
+          />
         </div>
         <SubTotalAndFee
           subTotal={subTotal.toFixed(2)}

@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useCallback } from "react";
 import { TableAndDateInfo } from '../../components';
 import SearchComp from './search';
+import IntroImg from './introBg';
 import styles from "./index.module.scss";
 import cls from 'classnames';
 import { DisplayMode } from "../../typing";
@@ -25,7 +26,7 @@ function selector (state: RootState) {
 
 function useIndexPageHook () {
   const {
-    restInfo: { restInfo, restaurantId, table },
+    restInfo: { restInfo, restaurantId, table, clientId, clientInfo },
     menuInfo: {
       activeCategoryId,
       fastCheckouts,
@@ -43,7 +44,7 @@ function useIndexPageHook () {
 
   const toOrder = useCallback(() => navigate("/order"), [navigate]);
 
-  useGetRestInfoQuery(restaurantId);
+  useGetRestInfoQuery({ restaurantId, clientId, displayMode });
 
   const skipQueryMenuInfo =
     !restaurantId || !activeCategoryId || !!menuMap[activeCategoryId];
@@ -52,7 +53,6 @@ function useIndexPageHook () {
     {
       restaurantId,
       categoryId: activeCategoryId,
-      menuMap,
     },
     { skip: skipQueryMenuInfo }
   );
@@ -70,6 +70,7 @@ function useIndexPageHook () {
     activeCategoryId,
     summary,
     displayMode,
+    clientInfo,
   };
 }
 
@@ -79,9 +80,10 @@ function DisplayInDefaultMarketMode (props: Params4DisplayType) {
   return <div className="page-wrapper">
     <LogoHeader hideBackArrow={true} hideLogo={true} />
     <div className={cls("expanded1")}>
-      <TableAndDateInfo restInfo={props.restInfo} />
+      <TableAndDateInfo restInfo={props.restInfo} clientInfo={props.clientInfo} />
+      <IntroImg restInfo={props.restInfo} />
       <div className={cls(styles.sectionTitle, styles.drinkTitle)}>
-        Nos Articles
+        Catégories
       </div>
       <Categories.Tabs
         hideCategory={props.searchMode}

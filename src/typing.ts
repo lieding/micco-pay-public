@@ -26,6 +26,7 @@ export interface IRestaurant {
   logoUrl: string;
   categories: string[];
   paymentMethods?: IPgPaymentConfig[]
+  cateKey4OrderingFastBar?: string
 }
 
 export interface ICourse {
@@ -49,11 +50,20 @@ export type OrderingSummary = Record<
   { course: ICourse; count: number }
 >;
 
+export interface IClient {
+  id: string
+  imgUrl: string
+  name: string
+  title: string
+  location?: LocationResOption
+}
+
 export type QueryRestInfoResponse = {
   restInfo?: IRestaurant;
   menuInfo?: ICourse[];
   fastCheckouts?: ICourse[];
   holiday?: string | false;
+  clientInfo?: IClient
   feeConfig?: { percentage: number; addition: number };
 };
 
@@ -207,4 +217,32 @@ export interface IReviewInfo {
   service: number
   atmosphere: number
   ratio: number
+}
+
+/// city: "Paris"
+// citycode: "75118"
+// context: "75, Paris, Île-de-France"
+// district: "Paris 18e Arrondissement" Attention, this value maybe Null
+/// housenumber "113" Attention, this value maybe Null
+// id: "75118_5122"
+// importance: 0.74667
+// label: "Avenue Junot 75018 Paris"
+// name: "Avenue Junot"
+// postcode: "75018"
+// score: 0.2724245454545455
+// street: "Avenue Junot"
+// type: "street"  OR "housenumber"
+// x: 651328.83
+// y: 6865553.21
+export interface LocationResOption {
+  id: string
+  city: string
+  citycode: string
+  context: string
+  district?: string
+  housenumber?: string
+  postcode: string
+  street: string
+  label: string
+  type: "street" | "housenumber" | "municipality"
 }

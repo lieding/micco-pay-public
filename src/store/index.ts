@@ -38,21 +38,16 @@ function OnInit () {
   let restaurantId = sessionStorageObj?.restaurantId || DefaultRestInfo.name;
   let table = sessionStorageObj?.table || "1";
   let displayMode = sessionStorageObj?.displayMode || DefaultConfig.displayMode;
+  let clientId = sessionStorageObj?.clientId;
 
-  const paramOfRestaurantId = searchParams.get("restaurantId");
-  const paramOfTable = searchParams.get("table");
-  const paramOfDisplayMode = searchParams.get("displayMode");
-  if (paramOfRestaurantId) {
-    restaurantId = paramOfRestaurantId;
-  }
-  if (paramOfTable) {
-    table = paramOfTable;
-  }
-  if (paramOfDisplayMode) {
-    displayMode = paramOfDisplayMode;
-  }
-  window.initParams = { restaurantId, table, displayMode };
-  SessionStorageUtils.saveRestConfig(window.initParams);
+  restaurantId = searchParams.get("restaurantId") || restaurantId;
+  table = searchParams.get("table") || table;
+  displayMode = searchParams.get("displayMode") || displayMode;
+  clientId = searchParams.get("clientId") || clientId;
+
+  const initParams = { restaurantId, table, displayMode, clientId };
+  window.initParams = initParams;
+  SessionStorageUtils.saveRestConfig(initParams);
 }
 
 function createMiddleware(getDefaultMiddleware: any) {

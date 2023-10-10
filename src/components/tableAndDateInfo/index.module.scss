@@ -2,6 +2,7 @@
   align-items: center;
   .logo {
     max-height: 30px;
+    min-width: 80px;
   }
   .dateAndTableInfo {
     text-align: right;
@@ -9,6 +10,9 @@
     .tableInfo {
       font-size: 16px;
       font-weight: 700;
+    }
+    img {
+      max-height: 30px;
     }
   }
 }

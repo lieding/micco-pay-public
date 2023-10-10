@@ -53,9 +53,19 @@ export function formatTime(date: Date): string {
   return DatePeriods.soir;
 }
 
-export function formatDate (date: Date) {
-  const monthStr = formateMonthInShort(date.getMonth());
-  const dateStr = date.getDate().toString().padStart(2, '0');
+export function formatDate (date: Date, showTodayOrTomorrow?: boolean) {
+  const dateMon = date.getMonth();
+  const dateDate = date.getDate();
+  if (showTodayOrTomorrow) {
+    const curDate = new Date(),
+      tomorrowDate = new Date(curDate.getTime() + 24 * 3600 * 1000);
+    if (curDate.getMonth() === dateMon && curDate.getDate() === dateDate)
+      return "Aujourd'hui";
+    if (tomorrowDate.getMonth() === dateMon && tomorrowDate.getDate() === dateDate)
+      return "Demain";
+  }
+  const monthStr = formateMonthInShort(dateMon);
+  const dateStr = dateDate.toString().padStart(2, '0');
 
   return `${monthStr} ${dateStr}, ${formatWeekDay(date.getDay())}`;
 }

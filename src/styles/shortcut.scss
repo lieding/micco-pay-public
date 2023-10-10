@@ -35,6 +35,12 @@
   align-items: center;
 }
 
+.flex-evenly {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
 .flex-column {
   display: flex;
   flex-direction: column;
@@ -62,6 +68,10 @@
     color: #000;
     background: grey;
   }
+}
+
+.hidden {
+  display: none !important;
 }
 
 .animation-loader {

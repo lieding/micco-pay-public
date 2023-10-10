@@ -4,11 +4,11 @@ import { DateTimeUtils, debounce, isValidArray } from '../../utils';
 import { LocationIcon } from '../../components/icons';
 import styles from './index.module.scss';
 import cls from 'classnames';
-import { LocationResOption, queryLocation } from './helper';
+import { queryLocation } from './helper';
 import { BottomPopup } from '../../components/core';
 import { CalendarIcon, ClockIcon } from '../../components/icons';
 import CustomInput from '../../components/customInput';
-import { RequestStatusEnum } from '../../typing';
+import { RequestStatusEnum, LocationResOption } from '../../typing';
 
 const TimeRangeConfig = [
   { value: 'ALL_DAY', text: "9:00 ~ 18:00" },
@@ -84,10 +84,16 @@ function LocationSelectionPopup ({ visible, toggleClose, locationSelect }: {
   </BottomPopup>;
 }
 
-export default function MarketInfoForm () {
+interface IMarketForm {
+  defaultLocation: LocationResOption | undefined
+}
+
+export default function MarketInfoForm ({ defaultLocation }: IMarketForm) {
+  const [ isDelivery, toogleDelivery ] = useState(true);
   const [ date , setDate ] = useState(new Date());
   const [ timeRangeKey, setTimeRangeKey ] = useState(TimeRangeConfig[0].value);
-  const [ locationInfo, setLocationInfo ] = useState<LocationResOption | null>(null);
+  const [ locationInfo, setLocationInfo ] =
+    useState<LocationResOption | null>(defaultLocation ?? null);
   const [ locationExtra, setLocationExtra ] = useState('');
   const [ popupVis, setPopupVis ] = useState(false);
   const locationSelect = (info: LocationResOption) => {
@@ -105,10 +111,20 @@ export default function MarketInfoForm () {
 
   return (
     <>
-      <div className={cls(styles.title)}>
+      {/* <div className={cls(styles.title)}>
         L'information de livraison
+      </div> */}
+      <div className={cls('flex-evenly', styles.title, styles.inputWrapper, styles.deliverySwitcher)}>
+        <span
+          onClick={() => toogleDelivery(true)}
+          className={cls(isDelivery ? styles.active : '')}
+        >Livraison</span>
+        <span
+          onClick={() => toogleDelivery(false)}
+          className={cls(!isDelivery ? styles.active : '')}
+        >Emporter</span>
       </div>
-      <div className={cls('flex-between', styles.datetimeInputWrapper)}>
+      <div className={cls('flex-between', styles.datetimeInputWrapper, !isDelivery ? 'hidden' : '')}>
         <DatetimePicker
           type='month-day'
           minDate={nowDate}
@@ -123,7 +139,7 @@ export default function MarketInfoForm () {
           {(val: Date, _: any, actions: { open: () => void }) =>
             <span className={cls(styles.innerSpan, styles.inputWrapper, 'flex-between')} onClick={actions.open}>
               <CalendarIcon />
-              { DateTimeUtils.formatDate(val) }
+              { DateTimeUtils.formatDate(val, true) }
             </span>
           }
         </DatetimePicker>
@@ -147,7 +163,7 @@ export default function MarketInfoForm () {
       </div>
       <div
         onClick={() => setPopupVis(true)}
-        className={cls('flex-between', styles.locationItem, styles.inputWrapper, styles.locationInfo)}
+        className={cls('flex-between', styles.locationItem, styles.inputWrapper, styles.locationInfo, !isDelivery ? 'hidden' : '')}
       >
         <LocationIcon />
         <div>
@@ -155,7 +171,7 @@ export default function MarketInfoForm () {
           <span className={styles.context}>{ locationInfo?.context }</span>
         </div>
       </div>
-      <div className={styles.locationExtraInfo}>
+      <div className={cls(styles.locationExtraInfo, !isDelivery ? 'hidden' : '')}>
         <CustomInput
           placeholder="Chambre, Bâtiment, Numéro"
           onChange={ev => setLocationExtra(ev.target.value)}
